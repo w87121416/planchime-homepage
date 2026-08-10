@@ -24,7 +24,7 @@ export default function ContactPage() {
           <article className="support-card featured">
             <span>01</span>
             <h2>官方邮箱</h2>
-            <p><a className="card-text-link" href="mailto:support@planchime.com">support@planchime.com</a></p>
+            <p><a className="card-text-link" href="mailto:zhangxiao@planchime.com">zhangxiao@planchime.com</a></p>
             <p className="support-meta">请在主题中写明“产品支持”“账号删除”或“隐私请求”。</p>
           </article>
           <article className="support-card">

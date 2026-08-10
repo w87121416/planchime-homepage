@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element -- 品牌图标已固定尺寸并本地托管，避免 vinext 边缘图片代理带来运行时依赖。 */
 import Link from "next/link";
+import { publicSiteFacts } from "../publicSiteFacts";
 
 const navigation = [
   { href: "/", label: "首页" },
@@ -38,6 +39,8 @@ export function Brand() {
 }
 
 export function SiteHeader() {
+  const { appStoreUrl } = publicSiteFacts;
+
   return (
     <header className="site-header">
       <div className="shell header-inner">
@@ -47,13 +50,21 @@ export function SiteHeader() {
             <Link href={item.href} key={item.href}>{item.label}</Link>
           ))}
         </nav>
-        <Link className="development-pill" href="/support">iOS 即将上线</Link>
+        {appStoreUrl ? (
+          <a className="development-pill" href={appStoreUrl} target="_blank" rel="noreferrer">
+            App Store 下载
+          </a>
+        ) : (
+          <Link className="development-pill" href="/support">iOS 即将上线</Link>
+        )}
       </div>
     </header>
   );
 }
 
 export function SiteFooter() {
+  const { filings } = publicSiteFacts;
+
   return (
     <footer className="site-footer">
       <div className="shell footer-grid">
@@ -70,6 +81,14 @@ export function SiteFooter() {
         <div className="company-note">
           <p>米堆（南京）网络科技有限公司</p>
           <p>中国 · 南京</p>
+          <p><a href="mailto:zhangxiao@planchime.com">zhangxiao@planchime.com</a></p>
+          {filings.map((record) => (
+            <p key={`${record.kind}-${record.number}`}>
+              {record.href ? (
+                <a href={record.href} target="_blank" rel="noreferrer">{record.number}</a>
+              ) : record.kind === "app" ? `App 备案：${record.number}` : record.number}
+            </p>
+          ))}
           <p>© 2026 记上日成 · PlanChime</p>
         </div>
       </div>

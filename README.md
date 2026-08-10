@@ -35,3 +35,20 @@ npm run build:static
 - `planchime.com` 只添加 GitHub Pages 所需的网站记录，根域和 `www` 最终都应跳转到 HTTPS 主站。
 - 现有企业邮箱的 MX、SPF 和 `mail` 记录不得修改。
 - 任何密钥、用户数据、付费资源或尚未开放的价格都不得写入仓库。
+
+## 上线事实配置
+
+App Store 链接、备案号和应用商店价格通过 GitHub 仓库的 Actions Variables 在构建时注入。没有正式值时保持为空，页面会继续显示“iOS 即将上线”，并隐藏备案号与商品价格。
+
+| Variable | 何时填写 |
+| --- | --- |
+| `PLANCHIME_APP_STORE_URL` | App Store 正式页面可公开访问后，填写 `https://apps.apple.com/...` 链接 |
+| `PLANCHIME_ICP_NUMBER` | 取得 ICP 备案号后 |
+| `PLANCHIME_PUBLIC_SECURITY_NUMBER` | 取得公安备案号后 |
+| `PLANCHIME_PUBLIC_SECURITY_URL` | 取得与公安备案号对应的 `beian.gov.cn` 详情链接后；可留空 |
+| `PLANCHIME_APP_FILING_NUMBER` | 取得 App 备案号后 |
+| `PLANCHIME_MONTHLY_STORE_PRICE` | 月会员商品在商店创建并核对后，填写商店实际展示文字 |
+| `PLANCHIME_ANNUAL_STORE_PRICE` | 年会员商品在商店创建并核对后，填写商店实际展示文字 |
+| `PLANCHIME_TOP_UP_STORE_PRICE` | 补充包商品在商店创建并核对后，填写商店实际展示文字 |
+
+价格变量必须抄录应用商店面向用户的完整展示文字，不根据内部定价计划提前填写。修改仓库变量后应重新运行“发布官网”工作流，并在公开页面核对结果。

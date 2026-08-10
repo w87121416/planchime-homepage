@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage, LegalSection } from "../components/LegalPage";
+import { publicSiteFacts } from "../publicSiteFacts";
 
 export const metadata: Metadata = {
   title: "用户协议",
@@ -8,6 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default function TermsPage() {
+  const hasStorePrices = publicSiteFacts.storePrices.length > 0;
+
   return (
     <LegalPage
       eyebrow="服务规则"
@@ -84,7 +87,9 @@ export default function TermsPage() {
       </LegalSection>
 
       <LegalSection title="8. 订阅与付费服务">
-        <p>当前没有可购买的会员商品。以后如开放，商品、价格、周期、权益、试用、自动续费、取消与退款规则会在付款前显著展示，并适用单独的<Link className="inline-link" href="/subscription">自动续费服务协议</Link>。</p>
+        <p>{hasStorePrices
+          ? <>当前已确认的商店价格见<Link className="inline-link" href="/subscription">自动续费服务协议</Link>。商品、价格、周期、权益、试用、自动续费、取消与退款规则会在付款前显著展示。</>
+          : <>当前没有已确认并可公开展示的会员商品价格。商品创建并核对后，价格、周期、权益、试用、自动续费、取消与退款规则会在付款前显著展示，并适用单独的<Link className="inline-link" href="/subscription">自动续费服务协议</Link>。</>}</p>
         <p>数字服务交易由实际应用商店按平台规则完成。我们不会因订阅到期而锁住用户已有本地日程或取消本地基础能力。</p>
       </LegalSection>
 
@@ -113,7 +118,7 @@ export default function TermsPage() {
         <p>
           本协议适用中华人民共和国法律。争议发生时，双方可先通过客服协商；协商不成的，任何一方均可依法向有管辖权的人民法院提起诉讼。本条不排除消费者依法选择其他投诉、调解或争议解决渠道。
         </p>
-        <p>客服邮箱：support@planchime.com。</p>
+        <p>客服邮箱：zhangxiao@planchime.com。</p>
       </LegalSection>
     </LegalPage>
   );

@@ -1,20 +1,28 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPage, LegalSection } from "../components/LegalPage";
+import { publicSiteFacts } from "../publicSiteFacts";
 
 export const metadata: Metadata = {
   title: "自动续费服务协议",
-  description: "记上日成自动续费服务协议。当前没有可购买商品；未来如开放会员，购买前会展示完整商品和续费信息。",
+  description: publicSiteFacts.storePrices.length > 0
+    ? "记上日成自动续费服务协议及已经核对的应用商店商品价格。"
+    : "记上日成自动续费服务协议。当前没有已确认并可公开展示的商品价格。",
 };
 
 export default function SubscriptionPage() {
+  const { storePrices } = publicSiteFacts;
+  const hasStorePrices = storePrices.length > 0;
+
   return (
     <LegalPage
       eyebrow="会员服务规则"
       title="自动续费服务协议"
-      summary="当前没有可购买的记上日成会员商品，也不会因浏览本页产生费用。未来如开放自动续费商品，用户只有在应用商店确认购买后才会订阅。"
+      summary={hasStorePrices
+        ? "这里列出已经从应用商店确认的商品价格。实际扣款金额、币种与周期，以 App 内应用商店确认页面为准。"
+        : "当前没有已确认并可公开展示的记上日成会员商品价格，也不会因浏览本页产生费用。用户只有在应用商店确认购买后才会订阅。"}
       version="1.0"
-      status="现行有效 · 当前无可购买商品"
+      status={hasStorePrices ? "现行有效 · 商店价格已公开" : "现行有效 · 当前无已确认价格"}
       publishedAt="2026 年 8 月 10 日"
       effectiveAt="2026 年 8 月 10 日"
       history={[
@@ -22,9 +30,20 @@ export default function SubscriptionPage() {
       ]}
     >
       <LegalSection title="1. 当前状态">
-        <p>
-          当前没有可购买商品、免费试用或预授权扣款，也不会通过本网站收款。本页仅公开未来如开放自动续费服务时适用的基本规则；商品开放后，购买页面和应用商店确认页面会展示当时有效的信息。
-        </p>
+        {hasStorePrices ? (
+          <>
+            <ul>
+              {storePrices.map((price) => (
+                <li key={price.product}><strong>{price.product}：</strong>{price.displayPrice}</li>
+              ))}
+            </ul>
+            <p>本网站不直接收款。不同账号、地区或币种的最终价格，以 App 内应用商店确认页面为准。</p>
+          </>
+        ) : (
+          <p>
+            当前没有已确认并可公开展示的商品价格、免费试用或预授权扣款，也不会通过本网站收款。商品创建并核对后，购买页面和应用商店确认页面会展示当时有效的信息。
+          </p>
+        )}
       </LegalSection>
 
       <LegalSection title="2. 会员与免费能力">
@@ -94,7 +113,7 @@ export default function SubscriptionPage() {
 
       <LegalSection title="11. 规则更新与联系">
         <p>
-          价格、权益或续费规则发生重大变化时，会按法律和平台规则提前显著告知，不以默认勾选替代用户选择。订阅与免费功能的一般服务规则还适用<Link className="inline-link" href="/terms">用户协议</Link>。客服邮箱：support@planchime.com。
+          价格、权益或续费规则发生重大变化时，会按法律和平台规则提前显著告知，不以默认勾选替代用户选择。订阅与免费功能的一般服务规则还适用<Link className="inline-link" href="/terms">用户协议</Link>。客服邮箱：zhangxiao@planchime.com。
         </p>
       </LegalSection>
     </LegalPage>

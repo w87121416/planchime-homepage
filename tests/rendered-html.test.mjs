@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { createPublicSiteFacts } from "../app/publicSiteFacts.ts";
 
 async function render(path = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
@@ -47,15 +48,58 @@ test("首页呈现正式品牌、主流程与真实能力边界", async () => {
   assert.match(html, /name="robots" content="index, follow"/i);
   assert.doesNotMatch(html, /发布前审查稿|隐私政策草案|用户协议草案/);
   assert.doesNotMatch(html, />\s*立即(?:下载|购买)\s*</);
+  assert.match(html, /href="mailto:zhangxiao@planchime\.com"/);
+  assert.match(html, /iOS 即将上线/);
+  assert.doesNotMatch(html, /App Store 下载|已在 App Store 上线/);
+  assert.doesNotMatch(html, /ICP备|公网安备|App 备案/);
   assert.doesNotMatch(html, /Your site is taking shape|Building your site/);
+});
+
+test("公开事实仅在通过校验后进入页面配置", () => {
+  const facts = createPublicSiteFacts({
+    PLANCHIME_APP_STORE_URL: "https://apps.apple.com/cn/app/example/id1234567890",
+    PLANCHIME_ICP_NUMBER: "苏ICP备12345678号",
+    PLANCHIME_PUBLIC_SECURITY_NUMBER: "苏公网安备 32010000000000号",
+    PLANCHIME_PUBLIC_SECURITY_URL: "https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010000000000",
+    PLANCHIME_APP_FILING_NUMBER: "苏ICP备12345678号-1A",
+    PLANCHIME_MONTHLY_STORE_PRICE: "¥12.00/月",
+    PLANCHIME_ANNUAL_STORE_PRICE: "¥168.00/年",
+  });
+
+  assert.equal(facts.appStoreUrl, "https://apps.apple.com/cn/app/example/id1234567890");
+  assert.equal(facts.filings.length, 3);
+  assert.deepEqual(facts.storePrices, [
+    { product: "月会员", displayPrice: "¥12.00/月" },
+    { product: "年会员", displayPrice: "¥168.00/年" },
+  ]);
+});
+
+test("错误链接、空备案号和非价格文本不会公开", () => {
+  const facts = createPublicSiteFacts({
+    PLANCHIME_APP_STORE_URL: "https://example.com/fake-app",
+    PLANCHIME_ICP_NUMBER: " ",
+    PLANCHIME_PUBLIC_SECURITY_NUMBER: "苏公网安备 32010000000000号",
+    PLANCHIME_PUBLIC_SECURITY_URL: "https://example.com/fake-record",
+    PLANCHIME_MONTHLY_STORE_PRICE: "即将公布",
+  });
+
+  assert.equal(facts.appStoreUrl, undefined);
+  assert.equal(facts.filings.length, 1);
+  assert.equal(facts.filings[0]?.href, undefined);
+  assert.deepEqual(facts.storePrices, []);
+
+  const nonProductApplePage = createPublicSiteFacts({
+    PLANCHIME_APP_STORE_URL: "https://apps.apple.com/account/subscriptions",
+  });
+  assert.equal(nonProductApplePage.appStoreUrl, undefined);
 });
 
 test("支持页提供可操作的官方联系与常见问题", async () => {
   const response = await render("/support");
   assert.equal(response.status, 200);
   const html = await response.text();
-  assert.match(html, /href="mailto:support@planchime\.com"/);
-  assert.match(html, /support@planchime\.com/);
+  assert.match(html, /href="mailto:zhangxiao@planchime\.com"/);
+  assert.match(html, /zhangxiao@planchime\.com/);
   assert.match(html, /米堆（南京）网络科技有限公司/);
   assert.match(html, /通知没有出现怎么办/);
   assert.match(html, /语音会一直监听吗/);
@@ -70,7 +114,7 @@ test("联系页免登录公开主体、邮箱与安全提示", async () => {
   const response = await render("/contact");
   assert.equal(response.status, 200);
   const html = await response.text();
-  assert.match(html, /href="mailto:support@planchime\.com"/);
+  assert.match(html, /href="mailto:zhangxiao@planchime\.com"/);
   assert.match(html, /无需登录/);
   assert.match(html, /米堆（南京）网络科技有限公司/);
   assert.match(html, /中国[^<]*南京/);

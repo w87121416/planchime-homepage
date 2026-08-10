@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFrame } from "./components/SiteFrame";
+import { publicSiteFacts } from "./publicSiteFacts";
 
 export const metadata: Metadata = {
   title: { absolute: "记上日成 - 日程、待办与提醒" },
@@ -62,6 +63,8 @@ const reviewLinks = [
 ];
 
 export default function Home() {
+  const { appStoreUrl } = publicSiteFacts;
+
   return (
     <SiteFrame>
       <section className="home-hero" aria-labelledby="home-title">
@@ -83,7 +86,12 @@ export default function Home() {
                 帮助与支持
               </Link>
             </div>
-            <p className="release-status"><i aria-hidden="true" />iOS 即将上线</p>
+            <p className="release-status">
+              <i aria-hidden="true" />
+              {appStoreUrl ? (
+                <a href={appStoreUrl} target="_blank" rel="noreferrer">已在 App Store 上线</a>
+              ) : "iOS 即将上线"}
+            </p>
           </div>
 
           <div
@@ -270,12 +278,18 @@ export default function Home() {
         <div className="shell home-cta-inner">
           <img src="/images/app-icon.png" alt="" width="96" height="96" />
           <div>
-            <p className="eyebrow">iOS 即将上线</p>
+            <p className="eyebrow">{appStoreUrl ? "已在 App Store 上线" : "iOS 即将上线"}</p>
             <h2>把事情记上，也把时间还给自己。</h2>
           </div>
-          <Link className="light-button" href="/support">
-            查看帮助与支持
-          </Link>
+          {appStoreUrl ? (
+            <a className="light-button" href={appStoreUrl} target="_blank" rel="noreferrer">
+              前往 App Store
+            </a>
+          ) : (
+            <Link className="light-button" href="/support">
+              查看帮助与支持
+            </Link>
+          )}
         </div>
       </section>
     </SiteFrame>
