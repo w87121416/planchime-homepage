@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     images: ["/images/og-ink-city-v1-1200x630.png"],
   },
   robots: {
-    // 官网首页允许被发现；仍处于草案状态的法律页面会在自身 metadata 中单独禁止索引。
+    // 官网与审核页面均为正式公开入口，搜索抓取口径保持一致。
     index: true,
     follow: true,
   },

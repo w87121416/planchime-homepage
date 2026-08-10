@@ -30,5 +30,15 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    // 下列目录是本机尚未纳入官网的实验草稿；静态发布只校验正式 app 与组件，避免草稿依赖污染生产构建。
+    "app/_sites-preview/**",
+    "app/chatgpt-auth.ts",
+    "db/**",
+    "drizzle/**",
+    "drizzle.config.ts",
+    "examples/**",
+    "worker/**"
+  ]
 }

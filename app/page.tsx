@@ -13,36 +13,36 @@ export const metadata: Metadata = {
 const steps = [
   {
     number: "01",
-    title: "说出来",
-    text: "语音、文字，或附上文件。先把事情交代清楚，不必先研究表单。",
+    title: "说，或直接写",
+    text: "像交代给助理一样，把要做的事和时间告诉它。",
   },
   {
     number: "02",
-    title: "看一眼",
-    text: "事项、时间、优先级与提醒被整理成简洁草稿；有歧义时再问一句。",
+    title: "看一眼草稿",
+    text: "事情、时间、优先级和提醒，被整理在一张清楚的确认卡里。",
   },
   {
     number: "03",
-    title: "确认后安排",
-    text: "你确认后才保存。冲突先展示影响，再由你决定保留、调整或重排。",
+    title: "确认后记上",
+    text: "确认才保存；遇到冲突，先说明再由你选择。",
   },
 ];
 
 const capabilityRows = [
-  ["一句话录入", "从一句自然表达中提炼事情、时间和优先级。"],
-  ["提前与准点", "可选提前 1 天、30 分钟、15 分钟、5 分钟，或仅准点。"],
-  ["冲突不覆盖", "已有安排始终被保护，任何改期都要经过确认。"],
-  ["回顾有分寸", "基于真实完成记录生成日、周、月回顾，不用焦虑催促。"],
+  ["一句话成稿", "从语音或文字中提炼事情、时间和优先级。"],
+  ["确认才创建", "所有结果都能直接修改，不替你擅自做主。"],
+  ["冲突先说明", "已有安排不会被静默覆盖，调整前先看清影响。"],
+  ["本地也可用", "没有网络，仍能查看、编辑和接收已登记的本地提醒。"],
 ];
 
 const faq = [
   [
     "需要登录才能使用吗？",
-    "不需要。基础本地功能无需账号；使用 AI、云端备份和跨端会员时才需要登录。",
+    "基础本地功能可以不登录。账号与同步能力以 App 内实际开放状态为准。",
   ],
   [
-    "AI 会直接修改我的日程吗？",
-    "不会。AI 只生成可编辑草稿，日期、时间、重复、提醒与冲突处理都由你确认。",
+    "智能整理会直接改日程吗？",
+    "不会。它只生成可编辑草稿，日期、时间、提醒与冲突处理都由你确认。",
   ],
   [
     "提醒一定会响吗？",
@@ -50,12 +50,15 @@ const faq = [
   ],
   [
     "会一直监听麦克风吗？",
-    "不会。只有你主动按下语音按钮后才开始当前录入，不做常驻监听、后台监听或自定义唤醒词。",
+    "不会。只有你主动按下语音按钮后才录入，不做常驻或后台监听。",
   ],
-  [
-    "支持哪些平台？",
-    "iOS 首发；Android 与微信小程序后续接入。微信订阅消息不能替代手机系统提醒。",
-  ],
+];
+
+const reviewLinks = [
+  { href: "/support", title: "帮助与支持", text: "使用问题与联系入口" },
+  { href: "/privacy", title: "隐私政策", text: "数据与权限说明" },
+  { href: "/terms", title: "用户协议", text: "服务规则与边界" },
+  { href: "/account-deletion", title: "删除账号", text: "删除范围与办理方式" },
 ];
 
 export default function Home() {
@@ -66,21 +69,21 @@ export default function Home() {
           <div className="home-hero-copy">
             <p className="eyebrow">记上日成 · PlanChime</p>
             <h1 id="home-title">
-              说一句，
-              <span>接下来的事就有安排。</span>
+              把事情交代一句，
+              <span>接下来就有安排。</span>
             </h1>
             <p className="home-hero-lead">
-              语音、文字或文件快速记录，系统把事情整理成清楚的草稿。你确认后保存，到点再给你一个简单、温和的下一步。
+              语音或文字快速记事，整理成可编辑日程。你确认后才保存，提醒按系统设置执行。
             </p>
             <div className="home-hero-actions">
               <Link className="primary-button" href="#how-it-works">
-                看看怎么使用
+                看看三步怎么用
               </Link>
-              <Link className="quiet-link" href="/#privacy">
-                查看真实能力边界 <span aria-hidden="true">→</span>
+              <Link className="quiet-link" href="/support">
+                帮助与支持
               </Link>
             </div>
-            <p className="release-note">iOS 首发准备中，尚未开放正式下载或收费。</p>
+            <p className="release-status"><i aria-hidden="true" />iOS 即将上线</p>
           </div>
 
           <div
@@ -99,25 +102,25 @@ export default function Home() {
             <div className="phone-preview" aria-hidden="true">
               <div className="phone-status">
                 <span>09:41</span>
-                <span aria-hidden="true">● ◔</span>
+                <span className="phone-system-status"><i /><i /><i /></span>
               </div>
               <div className="phone-heading">
                 <div>
-                  <small>7 月 31 日 · 周五</small>
+                  <small>今天 · 7 月 31 日</small>
                   <strong>日程</strong>
                 </div>
-                <span className="weather-chip">南京 · 28°</span>
+                <span className="weather-chip">南京 28°</span>
               </div>
               <div className="phone-next">
                 <small>下一件</small>
                 <strong>确认产品首页</strong>
-                <span>10:00 · 提前 15 分钟提醒</span>
+                <span>10:00 · 提前 15 分钟</span>
               </div>
               <div className="phone-row">
                 <time>14:30</time>
                 <div>
                   <strong>项目进度沟通</strong>
-                  <span>工作 · 普通</span>
+                  <span className="category-work">工作 · 普通</span>
                 </div>
                 <i aria-hidden="true" />
               </div>
@@ -125,12 +128,13 @@ export default function Home() {
                 <time>18:30</time>
                 <div>
                   <strong>晚间散步</strong>
-                  <span>生活 · 每周重复</span>
+                  <span className="category-life">生活 · 每周重复</span>
                 </div>
                 <i aria-hidden="true" />
               </div>
-              <div className="voice-dock">
-                <span aria-hidden="true">⌁</span>
+              <div className="phone-composer">
+                <span className="phone-add-mark" />
+                <span className="phone-input-copy">打字记事</span>
                 <strong>按住说话</strong>
               </div>
             </div>
@@ -140,10 +144,10 @@ export default function Home() {
 
       <section className="truth-strip" aria-label="产品基本原则">
         <div className="shell truth-strip-inner">
-          <span>本地功能无需登录</span>
-          <span>AI 只整理草稿</span>
+          <span>基础功能本地可用</span>
+          <span>智能整理只做草稿</span>
           <span>确认后才创建</span>
-          <span>权限拒绝仍能使用</span>
+          <span>不静默改动日程</span>
         </div>
       </section>
 
@@ -151,8 +155,8 @@ export default function Home() {
         <div className="shell">
           <div className="editorial-heading">
             <p className="eyebrow">三步就够</p>
-            <h2>想到、说出、确认。</h2>
-            <p>忙的时候，工具应该替你减少步骤，而不是再布置一份填写任务。</p>
+            <h2>说完，看一眼，就记好了。</h2>
+            <p>常用流程只有一个确认动作，其他细节需要时再改。</p>
           </div>
           <div className="flow-list">
             {steps.map((step) => (
@@ -184,7 +188,7 @@ export default function Home() {
           </div>
           <div className="capability-copy">
             <p className="eyebrow">可靠秘书</p>
-            <h2>帮你整理，但不替你做主。</h2>
+            <h2>替你整理，决定权留给你。</h2>
             <div className="capability-rows">
               {capabilityRows.map(([title, text], index) => (
                 <article key={title}>
@@ -204,13 +208,13 @@ export default function Home() {
         <div className="shell companion-layout">
           <div className="companion-copy">
             <p className="eyebrow">温暖伙伴</p>
-            <h2>会帮你，也懂得安静。</h2>
+            <h2>回顾一天，也照顾节奏。</h2>
             <p>
-              忙的时候，只把下一件重要的事讲清楚；完成以后，用真实进度给你一份有分寸的回应。庆祝、书信与表达温度都可以关闭。
+              日、周、月完成记录会整理成简洁回顾。诗信来自真实事项，表达温度可以调整，也可以关闭。
             </p>
             <blockquote>
               <span>今天完成 4 件</span>
-              <p>重要的几步已经落稳，剩下的可以从容一点。</p>
+              <p>重要的几步已经落稳，今天可以从容收尾。</p>
             </blockquote>
           </div>
           <figure className="evening-figure">
@@ -226,61 +230,21 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="home-section plan-section" id="plans">
-        <div className="shell plan-layout">
-          <div className="plan-intro">
-            <p className="eyebrow">简单、透明</p>
-            <h2>基础日程，始终免费。</h2>
-            <p>不强制登录，也不会因为会员到期锁住已有日程。</p>
-          </div>
-          <div className="plan-columns">
-            <article>
-              <span>免费版</span>
-              <h3>日常安排正常使用</h3>
-              <ul>
-                <li>手动创建与编辑</li>
-                <li>本地提醒与日历</li>
-                <li>常用重复规则</li>
-                <li>本地数据长期可用</li>
-              </ul>
-            </article>
-            <article className="pro-plan">
-              <span>记上日成 Pro · 规划中</span>
-              <h3>需要云与 AI 时再升级</h3>
-              <ul>
-                <li>AI 文字与语音整理</li>
-                <li>云端备份与跨端同步</li>
-                <li>会员专属回顾书信</li>
-              </ul>
-              <p>正式开放前会清楚展示价格、额度与续费规则。</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
       <section className="home-section trust-section" id="privacy">
         <div className="shell trust-layout">
           <div>
             <p className="eyebrow">可靠与隐私</p>
-            <h2>先保护你交代的事。</h2>
+            <h2>把能力边界，说清楚。</h2>
+            <p className="trust-intro">审核、隐私与账号相关页面，都可以从这里直接找到。</p>
           </div>
-          <div className="trust-points">
-            <article>
-              <h3>本地优先</h3>
-              <p>没有网络时仍能创建、编辑、查看，并接收已经安排好的本地提醒。</p>
-            </article>
-            <article>
-              <h3>权限按需</h3>
-              <p>只有使用对应功能时才请求麦克风、通知、定位或日历权限。</p>
-            </article>
-            <article>
-              <h3>不静默改动</h3>
-              <p>AI、语音和冲突建议都先变成可编辑预览，确认后才写入日程。</p>
-            </article>
-            <article>
-              <h3>披露再使用</h3>
-              <p>未来启用 AI、云备份或同步时，会先说明服务商、数据范围和处理方式。</p>
-            </article>
+          <div className="review-link-grid">
+            {reviewLinks.map((item) => (
+              <Link href={item.href} key={item.href}>
+                <span>{item.title}</span>
+                <small>{item.text}</small>
+                <b>打开</b>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -289,7 +253,7 @@ export default function Home() {
         <div className="shell faq-grid">
           <div>
             <p className="eyebrow">常见问题</p>
-            <h2>重要边界，提前说清楚。</h2>
+            <h2>常用问题，直接回答。</h2>
           </div>
           <div className="faq-list">
             {faq.map(([question, answer]) => (
@@ -306,11 +270,11 @@ export default function Home() {
         <div className="shell home-cta-inner">
           <img src="/images/app-icon.png" alt="" width="96" height="96" />
           <div>
-            <p className="eyebrow">记上日成</p>
-            <h2>记下来，今天就从容一点。</h2>
+            <p className="eyebrow">iOS 即将上线</p>
+            <h2>把事情记上，也把时间还给自己。</h2>
           </div>
           <Link className="light-button" href="/support">
-            查看上线进度
+            查看帮助与支持
           </Link>
         </div>
       </section>

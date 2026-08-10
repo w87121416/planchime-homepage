@@ -2230,3 +2230,410 @@ img {
 }
 
 /* 主题固定为同一套暖纸色，不根据手机或电脑的系统深色设置切换调色板。 */
+
+/* 正式官网视觉收口：只覆盖首页和全站骨架，不改变法律、支持页面的信息层级。 */
+.site-header {
+  border-bottom-color: rgba(130, 119, 99, 0.22);
+  background: rgba(247, 241, 229, 0.9);
+  box-shadow: 0 10px 34px rgba(37, 42, 38, 0.04);
+}
+
+.site-nav {
+  gap: clamp(20px, 2.4vw, 34px);
+}
+
+.development-pill {
+  border-color: rgba(51, 92, 79, 0.3);
+  background: rgba(226, 233, 227, 0.66);
+  color: var(--green-deep);
+  font-weight: 650;
+}
+
+.home-hero {
+  min-height: min(860px, calc(100svh - 72px));
+  padding-block: clamp(58px, 7vw, 90px);
+  background:
+    radial-gradient(circle at 14% 24%, rgba(255, 253, 247, 0.98), transparent 38%),
+    radial-gradient(circle at 82% 80%, rgba(208, 218, 208, 0.32), transparent 32%),
+    linear-gradient(150deg, #f7f0e4 0%, #eee4d2 100%);
+}
+
+.home-hero-grid {
+  grid-template-columns: minmax(0, 0.9fr) minmax(500px, 1.1fr);
+  gap: clamp(32px, 4.5vw, 64px);
+}
+
+.home-hero h1 {
+  max-width: 680px;
+  font-size: clamp(50px, 5.8vw, 76px);
+  letter-spacing: -0.048em;
+}
+
+.home-hero-lead {
+  max-width: 530px;
+  font-size: 17px;
+  line-height: 1.76;
+}
+
+.home-hero-actions {
+  gap: 20px;
+  margin-top: 32px;
+}
+
+.quiet-link {
+  min-width: 112px;
+  justify-content: center;
+  border-bottom: 1px solid rgba(51, 92, 79, 0.36);
+}
+
+.release-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 20px 0 0;
+  color: #5b6761;
+  font-size: 12px;
+}
+
+.release-status i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cinnabar);
+  box-shadow: 0 0 0 5px rgba(201, 86, 59, 0.1);
+}
+
+.home-hero-visual {
+  min-height: 604px;
+}
+
+.hero-art {
+  inset: -2% -18% -2% -10%;
+  height: 104%;
+  filter: saturate(0.78) contrast(1.06);
+}
+
+.phone-preview {
+  right: 1%;
+  bottom: 0;
+  min-height: 548px;
+  padding-bottom: 18px;
+  border-color: rgba(43, 53, 48, 0.46);
+  background: rgba(248, 242, 231, 0.96);
+  box-shadow:
+    0 34px 72px rgba(33, 42, 37, 0.22),
+    inset 0 0 0 5px rgba(255, 255, 255, 0.35);
+}
+
+.phone-system-status {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.phone-system-status i {
+  width: 3px;
+  border-radius: 999px;
+  background: var(--ink);
+}
+
+.phone-system-status i:nth-child(1) {
+  height: 5px;
+}
+
+.phone-system-status i:nth-child(2) {
+  height: 8px;
+}
+
+.phone-system-status i:nth-child(3) {
+  width: 12px;
+  height: 7px;
+  margin-left: 3px;
+  border-radius: 3px;
+}
+
+.phone-next {
+  min-height: 116px;
+  border-color: rgba(169, 148, 114, 0.56);
+  background:
+    linear-gradient(90deg, rgba(255, 253, 247, 0.92), rgba(247, 239, 224, 0.78)),
+    url("/images/ink-home-district.jpg") center / cover;
+}
+
+.phone-next strong {
+  font-family: "Songti SC", "STSong", serif;
+  font-size: 20px;
+}
+
+.phone-row span.category-work {
+  color: #426f73;
+}
+
+.phone-row span.category-life {
+  color: #9a5b47;
+}
+
+.phone-composer {
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: 38px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 5px 6px;
+  border: 1px solid rgba(133, 121, 101, 0.36);
+  border-radius: 17px;
+  background: rgba(255, 253, 247, 0.72);
+}
+
+.phone-add-mark {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 13px;
+  background: #e9dfcf;
+}
+
+.phone-add-mark::before,
+.phone-add-mark::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 13px;
+  height: 1.5px;
+  border-radius: 999px;
+  background: var(--ink);
+  transform: translate(-50%, -50%);
+}
+
+.phone-add-mark::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.phone-input-copy {
+  color: #7a827d;
+  font-size: 10px;
+}
+
+.phone-composer strong {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: 12px;
+  border-radius: 12px;
+  background: var(--green-deep);
+  color: #fffaf0;
+  font-size: 10px;
+}
+
+.truth-strip-inner {
+  max-width: 980px;
+}
+
+.truth-strip span {
+  letter-spacing: 0.02em;
+}
+
+.home-section {
+  padding-block: clamp(92px, 10vw, 128px);
+}
+
+.editorial-heading h2,
+.capability-copy h2,
+.companion-copy h2,
+.trust-layout h2,
+.faq-section h2,
+.home-cta h2 {
+  font-size: clamp(38px, 4.1vw, 54px);
+}
+
+.flow-list article {
+  min-height: 238px;
+}
+
+.flow-list h3 {
+  margin-top: 44px;
+}
+
+.trust-intro {
+  max-width: 360px;
+  margin: 22px 0 0;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.review-link-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--line-strong);
+}
+
+.review-link-grid a {
+  position: relative;
+  min-height: 154px;
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  padding: 26px 72px 26px 0;
+  border-bottom: 1px solid var(--line);
+  transition: background 180ms ease, padding 180ms ease;
+}
+
+.review-link-grid a:nth-child(even) {
+  padding-left: 28px;
+  border-left: 1px solid var(--line);
+}
+
+.review-link-grid a:hover {
+  padding-left: 14px;
+  background: rgba(255, 253, 247, 0.48);
+}
+
+.review-link-grid a:nth-child(even):hover {
+  padding-left: 42px;
+}
+
+.review-link-grid span {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.review-link-grid small {
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+.review-link-grid b {
+  position: absolute;
+  right: 22px;
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.home-cta-inner {
+  min-height: 226px;
+  background:
+    linear-gradient(90deg, rgba(21, 47, 39, 0.98), rgba(28, 62, 51, 0.94)),
+    url("/images/ink-achievement-evening.jpg") center / cover;
+}
+
+.footer-links {
+  max-width: 430px;
+}
+
+@media (max-width: 1060px) {
+  .home-hero-grid {
+    grid-template-columns: minmax(0, 0.88fr) minmax(420px, 1.12fr);
+  }
+
+  .phone-preview {
+    width: 298px;
+  }
+}
+
+@media (max-width: 860px) {
+  .home-hero {
+    min-height: auto;
+  }
+
+  .home-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-hero-copy {
+    max-width: 660px;
+  }
+
+  .home-hero-visual {
+    min-height: 560px;
+  }
+}
+
+@media (max-width: 720px) {
+  .site-nav a:nth-child(3) {
+    display: none;
+  }
+
+  .site-nav a:nth-child(4),
+  .site-nav a:nth-child(5) {
+    display: inline-flex;
+  }
+
+  .home-hero h1 {
+    font-size: clamp(42px, 12.3vw, 54px);
+  }
+
+  .home-hero-actions {
+    flex-direction: row;
+  }
+
+  .home-hero-actions .primary-button {
+    flex: 1;
+  }
+
+  .home-hero-actions .quiet-link {
+    width: auto;
+    min-width: 104px;
+  }
+
+  .home-hero-visual {
+    min-height: 420px;
+    margin-top: 18px;
+  }
+
+  .phone-preview {
+    width: min(276px, 82vw);
+    min-height: 402px;
+  }
+
+  .phone-row {
+    min-height: 46px;
+  }
+
+  .phone-composer {
+    min-height: 46px;
+    margin-top: 11px;
+  }
+
+  .phone-add-mark {
+    width: 32px;
+    height: 32px;
+  }
+
+  .review-link-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .review-link-grid a,
+  .review-link-grid a:nth-child(even) {
+    min-height: 116px;
+    padding: 22px 64px 22px 0;
+    border-left: 0;
+  }
+
+  .review-link-grid a:hover,
+  .review-link-grid a:nth-child(even):hover {
+    padding-left: 10px;
+  }
+}
+
+@media (max-width: 420px) {
+  .brand-copy small {
+    display: none;
+  }
+
+  .site-nav {
+    gap: 11px;
+  }
+
+  .home-hero-actions {
+    flex-direction: column;
+  }
+
+  .home-hero-actions .quiet-link {
+    width: 100%;
+  }
+}

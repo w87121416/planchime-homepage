@@ -44,11 +44,11 @@ export function LegalPage({
           <p className="eyebrow">{eyebrow}</p>
           <h1>{title}</h1>
           <p className="legal-summary">{summary}</p>
-          {/* 当前全部法律文本仍是审查稿，因此日期明确标成“草案更新日期”，避免被误读为已经正式发布。 */}
+          {/* 版本、发布日期与生效日期分开呈现，方便用户和审核人员确认正在阅读的正式文本。 */}
           <dl className="document-meta" aria-label={`${title}版本信息`}>
             <div><dt>状态</dt><dd>{status}</dd></div>
             <div><dt>版本</dt><dd>{version}</dd></div>
-            <div><dt>草案更新日期</dt><dd>{publishedAt}</dd></div>
+            <div><dt>发布日期</dt><dd>{publishedAt}</dd></div>
             <div><dt>生效日期</dt><dd>{effectiveAt}</dd></div>
           </dl>
         </div>
@@ -59,7 +59,7 @@ export function LegalPage({
           <LegalSection title="版本记录">
             <div className="legal-table-wrap">
               <table className="legal-table history-table">
-                <thead><tr><th>版本</th><th>草案更新日期</th><th>主要变化</th></tr></thead>
+                <thead><tr><th>版本</th><th>发布日期</th><th>主要变化</th></tr></thead>
                 <tbody>
                   {history.map((item) => (
                     <tr key={`${item.version}-${item.publishedAt}`}>
