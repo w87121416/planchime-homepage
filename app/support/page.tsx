@@ -24,7 +24,7 @@ export default function SupportPage() {
           <article className="support-card featured">
             <span>01</span>
             <h2>邮件支持</h2>
-            <p><a className="card-text-link" href="mailto:support@planchime.com">support@planchime.com</a></p>
+            <p><a className="card-text-link" href="mailto:zhangxiao@planchime.com">zhangxiao@planchime.com</a></p>
             <p className="support-meta">米堆（南京）网络科技有限公司 · 中国南京</p>
           </article>
           <article className="support-card">

@@ -94,7 +94,7 @@ export default function DataListPage() {
 
       <LegalSection title="6. 更新与核对方式">
         <p>清单会在 SDK 新增或升级、接收方变化、信息类型变化前更新版本和生效日期。每个发布版本均应核对权限清单、首次使用、拒绝授权、联网调用和账号删除等场景。</p>
-        <p>如发现实际处理与本清单不一致，请联系 support@planchime.com。个人信息处理的一般规则见<Link className="inline-link" href="/privacy">《记上日成隐私政策》</Link>。</p>
+        <p>如发现实际处理与本清单不一致，请联系 zhangxiao@planchime.com。个人信息处理的一般规则见<Link className="inline-link" href="/privacy">《记上日成隐私政策》</Link>。</p>
       </LegalSection>
     </LegalPage>
   );

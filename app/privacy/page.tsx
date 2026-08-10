@@ -141,7 +141,7 @@ export default function PrivacyPage() {
 
       <LegalSection title="12. 联系我们">
         <p>
-          运营主体：米堆（南京）网络科技有限公司。客服邮箱：support@planchime.com。
+          运营主体：米堆（南京）网络科技有限公司。客服邮箱：zhangxiao@planchime.com。
         </p>
         <p>
           来信请说明“隐私权利请求”及所需处理事项，不要发送密码、验证码、身份证照片、银行卡或无关日程内容。我们会在法律要求的期限内答复；需要补充核验、依法不能处理或需延长时，会说明原因和可行的后续路径。

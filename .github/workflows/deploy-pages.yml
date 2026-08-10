@@ -34,6 +34,16 @@ jobs:
         run: npm run lint
 
       - name: 生成静态官网
+        env:
+          # 公开事实只从 GitHub 仓库变量注入；未取得正式值时保持为空，官网不会显示占位内容。
+          PLANCHIME_APP_STORE_URL: ${{ vars.PLANCHIME_APP_STORE_URL }}
+          PLANCHIME_ICP_NUMBER: ${{ vars.PLANCHIME_ICP_NUMBER }}
+          PLANCHIME_PUBLIC_SECURITY_NUMBER: ${{ vars.PLANCHIME_PUBLIC_SECURITY_NUMBER }}
+          PLANCHIME_PUBLIC_SECURITY_URL: ${{ vars.PLANCHIME_PUBLIC_SECURITY_URL }}
+          PLANCHIME_APP_FILING_NUMBER: ${{ vars.PLANCHIME_APP_FILING_NUMBER }}
+          PLANCHIME_MONTHLY_STORE_PRICE: ${{ vars.PLANCHIME_MONTHLY_STORE_PRICE }}
+          PLANCHIME_ANNUAL_STORE_PRICE: ${{ vars.PLANCHIME_ANNUAL_STORE_PRICE }}
+          PLANCHIME_TOP_UP_STORE_PRICE: ${{ vars.PLANCHIME_TOP_UP_STORE_PRICE }}
         run: npm run build:static
 
       - name: 准备 GitHub Pages

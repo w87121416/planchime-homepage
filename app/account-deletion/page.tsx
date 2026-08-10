@@ -30,7 +30,7 @@ export default function AccountDeletionPage() {
       <LegalSection title="2. 备用联系入口">
         <div className="status-panel" role="note">
           <strong>无法使用 App 时，可发送邮件</strong>
-          <p><a className="inline-link" href="mailto:support@planchime.com?subject=%E8%AE%B0%E4%B8%8A%E6%97%A5%E6%88%90%E8%B4%A6%E5%8F%B7%E5%88%A0%E9%99%A4">联系 support@planchime.com</a>，主题请写“账号删除”。网页入口用于说明和备用联系，不会在未核验身份时直接删除数据。</p>
+          <p><a className="inline-link" href="mailto:zhangxiao@planchime.com?subject=%E8%AE%B0%E4%B8%8A%E6%97%A5%E6%88%90%E8%B4%A6%E5%8F%B7%E5%88%A0%E9%99%A4">联系 zhangxiao@planchime.com</a>，主题请写“账号删除”。网页入口用于说明和备用联系，不会在未核验身份时直接删除数据。</p>
         </div>
         <p>通过备用入口申请时，只需要以下最少信息：</p>
         <ul>
@@ -73,7 +73,7 @@ export default function AccountDeletionPage() {
       </LegalSection>
 
       <LegalSection title="7. 联系与投诉">
-        <p>客服邮箱：support@planchime.com。来信时请说明“账号删除”或“个人信息权利请求”。如对处理结果有异议，可回复原邮件要求复核，也可依法向有权监管部门投诉。</p>
+        <p>客服邮箱：zhangxiao@planchime.com。来信时请说明“账号删除”或“个人信息权利请求”。如对处理结果有异议，可回复原邮件要求复核，也可依法向有权监管部门投诉。</p>
         <p>更多个人信息处理规则见<Link className="inline-link" href="/privacy">《记上日成隐私政策》</Link>和<Link className="inline-link" href="/privacy/data-list">个人信息与第三方服务清单</Link>。</p>
       </LegalSection>
     </LegalPage>
