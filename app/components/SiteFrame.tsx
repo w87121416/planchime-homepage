@@ -3,9 +3,9 @@ import Link from "next/link";
 
 const navigation = [
   { href: "/", label: "首页" },
-  { href: "/#how-it-works", label: "如何使用" },
-  { href: "/#privacy", label: "可靠与隐私" },
-  { href: "/#faq", label: "常见问题" },
+  { href: "/#how-it-works", label: "怎么使用" },
+  { href: "/#capabilities", label: "主要功能" },
+  { href: "/#privacy", label: "隐私与边界" },
   { href: "/support", label: "支持" },
 ];
 
@@ -14,6 +14,7 @@ const footerNavigation = [
   { href: "/terms", label: "用户协议" },
   { href: "/subscription", label: "订阅规则" },
   { href: "/support", label: "帮助与支持" },
+  { href: "/contact", label: "联系我们" },
   { href: "/privacy/data-list", label: "数据清单" },
   { href: "/account-deletion", label: "删除账号" },
 ];
@@ -46,7 +47,7 @@ export function SiteHeader() {
             <Link href={item.href} key={item.href}>{item.label}</Link>
           ))}
         </nav>
-        <Link className="development-pill" href="/support">iOS 准备中</Link>
+        <Link className="development-pill" href="/support">iOS 即将上线</Link>
       </div>
     </header>
   );
@@ -69,7 +70,7 @@ export function SiteFooter() {
         <div className="company-note">
           <p>米堆（南京）网络科技有限公司</p>
           <p>中国 · 南京</p>
-          <p>© 2026 PlanChime</p>
+          <p>© 2026 记上日成 · PlanChime</p>
         </div>
       </div>
     </footer>
