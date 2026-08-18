@@ -5,10 +5,80 @@ import { publicSiteFacts } from "../publicSiteFacts";
 
 export const metadata: Metadata = {
   title: "用户协议",
-  description: "记上日成用户协议，说明服务范围、提醒边界、账号规则、用户内容与付费能力。",
+  description: "记上日成 Android 1.0 用户协议，说明免费离线服务、本地数据和提醒能力边界。",
 };
 
 export default function TermsPage() {
+  return (
+    <LegalPage
+      eyebrow="服务规则"
+      title="记上日成用户协议"
+      summary="本协议适用于记上日成 Android 1.0。当前版本是无需登录的免费本地日程工具，提供今日、日历、完成、稍后、改期和本地提醒，不提供账号、云同步、AI、语音、天气、广告、支付或订阅。"
+      version="1.1"
+      status="现行有效"
+      publishedAt="2026 年 8 月 18 日"
+      effectiveAt="2026 年 8 月 18 日"
+      history={[
+        { version: "1.1", publishedAt: "2026 年 8 月 18 日", note: "按 Android 1.0 离线首发范围更新服务、数据与提醒边界。" },
+        { version: "1.0", publishedAt: "2026 年 8 月 10 日", note: "首次发布。" },
+      ]}
+    >
+      <LegalSection title="1. 协议主体与适用范围">
+        <p>记上日成由米堆（南京）网络科技有限公司（以下简称“我们”）提供。本协议适用于包名为 <code>com.planchime.app</code> 的 Android 1.0。用户下载、安装或使用前，应同时阅读<Link className="inline-link" href="/privacy">隐私政策</Link>和<Link className="inline-link" href="/privacy/data-list">数据与 SDK 清单</Link>。</p>
+        <p>当前版本无需账号，不含付费商品或订阅。未来功能只有在实际版本明确提供并完成必要披露后才适用，不因路线图、协议历史或代码预留而成为已承诺服务。</p>
+      </LegalSection>
+
+      <LegalSection title="2. 当前服务内容">
+        <p>Android 1.0 提供日程与待办的创建、编辑、今日与日历查看、完成、稍后、改期、本地提醒、JSON 导出和本机数据完整清理。基础功能可离线使用，正式安装包不申请互联网访问权限。</p>
+        <p>当前不提供账号、云同步、跨设备恢复、AI、语音、天气、广告、统计、远程推送、支付或订阅。不同 Android 版本、设备厂商和系统设置可能影响界面或提醒能力，App 会在相关页面说明必要条件和降级方式。</p>
+      </LegalSection>
+
+      <LegalSection title="3. 提醒能力边界">
+        <p>App 会根据用户设置请求 Android 系统登记本地提醒。提醒展示与声音受通知权限、精确闹钟特殊访问、系统静音、勿扰模式、设备电量和厂商省电或后台策略影响；我们不承诺提醒在任何场景下“必响”、穿透静音或绝对准点。</p>
+        <p>用户应核对日期、时间、重复规则和提醒设置。对医疗、财务、合同、航班、考试、应急或其他高风险事项，请同时采用可靠的独立确认方式，不要把本产品作为唯一通知手段。</p>
+        <p>权限被拒绝或登记失败时，App 会尽量保留已输入日程、说明提醒尚未完成，并提供可执行的恢复入口。</p>
+      </LegalSection>
+
+      <LegalSection title="4. 本地数据、导出与删除">
+        <p>日程、待办、完成状态、提醒设置和偏好保存在用户设备。当前版本没有云端备份或跨设备恢复；设备损坏、丢失、卸载 App 或系统清除存储可能造成仅存于本机且未导出的数据无法恢复。</p>
+        <p>用户可以在 App 的“数据与帮助”中通过 Android 系统文件创建器导出 JSON 副本。完整清理须经过两次确认，App 会先取消已登记的本地提醒，再清理用户数据。成功清理后，开发者无法远程恢复本机数据。</p>
+      </LegalSection>
+
+      <LegalSection title="5. 用户责任与内容">
+        <p>用户应确保其输入、导出和使用的内容合法，并自行保护设备解锁方式与主动导出的文件。请避免在日程中记录不必要的身份证件、健康、财务、密码或验证码等敏感信息。</p>
+        <p>用户对其依法享有权利的日程、备注和其他输入内容保留相应权利。当前版本不把这些内容上传给我们，也不将其用于广告或模型训练。</p>
+      </LegalSection>
+
+      <LegalSection title="6. 软件许可与禁止行为">
+        <p>记上日成的软件、界面、品牌、文案和依法受保护的其他成果归我们或相应权利人所有。用户可为正常个人使用目的安装和使用；开源组件依其各自许可证使用，清单可在 App 内查看。</p>
+        <ul>
+          <li>不得利用软件侵害他人隐私、知识产权或其他合法权益。</li>
+          <li>不得绕过安全机制、恶意修改、干扰或攻击软件和相关公开页面。</li>
+          <li>不得冒用记上日成品牌、伪造官方版本或传播带有恶意代码的修改版本。</li>
+        </ul>
+      </LegalSection>
+
+      <LegalSection title="7. 服务变更与终止">
+        <p>我们会尽力保持软件稳定，并通过版本说明或官网告知重要变更。系统限制、设备故障、不可抗力或第三方平台变化可能影响部分能力。</p>
+        <p>如未来停止维护当前版本，我们会在可行范围内提前说明。由于 Android 1.0 的数据保存在用户设备，本地导出是迁移或留存数据的主要方式。</p>
+      </LegalSection>
+
+      <LegalSection title="8. 责任边界与消费者权利">
+        <p>我们依法对提供的软件服务承担责任，不以本协议排除因故意或重大过失、侵犯人身权益、违反个人信息保护义务等依法不能免除的责任。本协议中的提醒和设备限制说明不影响用户依法享有的消费者权利。</p>
+        <p>因可归责于我们的软件缺陷遭受损失时，用户可通过客服提供必要事实与证据，我们会按适用法律和实际影响处理。</p>
+      </LegalSection>
+
+      <LegalSection title="9. 未成年人、法律与联系">
+        <p>未满十八周岁的用户应在监护人指导下阅读和使用。当前版本不提供账号、社交、内容发布或付费功能。</p>
+        <p>本协议适用中华人民共和国法律。争议可先通过客服协商；协商不成的，双方可依法向有管辖权的人民法院提起诉讼。本条不排除消费者依法选择其他投诉、调解或争议解决渠道。</p>
+        <p>运营主体：米堆（南京）网络科技有限公司。客服邮箱：<a className="inline-link" href="mailto:zhangxiao@planchime.com">zhangxiao@planchime.com</a>。</p>
+      </LegalSection>
+    </LegalPage>
+  );
+}
+
+// 以下旧版通用协议仅作为后续能力设计参考，不会由当前 /terms 页面渲染。
+function FutureTermsReferencePage() {
   const hasStorePrices = publicSiteFacts.storePrices.length > 0;
 
   return (
@@ -123,3 +193,5 @@ export default function TermsPage() {
     </LegalPage>
   );
 }
+
+void FutureTermsReferencePage;

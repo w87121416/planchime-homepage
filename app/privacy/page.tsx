@@ -4,10 +4,93 @@ import { LegalPage, LegalSection } from "../components/LegalPage";
 
 export const metadata: Metadata = {
   title: "隐私政策",
-  description: "记上日成隐私政策，说明本地日程、语音、AI、提醒、位置、账号与购买相关的数据处理规则。",
+  description: "记上日成 Android 1.0 隐私政策，说明本地日程、提醒、导出、清理和系统权限。",
 };
 
 export default function PrivacyPage() {
+  return (
+    <LegalPage
+      eyebrow="隐私与数据"
+      title="记上日成隐私政策"
+      summary="本政策说明记上日成 Android 1.0 如何在设备本地处理日程、提醒和应用设置。当前版本无需登录，不提供云同步、广告、统计、AI、语音、天气、支付、订阅或远程推送。"
+      version="1.1"
+      status="现行有效"
+      publishedAt="2026 年 8 月 18 日"
+      effectiveAt="2026 年 8 月 18 日"
+      history={[
+        { version: "1.1", publishedAt: "2026 年 8 月 18 日", note: "按 Android 1.0 离线首发版本更新本地数据、权限与第三方组件说明。" },
+        { version: "1.0", publishedAt: "2026 年 8 月 10 日", note: "首次发布。" },
+      ]}
+    >
+      <LegalSection title="1. 适用范围与处理者">
+        <p>
+          本政策适用于包名为 <code>com.planchime.app</code> 的记上日成 Android 1.0，以及用于说明该版本的 planchime.com 公开页面。个人信息处理者为米堆（南京）网络科技有限公司，联系邮箱为 <a className="inline-link" href="mailto:zhangxiao@planchime.com">zhangxiao@planchime.com</a>。
+        </p>
+        <p>
+          当前 Android 版本无需注册或登录，正式安装包不声明互联网访问权限。账号、云同步、AI、语音、天气、广告、统计、支付、订阅和远程推送均不属于 Android 1.0 当前功能。
+        </p>
+      </LegalSection>
+
+      <LegalSection title="2. 当前版本处理的信息">
+        <div className="legal-table-wrap">
+          <table className="legal-table wide-table">
+            <thead><tr><th>场景</th><th>信息范围</th><th>处理方式</th></tr></thead>
+            <tbody>
+              <tr><td>日程与待办</td><td>用户输入的标题、备注、日期、时间、重复规则、完成状态和改期结果</td><td>保存在 App 的本地数据库中，用于今日、日历、完成、稍后和改期；不会由本版本上传给开发者。</td></tr>
+              <tr><td>本地提醒</td><td>提醒时间、事项摘要、登记标识和必要状态</td><td>在设备本地保存，并交由 Android 系统提醒能力登记；是否展示受系统权限与设备设置影响。</td></tr>
+              <tr><td>应用偏好</td><td>用户选择的显示、提醒和使用偏好</td><td>保存在 App 沙盒内，用于保持用户明确选择的设置。</td></tr>
+              <tr><td>JSON 导出</td><td>用户主动选择导出的本地日程和设置副本</td><td>通过 Android 系统文件创建器保存到用户选择的位置；App 不读取整个存储空间，也不把导出文件上传给开发者。</td></tr>
+              <tr><td>完整清理</td><td>本地日程、待办、提醒和偏好</td><td>用户阅读范围说明并完成第二次确认后，App 先取消提醒，再原子清理用户数据表。</td></tr>
+              <tr><td>客服邮件</td><td>来信邮箱、用户主动提供的问题描述与附件</td><td>仅在用户主动发信时，由客服和邮件服务提供方为回复、排查问题与安全响应而处理。请勿发送密码、验证码或无关敏感内容。</td></tr>
+              <tr><td>官网访问</td><td>托管方可能记录的 IP 地址、访问时间、请求地址、浏览器和错误信息</td><td>用于网页交付、安全防护和故障排查；与 Android App 内的本地日程数据分开，官网不接入广告或行为分析脚本。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </LegalSection>
+
+      <LegalSection title="3. 系统权限与特殊访问">
+        <p>当前正式安装包只声明下列三项 Android 权限或特殊访问，不申请互联网、通讯录、短信、通话记录、位置、麦克风、相机或存储读取权限。</p>
+        <ul>
+          <li><strong>通知（POST_NOTIFICATIONS）：</strong>仅在需要展示用户主动设置的本地提醒时使用。拒绝后，创建、编辑、今日和日历仍可使用。</li>
+          <li><strong>精确闹钟特殊访问（SCHEDULE_EXACT_ALARM）：</strong>仅为尽可能按用户设定时刻登记本地提醒。未开启时会说明提醒能力受限，不阻止保存日程。</li>
+          <li><strong>设备重启广播（RECEIVE_BOOT_COMPLETED）：</strong>设备重启后恢复用户已经设置的本地提醒，不用于启动联网服务或收集设备行为。</li>
+        </ul>
+        <p>用户可以在 Android 系统设置中随时撤回通知或精确闹钟相关访问。撤回不会删除已经保存的日程。</p>
+      </LegalSection>
+
+      <LegalSection title="4. 联网、共享与第三方组件">
+        <p>
+          Android 1.0 正式 APK 与 AAB 不声明 <code>INTERNET</code> 权限，不会通过当前版本把日程、待办、提醒或应用偏好发送给开发者服务器或第三方。当前没有广告、统计、崩溃上报、远程推送、支付、AI、语音、地图、社交登录、云存储或热更新 SDK。
+        </p>
+        <p>
+          App 使用 React Native、Hermes、SQLite、AndroidX、Fresco、SoLoader 和 OkHttp 等本地运行或框架传递组件。它们用于界面、执行环境、数据库和平台兼容，不被当前版本用于把用户日程传出设备。组件名称、版本与许可证可在 App 内“数据与帮助”查看，也可查阅<Link className="inline-link" href="/privacy/data-list">数据与 SDK 清单</Link>。
+        </p>
+      </LegalSection>
+
+      <LegalSection title="5. 保存、导出与删除">
+        <p>日程等 App 数据保存在当前设备，直至用户在 App 内完整清理、使用 Android 系统“清除存储”或卸载 App。设备损坏、丢失、卸载或系统清理可能造成未导出的本地数据无法恢复。</p>
+        <p>用户可以通过 App 的“数据与帮助”导出 JSON 副本。完整清理采用两次确认，成功后本机数据无法由开发者恢复；客服邮件与依法需要保留的安全、争议记录按必要期限保存后删除或匿名化。</p>
+      </LegalSection>
+
+      <LegalSection title="6. 用户权利与安全">
+        <p>用户可在 App 内查看、修改、导出和删除本地数据，也可在系统设置中管理相关权限。由于当前版本没有云账号，开发者无法远程读取、修改或恢复设备内的日程。</p>
+        <p>我们采用最小权限、正式包禁用明文流量、仓库不保存签名密钥等措施降低风险。若发现与本政策不一致的处理，可发送邮件联系我们；我们会说明已保留的内容、尚未完成的处理和下一步。</p>
+      </LegalSection>
+
+      <LegalSection title="7. 未成年人">
+        <p>当前版本无需账号，不提供社交、内容发布或付费能力。未成年人应在监护人指导下使用，并避免在日程正文中记录不必要的身份证件、健康、财务或其他敏感信息。</p>
+      </LegalSection>
+
+      <LegalSection title="8. 政策更新与联系">
+        <p>如果以后增加账号、联网、AI、语音、天气、支付、订阅或新的第三方 SDK，我们会在相关能力开始处理信息前更新政策与清单，并在需要时取得用户同意；不会仅因代码预留就把未来能力视为已经启用。</p>
+        <p>运营主体：米堆（南京）网络科技有限公司。联系邮箱：<a className="inline-link" href="mailto:zhangxiao@planchime.com">zhangxiao@planchime.com</a>。</p>
+      </LegalSection>
+    </LegalPage>
+  );
+}
+
+// 以下旧版通用政策仅作为后续能力设计参考，不会由当前 /privacy 页面渲染。
+function FuturePrivacyReferencePage() {
   return (
     <LegalPage
       eyebrow="隐私与数据"
@@ -150,3 +233,5 @@ export default function PrivacyPage() {
     </LegalPage>
   );
 }
+
+void FuturePrivacyReferencePage;

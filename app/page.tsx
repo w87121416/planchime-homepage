@@ -2,69 +2,66 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFrame } from "./components/SiteFrame";
-import { publicSiteFacts } from "./publicSiteFacts";
 
 export const metadata: Metadata = {
   title: { absolute: "记上日成 - 日程、待办与提醒" },
   description:
-    "说一句，把事情稳稳记上日程。记上日成是一款本地优先、由你确认的日程、待办与提醒工具。",
+    "记上日成 Android 1.0 是一款无需登录的离线日程、待办与本地提醒工具。",
   alternates: { canonical: "/" },
 };
 
 const steps = [
   {
     number: "01",
-    title: "说，或直接写",
-    text: "像交代给助理一样，把要做的事和时间告诉它。",
+    title: "写下安排",
+    text: "填好事情、日期与时间；没有网络也可以保存。",
   },
   {
     number: "02",
-    title: "看一眼草稿",
-    text: "事情、时间、优先级和提醒，被整理在一张清楚的确认卡里。",
+    title: "按需设提醒",
+    text: "提醒由你主动设置；权限不足时会说明影响，不会丢掉日程。",
   },
   {
     number: "03",
-    title: "确认后记上",
-    text: "确认才保存；遇到冲突，先说明再由你选择。",
+    title: "从容处理变化",
+    text: "完成、稍后或改期都由你决定，不会静默移动已有事项。",
   },
 ];
 
 const capabilityRows = [
-  ["一句话成稿", "从语音或文字中提炼事情、时间和优先级。"],
-  ["确认才创建", "所有结果都能直接修改，不替你擅自做主。"],
-  ["冲突先说明", "已有安排不会被静默覆盖，调整前先看清影响。"],
-  ["本地也可用", "没有网络，仍能查看、编辑和接收已登记的本地提醒。"],
+  ["无需登录", "打开即可使用，不要求注册账号。"],
+  ["本地优先", "日程保存在设备本地，正式版本不申请联网权限。"],
+  ["今日与日历", "用两个清楚的视图查看现在与之后的安排。"],
+  ["变化好处理", "支持完成、稍后和改期，把决定权留给你。"],
 ];
 
 const faq = [
   [
     "需要登录才能使用吗？",
-    "基础本地功能可以不登录。账号与同步能力以 App 内实际开放状态为准。",
+    "不需要。Android 1.0 打开即可使用，当前版本不提供账号或云同步。",
   ],
   [
-    "智能整理会直接改日程吗？",
-    "不会。它只生成可编辑草稿，日期、时间、提醒与冲突处理都由你确认。",
+    "数据会上传吗？",
+    "不会。Android 1.0 不申请互联网访问权限，日程和设置保存在设备本地。",
   ],
   [
     "提醒一定会响吗？",
-    "普通通知受权限、静音、专注模式和系统设置影响。产品会如实显示当前能力，不承诺绕过系统限制。",
+    "提醒受通知权限、精确闹钟特殊访问、静音和设备省电策略影响，不承诺穿透静音或任何环境下必响。",
   ],
   [
-    "会一直监听麦克风吗？",
-    "不会。只有你主动按下语音按钮后才录入，不做常驻或后台监听。",
+    "当前有 AI、语音、天气或订阅吗？",
+    "没有。Android 1.0 不包含这些能力，也没有广告、支付或远程推送。",
   ],
 ];
 
 const reviewLinks = [
   { href: "/support", title: "帮助与支持", text: "使用问题与联系入口" },
-  { href: "/privacy", title: "隐私政策", text: "数据与权限说明" },
-  { href: "/terms", title: "用户协议", text: "服务规则与边界" },
-  { href: "/account-deletion", title: "删除账号", text: "删除范围与办理方式" },
+  { href: "/privacy", title: "隐私政策", text: "本地数据与权限说明" },
+  { href: "/terms", title: "用户协议", text: "服务规则与提醒边界" },
+  { href: "/privacy/data-list", title: "数据与 SDK 清单", text: "当前版本的透明清单" },
 ];
 
 export default function Home() {
-  const { appStoreUrl } = publicSiteFacts;
-
   return (
     <SiteFrame>
       <section className="home-hero" aria-labelledby="home-title">
@@ -72,15 +69,15 @@ export default function Home() {
           <div className="home-hero-copy">
             <p className="eyebrow">记上日成 · PlanChime</p>
             <h1 id="home-title">
-              把事情交代一句，
-              <span>接下来就有安排。</span>
+              把日程稳稳
+              <span>记在本机。</span>
             </h1>
             <p className="home-hero-lead">
-              语音或文字快速记事，整理成可编辑日程。你确认后才保存，提醒按系统设置执行。
+              记上日成是一款无需登录的本地日程与待办工具。离线也能创建和编辑事项，在今日与日历中查看安排，并用完成、稍后和改期处理变化。
             </p>
             <div className="home-hero-actions">
-              <Link className="primary-button" href="#how-it-works">
-                看看三步怎么用
+              <Link className="primary-button" href="#capabilities">
+                查看 Android 1.0 能力
               </Link>
               <Link className="quiet-link" href="/support">
                 帮助与支持
@@ -88,9 +85,7 @@ export default function Home() {
             </div>
             <p className="release-status">
               <i aria-hidden="true" />
-              {appStoreUrl ? (
-                <a href={appStoreUrl} target="_blank" rel="noreferrer">已在 App Store 上线</a>
-              ) : "iOS 即将上线"}
+              Android 1.0 发布准备中
             </p>
           </div>
 
@@ -117,17 +112,17 @@ export default function Home() {
                   <small>今天 · 7 月 31 日</small>
                   <strong>日程</strong>
                 </div>
-                <span className="weather-chip">南京 28°</span>
+                <span className="weather-chip">离线可用</span>
               </div>
               <div className="phone-next">
                 <small>下一件</small>
-                <strong>确认产品首页</strong>
+                <strong>整理发布材料</strong>
                 <span>10:00 · 提前 15 分钟</span>
               </div>
               <div className="phone-row">
                 <time>14:30</time>
                 <div>
-                  <strong>项目进度沟通</strong>
+                  <strong>查看今日安排</strong>
                   <span className="category-work">工作 · 普通</span>
                 </div>
                 <i aria-hidden="true" />
@@ -136,14 +131,14 @@ export default function Home() {
                 <time>18:30</time>
                 <div>
                   <strong>晚间散步</strong>
-                  <span className="category-life">生活 · 每周重复</span>
+                  <span className="category-life">生活 · 本地提醒</span>
                 </div>
                 <i aria-hidden="true" />
               </div>
               <div className="phone-composer">
                 <span className="phone-add-mark" />
-                <span className="phone-input-copy">打字记事</span>
-                <strong>按住说话</strong>
+                <span className="phone-input-copy">新建日程</span>
+                <strong>保存到本机</strong>
               </div>
             </div>
           </div>
@@ -152,10 +147,10 @@ export default function Home() {
 
       <section className="truth-strip" aria-label="产品基本原则">
         <div className="shell truth-strip-inner">
-          <span>基础功能本地可用</span>
-          <span>智能整理只做草稿</span>
-          <span>确认后才创建</span>
-          <span>不静默改动日程</span>
+          <span>无需登录</span>
+          <span>正式版不申请联网权限</span>
+          <span>本地提醒</span>
+          <span>完成、稍后与改期</span>
         </div>
       </section>
 
@@ -163,8 +158,8 @@ export default function Home() {
         <div className="shell">
           <div className="editorial-heading">
             <p className="eyebrow">三步就够</p>
-            <h2>说完，看一眼，就记好了。</h2>
-            <p>常用流程只有一个确认动作，其他细节需要时再改。</p>
+            <h2>写下，设好，需要时再调整。</h2>
+            <p>基础功能不依赖网络；权限被拒绝时，日程仍会完整保存在本机。</p>
           </div>
           <div className="flow-list">
             {steps.map((step) => (
@@ -195,8 +190,8 @@ export default function Home() {
             </div>
           </div>
           <div className="capability-copy">
-            <p className="eyebrow">可靠秘书</p>
-            <h2>替你整理，决定权留给你。</h2>
+            <p className="eyebrow">Android 离线首发版</p>
+            <h2>需要的能力，先做稳。</h2>
             <div className="capability-rows">
               {capabilityRows.map(([title, text], index) => (
                 <article key={title}>
@@ -215,14 +210,14 @@ export default function Home() {
       <section className="home-section companion-section" id="companion">
         <div className="shell companion-layout">
           <div className="companion-copy">
-            <p className="eyebrow">温暖伙伴</p>
-            <h2>回顾一天，也照顾节奏。</h2>
+            <p className="eyebrow">本地数据</p>
+            <h2>能导出，也能完整清理。</h2>
             <p>
-              日、周、月完成记录会整理成简洁回顾。诗信来自真实事项，表达温度可以调整，也可以关闭。
+              你可以在 App 内把数据导出为 JSON 文件，也可以经过两次确认后清理本机数据。导出位置由你通过 Android 系统选择。
             </p>
             <blockquote>
-              <span>今天完成 4 件</span>
-              <p>重要的几步已经落稳，今天可以从容收尾。</p>
+              <span>提醒能力受限时</span>
+              <p>日程已经保存；你仍可继续查看和编辑，并按提示调整系统权限。</p>
             </blockquote>
           </div>
           <figure className="evening-figure">
@@ -233,7 +228,7 @@ export default function Home() {
               height="900"
               loading="lazy"
             />
-            <figcaption>默认主题「墨息浮光」</figcaption>
+            <figcaption>本地优先，能力边界说清楚</figcaption>
           </figure>
         </div>
       </section>
@@ -243,7 +238,7 @@ export default function Home() {
           <div>
             <p className="eyebrow">可靠与隐私</p>
             <h2>把能力边界，说清楚。</h2>
-            <p className="trust-intro">审核、隐私与账号相关页面，都可以从这里直接找到。</p>
+            <p className="trust-intro">当前版本的数据、权限、SDK 和提醒限制都可以免登录查看。</p>
           </div>
           <div className="review-link-grid">
             {reviewLinks.map((item) => (
@@ -278,18 +273,12 @@ export default function Home() {
         <div className="shell home-cta-inner">
           <img src="/images/app-icon.png" alt="" width="96" height="96" />
           <div>
-            <p className="eyebrow">{appStoreUrl ? "已在 App Store 上线" : "iOS 即将上线"}</p>
+            <p className="eyebrow">Android 1.0 发布准备中</p>
             <h2>把事情记上，也把时间还给自己。</h2>
           </div>
-          {appStoreUrl ? (
-            <a className="light-button" href={appStoreUrl} target="_blank" rel="noreferrer">
-              前往 App Store
-            </a>
-          ) : (
-            <Link className="light-button" href="/support">
-              查看帮助与支持
-            </Link>
-          )}
+          <Link className="light-button" href="/support">
+            查看帮助与支持
+          </Link>
         </div>
       </section>
     </SiteFrame>

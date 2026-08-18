@@ -4,20 +4,18 @@ import { publicSiteFacts } from "../publicSiteFacts";
 
 const navigation = [
   { href: "/", label: "首页" },
-  { href: "/#how-it-works", label: "怎么使用" },
-  { href: "/#capabilities", label: "主要功能" },
-  { href: "/#privacy", label: "隐私与边界" },
-  { href: "/support", label: "支持" },
+  { href: "/privacy", label: "隐私政策" },
+  { href: "/privacy/data-list", label: "数据与 SDK" },
+  { href: "/terms", label: "用户协议" },
+  { href: "/support", label: "帮助与支持" },
 ];
 
 const footerNavigation = [
+  { href: "/", label: "首页" },
   { href: "/privacy", label: "隐私政策" },
+  { href: "/privacy/data-list", label: "数据与 SDK 清单" },
   { href: "/terms", label: "用户协议" },
-  { href: "/subscription", label: "订阅规则" },
   { href: "/support", label: "帮助与支持" },
-  { href: "/contact", label: "联系我们" },
-  { href: "/privacy/data-list", label: "数据清单" },
-  { href: "/account-deletion", label: "删除账号" },
 ];
 
 export function Brand() {
@@ -39,8 +37,6 @@ export function Brand() {
 }
 
 export function SiteHeader() {
-  const { appStoreUrl } = publicSiteFacts;
-
   return (
     <header className="site-header">
       <div className="shell header-inner">
@@ -50,13 +46,7 @@ export function SiteHeader() {
             <Link href={item.href} key={item.href}>{item.label}</Link>
           ))}
         </nav>
-        {appStoreUrl ? (
-          <a className="development-pill" href={appStoreUrl} target="_blank" rel="noreferrer">
-            App Store 下载
-          </a>
-        ) : (
-          <Link className="development-pill" href="/support">iOS 即将上线</Link>
-        )}
+        <Link className="development-pill" href="/support">Android 1.0 发布准备中</Link>
       </div>
     </header>
   );
@@ -70,10 +60,10 @@ export function SiteFooter() {
       <div className="shell footer-grid">
         <div>
           <Brand />
-          <p className="footer-note">把事情记上日程，让每天都有所成。</p>
+          <p className="footer-note">无需登录，把日程稳稳记在本机。</p>
         </div>
         <div className="footer-links" aria-label="页脚导航">
-          {/* 合规清单与账号删除必须能从公开页面直接到达，不能只依赖 App 内深层入口。 */}
+          {/* Android 离线首发版只突出当前真实能力，避免把未来账号或订阅误写成已上线。 */}
           {footerNavigation.map((item) => (
             <Link href={item.href} key={item.href}>{item.label}</Link>
           ))}

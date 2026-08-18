@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     template: "%s｜记上日成",
   },
   description:
-    "记上日成是一款本地优先、由你确认的日程、待办与提醒工具。说一句，把事情稳稳记上日程。",
+    "记上日成 Android 1.0 是一款无需登录的离线日程、待办与本地提醒工具。",
   applicationName: "记上日成",
   authors: [{ name: "米堆（南京）网络科技有限公司" }],
   icons: {
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     url: "https://planchime.com",
     siteName: "记上日成",
     title: "记上日成 - 日程、待办与提醒",
-    description: "说一句，把事情稳稳记上日程。",
+    description: "无需登录，把日程、待办和本地提醒稳稳保存在设备上。",
     images: [
       {
         url: "/images/og-ink-city-v1-1200x630.png",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "记上日成 - 日程、待办与提醒",
-    description: "说一句，把事情稳稳记上日程。",
+    description: "无需登录，把日程、待办和本地提醒稳稳保存在设备上。",
     images: ["/images/og-ink-city-v1-1200x630.png"],
   },
   robots: {
