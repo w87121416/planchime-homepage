@@ -1,0 +1,17 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "4838GRL85V.com.planchime.app"
+        ],
+        "components": [
+          {
+            "/": "/wechat/*",
+            "comment": "微信开放平台移动应用的 Universal Link 专用路径"
+          }
+        ]
+      }
+    ]
+  }
+}
