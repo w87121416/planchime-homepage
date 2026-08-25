@@ -35,22 +35,24 @@ async function render(path = "/") {
   throw new Error(`重定向次数过多：${path}`);
 }
 
-test("首页呈现正式品牌、主流程与真实能力边界", async () => {
+test("首页呈现 Android 离线首发版的真实能力边界", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /<title>[^<]*记上日成[^<]*<\/title>/i);
-  assert.match(html, /(?:说一句|把事情交代一句)，[\s\S]*接下来(?:的事)?就有安排。/);
+  assert.match(html, /把日程稳稳[\s\S]*记在本机。/);
   assert.match(html, /米堆（南京）网络科技有限公司/);
-  assert.match(html, /(?:AI 只整理草稿|智能整理只做草稿)/);
+  assert.match(html, /正式版不申请联网权限/);
+  assert.match(html, /Android 1\.0 发布准备中/);
+  assert.match(html, /完成、稍后与改期/);
   assert.match(html, /name="robots" content="index, follow"/i);
   assert.doesNotMatch(html, /发布前审查稿|隐私政策草案|用户协议草案/);
   assert.doesNotMatch(html, />\s*立即(?:下载|购买)\s*</);
   assert.match(html, /href="mailto:zhangxiao@planchime\.com"/);
-  assert.match(html, /iOS 即将上线/);
-  assert.doesNotMatch(html, /App Store 下载|已在 App Store 上线/);
+  assert.doesNotMatch(html, /iOS 即将上线|App Store 下载|已在 App Store 上线/);
+  assert.doesNotMatch(html, /语音或文字快速记事|智能整理只做草稿|按住说话/);
   assert.doesNotMatch(html, /ICP备|公网安备|App 备案/);
   assert.doesNotMatch(html, /Your site is taking shape|Building your site/);
 });
@@ -94,7 +96,7 @@ test("错误链接、空备案号和非价格文本不会公开", () => {
   assert.equal(nonProductApplePage.appStoreUrl, undefined);
 });
 
-test("支持页提供可操作的官方联系与常见问题", async () => {
+test("支持页提供 Android 当前版本的可操作说明", async () => {
   const response = await render("/support");
   assert.equal(response.status, 200);
   const html = await response.text();
@@ -102,12 +104,31 @@ test("支持页提供可操作的官方联系与常见问题", async () => {
   assert.match(html, /zhangxiao@planchime\.com/);
   assert.match(html, /米堆（南京）网络科技有限公司/);
   assert.match(html, /通知没有出现怎么办/);
-  assert.match(html, /语音会一直监听吗/);
-  assert.match(html, /AI 会直接改变日程吗/);
-  assert.match(html, /必须登录才能使用吗/);
-  assert.match(html, /如何管理或恢复订阅/);
-  assert.match(html, /如何删除账号/);
+  assert.match(html, /Android[\s\S]*设置[\s\S]*应用[\s\S]*记上日成[\s\S]*通知/);
+  assert.match(html, /为什么需要精确闹钟特殊访问/);
+  assert.match(html, /如何导出数据/);
+  assert.match(html, /如何删除本地数据/);
+  assert.match(html, /当前有账号、AI、语音、天气或订阅吗/);
+  assert.doesNotMatch(html, /iPhone|如何管理或恢复订阅|如何删除账号/);
   assert.doesNotMatch(html, /发布前审查稿|立即下载|立即购买/);
+});
+
+test("隐私、数据清单与协议只把 Android 1.0 当前能力写成现行事实", async () => {
+  const expected = [
+    ["/privacy", /正式安装包不声明互联网访问权限/, /POST_NOTIFICATIONS/],
+    ["/privacy/data-list", /正式 APK 与 AAB 的权限清单一致/, /RECEIVE_BOOT_COMPLETED/],
+    ["/terms", /无需登录的免费本地日程工具/, /当前不提供账号、云同步/],
+  ];
+
+  for (const [path, firstFact, secondFact] of expected) {
+    const response = await render(path);
+    assert.equal(response.status, 200, path);
+    const html = await response.text();
+    assert.match(html, /com\.planchime\.app/, path);
+    assert.match(html, firstFact, path);
+    assert.match(html, secondFact, path);
+    assert.doesNotMatch(html, /iPhone“设置|当前适配 qwen|Apple Speech|StoreKit 平台订单/, path);
+  }
 });
 
 test("联系页免登录公开主体、邮箱与安全提示", async () => {
@@ -124,7 +145,7 @@ test("联系页免登录公开主体、邮箱与安全提示", async () => {
   assert.doesNotMatch(html, /客服电话|办公地址|ICP备案/);
 });
 
-test("Apple 审核所需公共页面可访问、可索引且不是草案", async () => {
+test("商店审核所需公共页面可访问、可索引且不是草案", async () => {
   const reviewPaths = [
     "/support",
     "/contact",
@@ -146,7 +167,7 @@ test("Apple 审核所需公共页面可访问、可索引且不是草案", async
   }
 });
 
-test("站点地图收录全部正式官网与 Apple 审核入口", async () => {
+test("站点地图收录全部正式官网与审核入口", async () => {
   const moduleUrl = new URL("../app/sitemap.ts", import.meta.url);
   moduleUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
   const { default: createSitemap } = await import(moduleUrl.href);

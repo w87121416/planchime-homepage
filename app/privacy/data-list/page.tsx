@@ -4,10 +4,92 @@ import { LegalPage, LegalSection } from "../../components/LegalPage";
 
 export const metadata: Metadata = {
   title: "个人信息与第三方服务清单",
-  description: "记上日成个人信息、设备权限、共享对象与第三方服务清单。",
+  description: "记上日成 Android 1.0 当前实际处理的数据、权限、系统能力和第三方组件清单。",
 };
 
 export default function DataListPage() {
+  return (
+    <LegalPage
+      eyebrow="公开透明清单"
+      title="Android 1.0 数据与 SDK 清单"
+      summary="本清单只列出记上日成 Android 1.0 正式安装包当前实际处理的数据、系统权限和组件，不把账号、AI、语音、天气、支付或其他未来能力写成已经启用。"
+      version="1.1"
+      status="现行有效"
+      publishedAt="2026 年 8 月 18 日"
+      effectiveAt="2026 年 8 月 18 日"
+    >
+      <LegalSection title="1. 当前结论">
+        <p><strong>无需登录、仅本地处理、正式包不申请联网权限。</strong>本清单对应包名 <code>com.planchime.app</code>；日程、待办、提醒和应用偏好保存在用户设备。Android 1.0 没有广告、统计、崩溃上报、远程推送、支付、AI、语音、地图、社交登录、云存储或热更新 SDK。</p>
+        <p>planchime.com 的基础访问日志由网站托管服务产生，与 Android App 数据分开。官网不会读取 App 内日程，也不接入广告或行为分析脚本。</p>
+      </LegalSection>
+
+      <LegalSection title="2. App 内本地处理清单">
+        <div className="legal-table-wrap">
+          <table className="legal-table wide-table">
+            <thead><tr><th>数据或能力</th><th>用途与处理位置</th><th>是否离开设备</th></tr></thead>
+            <tbody>
+              <tr><td>日程与待办正文、日期、时间、重复和状态</td><td>SQLite 本地保存，用于创建、编辑、今日、日历、完成、稍后和改期</td><td><strong>否</strong></td></tr>
+              <tr><td>提醒设置与登记状态</td><td>App 本地数据库与 Android 系统提醒服务，用于登记、取消和重启后恢复用户设置的提醒</td><td><strong>否</strong></td></tr>
+              <tr><td>应用偏好</td><td>App 沙盒本地保存，用于保持用户明确选择的设置</td><td><strong>否</strong></td></tr>
+              <tr><td>JSON 导出</td><td>由用户通过 Android 系统文件创建器选择保存位置</td><td>只写入用户选择的位置，不上传给开发者</td></tr>
+              <tr><td>完整清理</td><td>两次确认后取消本地提醒并原子清空用户数据表</td><td><strong>否</strong></td></tr>
+              <tr><td>软件许可证清单</td><td>随安装包内置，用于展示框架和开源组件的许可证信息</td><td><strong>否</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </LegalSection>
+
+      <LegalSection title="3. 权限与特殊访问">
+        <div className="legal-table-wrap">
+          <table className="legal-table wide-table">
+            <thead><tr><th>Android 声明</th><th>用途</th><th>拒绝或撤回后的影响</th></tr></thead>
+            <tbody>
+              <tr><td><code>POST_NOTIFICATIONS</code></td><td>展示用户主动设置的本地提醒</td><td>通知提醒不可用；创建、编辑、今日、日历和本地保存仍可用</td></tr>
+              <tr><td><code>SCHEDULE_EXACT_ALARM</code></td><td>在系统允许时尽可能按用户设定时刻登记本地提醒</td><td>提醒准确性可能受限；App 会说明影响，不阻止保存事项</td></tr>
+              <tr><td><code>RECEIVE_BOOT_COMPLETED</code></td><td>设备重启后恢复之前已登记的本地提醒</td><td>这是普通声明权限，无需用户单独授权；不用于联网或收集设备行为</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>正式 APK 与 AAB 的权限清单一致，不包含 <code>INTERNET</code>。当前版本也不申请麦克风、相机、位置、通讯录、短信、通话记录或广泛存储读取权限。</p>
+      </LegalSection>
+
+      <LegalSection title="4. 第三方组件与服务状态">
+        <div className="legal-table-wrap">
+          <table className="legal-table wide-table">
+            <thead><tr><th>类别</th><th>组件或提供方</th><th>当前用途与数据边界</th></tr></thead>
+            <tbody>
+              <tr><td>应用框架</td><td>React Native、Hermes、AndroidX</td><td>用于界面、JavaScript 执行环境和 Android 平台兼容；在设备本地运行</td></tr>
+              <tr><td>本地数据</td><td>SQLite</td><td>保存日程、提醒状态和偏好；数据库位于 App 沙盒</td></tr>
+              <tr><td>图片与原生加载</td><td>Fresco、SoLoader</td><td>框架传递组件，用于本地图片和原生库加载</td></tr>
+              <tr><td>网络库传递依赖</td><td>OkHttp</td><td>由框架依赖带入；Android 1.0 正式包不声明互联网权限，不用于上传用户日程</td></tr>
+              <tr><td>Android 系统能力</td><td>通知、AlarmManager、系统文件创建器</td><td>用于本地提醒和用户主动导出；由 Android 系统在设备上提供</td></tr>
+              <tr><td>官网托管</td><td>当前 planchime.com 托管服务</td><td>可能处理 IP、请求时间、页面地址、浏览器和错误信息，用于页面交付与安全；与 App 本地数据分开</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>完整组件名称、版本与许可证以 App 内“数据与帮助”展示和当前正式安装包所附许可证为准。</p>
+      </LegalSection>
+
+      <LegalSection title="5. 当前明确不提供">
+        <ul>
+          <li>不提供账号、登录、云同步或跨设备数据处理。</li>
+          <li>不提供 AI、语音、天气、地图、远程推送或第三方诊断。</li>
+          <li>不接入广告、统计、支付、订阅、社交登录或热更新 SDK。</li>
+          <li>不读取邮箱、通讯录、短信、通话记录、位置、麦克风或相机。</li>
+          <li>不出售个人信息，不基于日程正文建立广告画像。</li>
+        </ul>
+      </LegalSection>
+
+      <LegalSection title="6. 更新与联系">
+        <p>新增或更换 SDK、权限、接收方或信息类型前，我们会更新本清单并完成版本核对；不会仅因规划或代码预留就把未来服务写成已经启用。</p>
+        <p>如发现实际处理与本清单不一致，请联系 <a className="inline-link" href="mailto:zhangxiao@planchime.com">zhangxiao@planchime.com</a>。一般处理规则见<Link className="inline-link" href="/privacy">《记上日成隐私政策》</Link>。</p>
+      </LegalSection>
+    </LegalPage>
+  );
+}
+
+// 以下旧版跨平台清单仅作为后续能力设计参考，不会由当前公开页面渲染。
+function FutureDataListReferencePage() {
   return (
     <LegalPage
       eyebrow="公开透明清单"
@@ -99,3 +181,5 @@ export default function DataListPage() {
     </LegalPage>
   );
 }
+
+void FutureDataListReferencePage;
