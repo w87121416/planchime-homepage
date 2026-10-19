@@ -2231,6 +2231,75 @@ img {
 
 /* 主题固定为同一套暖纸色，不根据手机或电脑的系统深色设置切换调色板。 */
 
+/* 三端入口共用品牌色；窄屏按阅读顺序堆叠，不让下载按钮挤出视口。 */
+.platform-section { scroll-margin-top: 100px; }
+.platform-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 36px;
+}
+.platform-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  padding: clamp(24px, 3vw, 36px);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--surface);
+}
+.platform-card-featured {
+  border-color: #afc3b7;
+  background: linear-gradient(150deg, #edf1e8, var(--surface));
+}
+.platform-card .platform-status {
+  margin: 0 0 24px;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+}
+.platform-card h3 { margin: 0; font-size: 25px; line-height: 1.4; }
+.platform-card > p:not(.platform-status) {
+  margin: 18px 0 20px;
+  color: var(--ink-soft);
+  font-size: 15px;
+}
+.platform-card > small {
+  display: block;
+  margin-bottom: 28px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.platform-card .primary-button, .platform-action, .platform-guide {
+  margin-top: auto;
+  max-width: 100%;
+}
+.platform-action, .platform-guide summary {
+  display: block;
+  padding: 12px 0;
+  min-height: 48px;
+  color: var(--green-deep);
+  border-bottom: 1px solid var(--line-strong);
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.platform-guide ol {
+  padding-left: 20px;
+  margin-bottom: 0;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.platform-guide li + li { margin-top: 8px; }
+@media (max-width: 860px) {
+  .platform-grid { grid-template-columns: 1fr; }
+  .platform-card { padding: 28px; }
+  .platform-card > small { margin-bottom: 16px; }
+}
+
 /* 正式官网视觉收口：只覆盖首页和全站骨架，不改变法律、支持页面的信息层级。 */
 .site-header {
   border-bottom-color: rgba(130, 119, 99, 0.22);

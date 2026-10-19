@@ -4,23 +4,23 @@ import { LegalPage, LegalSection } from "../../components/LegalPage";
 
 export const metadata: Metadata = {
   title: "个人信息与第三方服务清单",
-  description: "记上日成 Android 1.0 当前实际处理的数据、权限、系统能力和第三方组件清单。",
+  description: "记上日成 1.1 三端当前实际处理的数据、权限、系统能力和第三方服务清单。",
 };
 
 export default function DataListPage() {
   return (
     <LegalPage
       eyebrow="公开透明清单"
-      title="Android 1.0 数据与 SDK 清单"
-      summary="本清单只列出记上日成 Android 1.0 正式安装包当前实际处理的数据、系统权限和组件，不把账号、AI、语音、天气、支付或其他未来能力写成已经启用。"
-      version="1.1"
+      title="1.1 数据与第三方服务清单"
+      summary="本清单适用于 iOS、Android 1.1 与微信小程序 1.1.0，区分设备本地处理、用户主动登录和再次确认后才会发生的跨端同步。"
+      version="1.2"
       status="现行有效"
-      publishedAt="2026 年 8 月 18 日"
-      effectiveAt="2026 年 8 月 18 日"
+      publishedAt="2026 年 9 月 8 日"
+      effectiveAt="2026 年 9 月 8 日"
     >
       <LegalSection title="1. 当前结论">
-        <p><strong>无需登录、仅本地处理、正式包不申请联网权限。</strong>本清单对应包名 <code>com.planchime.app</code>；日程、待办、提醒和应用偏好保存在用户设备。Android 1.0 没有广告、统计、崩溃上报、远程推送、支付、AI、语音、地图、社交登录、云存储或热更新 SDK。</p>
-        <p>planchime.com 的基础访问日志由网站托管服务产生，与 Android App 数据分开。官网不会读取 App 内日程，也不接入广告或行为分析脚本。</p>
+        <p><strong>无需登录即可本地使用。</strong>移动端包名为 <code>com.planchime.app</code>。登录是可选能力，登录本身不会上传日程；只有再次选择“仅从现在同步”或确认合并预览后，所选日程才会传到账号服务。</p>
+        <p>1.1 不接入广告、统计、支付、AI、天气或邮件 SDK，不出售个人信息，也不基于日程正文建立广告画像。</p>
       </LegalSection>
 
       <LegalSection title="2. App 内本地处理清单">
@@ -28,12 +28,13 @@ export default function DataListPage() {
           <table className="legal-table wide-table">
             <thead><tr><th>数据或能力</th><th>用途与处理位置</th><th>是否离开设备</th></tr></thead>
             <tbody>
-              <tr><td>日程与待办正文、日期、时间、重复和状态</td><td>SQLite 本地保存，用于创建、编辑、今日、日历、完成、稍后和改期</td><td><strong>否</strong></td></tr>
+              <tr><td>日程与待办正文、日期、时间、重复和状态</td><td>设备本地保存，用于创建、编辑、今日、日历、完成、稍后和改期</td><td>默认不离开设备；用户再次确认同步后，所选内容上传</td></tr>
               <tr><td>提醒设置与登记状态</td><td>App 本地数据库与 Android 系统提醒服务，用于登记、取消和重启后恢复用户设置的提醒</td><td><strong>否</strong></td></tr>
               <tr><td>应用偏好</td><td>App 沙盒本地保存，用于保持用户明确选择的设置</td><td><strong>否</strong></td></tr>
-              <tr><td>JSON 导出</td><td>由用户通过 Android 系统文件创建器选择保存位置</td><td>只写入用户选择的位置，不上传给开发者</td></tr>
-              <tr><td>完整清理</td><td>两次确认后取消本地提醒并原子清空用户数据表</td><td><strong>否</strong></td></tr>
-              <tr><td>软件许可证清单</td><td>随安装包内置，用于展示框架和开源组件的许可证信息</td><td><strong>否</strong></td></tr>
+              <tr><td>手机号与一次性验证码</td><td>仅在 iOS 或 Android 用户主动选择手机号登录时，通过账号服务和阿里云短信发送、校验</td><td><strong>是，仅用于登录与账号安全</strong></td></tr>
+              <tr><td>Apple 或微信一次性身份凭据</td><td>仅在用户主动选择对应平台登录时换取稳定身份标识；长期密钥只保存在服务端</td><td><strong>是，仅用于登录与账号安全</strong></td></tr>
+              <tr><td>随机安装/设备标识、会话与同步游标</td><td>登录后用于会话安全、增量同步和跨端一致性</td><td><strong>是</strong></td></tr>
+              <tr><td>导出与账号注销</td><td>用户主动发起；导出正文或文件最多保留 7 天，注销申请有 7 天可取消宽限期</td><td>按用户请求处理</td></tr>
             </tbody>
           </table>
         </div>
@@ -47,10 +48,12 @@ export default function DataListPage() {
               <tr><td><code>POST_NOTIFICATIONS</code></td><td>展示用户主动设置的本地提醒</td><td>通知提醒不可用；创建、编辑、今日、日历和本地保存仍可用</td></tr>
               <tr><td><code>SCHEDULE_EXACT_ALARM</code></td><td>在系统允许时尽可能按用户设定时刻登记本地提醒</td><td>提醒准确性可能受限；App 会说明影响，不阻止保存事项</td></tr>
               <tr><td><code>RECEIVE_BOOT_COMPLETED</code></td><td>设备重启后恢复之前已登记的本地提醒</td><td>这是普通声明权限，无需用户单独授权；不用于联网或收集设备行为</td></tr>
+              <tr><td><code>READ_CALENDAR</code> / <code>WRITE_CALENDAR</code></td><td>仅在用户主动选择系统日历同步时读取或写入所选日历</td><td>系统日历同步不可用；App 内日程仍可使用</td></tr>
+              <tr><td><code>INTERNET</code> / <code>ACCESS_NETWORK_STATE</code></td><td>用户主动登录、同步、导出或注销时连接 <code>https://api.planchime.com</code></td><td>联网能力不可用；本地日程功能仍可使用</td></tr>
             </tbody>
           </table>
         </div>
-        <p>正式 APK 与 AAB 的权限清单一致，不包含 <code>INTERNET</code>。当前版本也不申请麦克风、相机、位置、通讯录、短信、通话记录或广泛存储读取权限。</p>
+        <p>正式 APK 与 AAB 的权限清单一致。当前版本不申请相机、位置、通讯录、短信、通话记录或广泛存储读取权限；小程序不请求手机号、相册、相机、位置或麦克风。</p>
       </LegalSection>
 
       <LegalSection title="4. 第三方组件与服务状态">
@@ -61,8 +64,11 @@ export default function DataListPage() {
               <tr><td>应用框架</td><td>React Native、Hermes、AndroidX</td><td>用于界面、JavaScript 执行环境和 Android 平台兼容；在设备本地运行</td></tr>
               <tr><td>本地数据</td><td>SQLite</td><td>保存日程、提醒状态和偏好；数据库位于 App 沙盒</td></tr>
               <tr><td>图片与原生加载</td><td>Fresco、SoLoader</td><td>框架传递组件，用于本地图片和原生库加载</td></tr>
-              <tr><td>网络库传递依赖</td><td>OkHttp</td><td>由框架依赖带入；Android 1.0 正式包不声明互联网权限，不用于上传用户日程</td></tr>
-              <tr><td>Android 系统能力</td><td>通知、AlarmManager、系统文件创建器</td><td>用于本地提醒和用户主动导出；由 Android 系统在设备上提供</td></tr>
+              <tr><td>账号与同步服务</td><td>记上日成北京 ECS，<code>api.planchime.com</code></td><td>仅在用户主动登录或再次确认同步后处理相应身份、会话和所选日程</td></tr>
+              <tr><td>短信</td><td>阿里云短信</td><td>仅在用户主动请求手机号验证码时发送登录验证码，不发送营销短信</td></tr>
+              <tr><td>Apple 登录</td><td>Apple</td><td>仅 iOS 用户主动选择时处理 Apple 一次性身份凭据；不读取姓名或邮箱</td></tr>
+              <tr><td>微信登录</td><td>微信开放平台 / 腾讯</td><td>用户主动选择时处理一次性 code；不请求昵称、头像或通讯录</td></tr>
+              <tr><td>系统能力</td><td>Apple / Android 系统日历、通知与提醒服务</td><td>只在用户主动使用相应功能时调用；提醒仍由支持该能力的设备本地登记</td></tr>
               <tr><td>官网托管</td><td>当前 planchime.com 托管服务</td><td>可能处理 IP、请求时间、页面地址、浏览器和错误信息，用于页面交付与安全；与 App 本地数据分开</td></tr>
             </tbody>
           </table>
@@ -70,12 +76,12 @@ export default function DataListPage() {
         <p>完整组件名称、版本与许可证以 App 内“数据与帮助”展示和当前正式安装包所附许可证为准。</p>
       </LegalSection>
 
-      <LegalSection title="5. 当前明确不提供">
+      <LegalSection title="5. 留存、删除与明确不提供">
+        <p>有效账号与已同步日程为提供功能持续保存；撤回同步同意只停止后续同步，不删除既有云端数据。完成或取消的注销请求及最小 HMAC 墓碑保留 30 天，安全审计与身份防重放事件保留 180 天，加密数据库备份保留 30 天。</p>
         <ul>
-          <li>不提供账号、登录、云同步或跨设备数据处理。</li>
-          <li>不提供 AI、语音、天气、地图、远程推送或第三方诊断。</li>
-          <li>不接入广告、统计、支付、订阅、社交登录或热更新 SDK。</li>
-          <li>不读取邮箱、通讯录、短信、通话记录、位置、麦克风或相机。</li>
+          <li>不提供 AI、天气、邮箱读取、支付、订阅、广告或营销短信。</li>
+          <li>不读取通讯录、短信、通话记录、位置、相册或相机。</li>
+          <li>不把令牌、验证码、微信 code 或日程正文写入应用日志。</li>
           <li>不出售个人信息，不基于日程正文建立广告画像。</li>
         </ul>
       </LegalSection>

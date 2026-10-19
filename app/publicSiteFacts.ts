@@ -95,5 +95,18 @@ export function createPublicSiteFacts(environment: BuildEnvironment): PublicSite
   return { appStoreUrl, filings, storePrices };
 }
 
-// 这些值在构建时固化到静态官网；没有经过确认的事实保持空值，页面不会渲染占位链接、备案号或价格。
-export const publicSiteFacts = createPublicSiteFacts(process.env);
+// 2026-10-17 只读核验：Apple 中国区产品页及阿里云 planchime.com 网站备案详情。
+// 这里仅保存可公开的产品链接和网站备案号，不使用 App 备案号替代网站备案。
+export const verifiedPublicDefaults = {
+  PLANCHIME_APP_STORE_URL: "https://apps.apple.com/cn/app/id6803545111",
+  PLANCHIME_ICP_NUMBER: "苏ICP备2026061783号-2",
+} as const;
+
+// Pages 未配置变量时也保留已核实事实；非空覆盖值仍需校验，错误链接不会回退为可点击入口。
+export const publicSiteFacts = createPublicSiteFacts({
+  ...process.env,
+  PLANCHIME_APP_STORE_URL:
+    process.env.PLANCHIME_APP_STORE_URL?.trim() || verifiedPublicDefaults.PLANCHIME_APP_STORE_URL,
+  PLANCHIME_ICP_NUMBER:
+    process.env.PLANCHIME_ICP_NUMBER?.trim() || verifiedPublicDefaults.PLANCHIME_ICP_NUMBER,
+});

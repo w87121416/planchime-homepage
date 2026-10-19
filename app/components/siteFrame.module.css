@@ -1,0 +1,47 @@
+/* 全站共用暖白外框；法律文档继续沿用已验证的正文结构，不改写政策事实。 */
+.frame { --paper: #faf8f3; --ink: #202a24; --ink-soft: #657063; --green: #294c3b; --line: #e2e4da; background: #faf8f3; }
+.frame :global(.site-header) { position: relative; background: #faf8f3; backdrop-filter: none; border: 0; color: #202a24; }
+.frame :global(.header-inner) { width: min(1296px, calc(100% - 144px)); min-height: 99px; padding-block: 22px; border-bottom: 1px solid #e2e4da; display: flex; align-items: center; gap: 32px; flex-wrap: nowrap; }
+.frame :global(.brand) { gap: 14px; flex-shrink: 0; color: #202a24; text-decoration: none; }
+.frame :global(.brand-mark) { width: 42px; height: 42px; border-radius: 10px; box-shadow: none; }
+.frame :global(.brand-copy) { display: block; }
+.frame :global(.brand-copy strong) { font-size: 21px; font-weight: 600; letter-spacing: -.02em; line-height: 1.4; }
+.frame :global(.brand-copy small) { display: none; }
+.frame :global(.site-nav) { margin-left: auto; display: flex; gap: 32px; width: auto; font-size: 14px; }
+.frame :global(.site-nav a) { display: inline-flex; align-items: center; min-height: 44px; color: #626e61; padding: 0; white-space: nowrap; text-decoration: none; }
+.frame :global(.site-nav a:hover) { color: #294c3b; text-decoration: underline; text-underline-offset: 5px; }
+.frame :global(.development-pill) { display: inline-flex; align-items: center; justify-content: center; min-width: 126px; min-height: 44px; padding: 10px 24px; background: #294c3b; border: 1px solid #294c3b; border-radius: 12px; color: #fff; font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; }
+.frame :global(.site-footer) { background: #faf8f3; border-top: 0; padding: 58px 0 46px; }
+.frame :global(.footer-grid) { width: min(1296px, calc(100% - 144px)); display: grid; grid-template-columns: 1fr 1fr 1.15fr; gap: 50px; }
+.frame :global(.footer-note) { font-size: 12px; color: #717b6b; max-width: 290px; margin-top: 18px; }
+.frame :global(.footer-links) { display: grid; grid-template-columns: 1fr 1fr; align-content: start; gap: 4px 24px; font-size: 12px; }
+.frame :global(.footer-links a) { min-height: 40px; display: inline-flex; align-items: center; color: #63705e; }
+.frame :global(.company-note) { color: #6a7464; font-size: 11px; line-height: 1.8; }
+.frame :global(.company-note p) { margin: 0 0 6px; }
+.frame :global(.company-note a) { overflow-wrap: anywhere; }
+.frame a:focus-visible, .frame button:focus-visible { outline: 3px solid #bd503c; outline-offset: 5px; }
+.mobileMenu { display: none; }
+@media (max-width: 1100px) {
+  .frame :global(.header-inner), .frame :global(.footer-grid) { width: calc(100% - 80px); gap: 24px; }
+  .frame :global(.site-nav) { gap: 24px; }
+}
+@media (max-width: 760px) {
+  .frame :global(.header-inner) { width: calc(100% - 48px); min-height: 90px; padding-block: 22px; justify-content: space-between; gap: 20px; }
+  .frame :global(.brand-copy strong) { font-size: 19px; }
+  .frame :global(.site-nav), .frame :global(.development-pill) { display: none; }
+  .mobileMenu { display: block; }
+  .menuButton { width: 44px; height: 44px; border: 1px solid #dce0d4; border-radius: 12px; background: transparent; color: #294c3b; display: grid; place-items: center; cursor: pointer; padding: 0; }
+  .menuButton > span { font-size: 27px; line-height: 1; }
+  .menuButton i { display: block; width: 17px; height: 1px; background: currentColor; margin: 5px 0; }
+  .mobileMenu nav { position: absolute; left: 24px; right: 24px; top: 79px; padding: 14px; border: 1px solid #dce0d4; border-radius: 16px; background: #faf8f3; box-shadow: 0 12px 28px #293d2b12; z-index: 20; }
+  .mobileMenu nav[hidden] { display: none; }
+  .mobileMenu nav a { display: flex; align-items: center; min-height: 48px; padding: 8px 14px; border-radius: 8px; color: #294c3b; text-decoration: none; font-size: 16px; }
+  .mobileMenu nav a:hover { background: #edeee5; }
+  .frame :global(.footer-grid) { width: calc(100% - 48px); grid-template-columns: 1fr; gap: 28px; }
+  .frame :global(.site-footer) { padding-block: 40px; }
+  .frame :global(.footer-links) { grid-template-columns: 1fr 1fr; gap: 0 20px; }
+  .frame :global(.company-note) { border-top: 1px solid #e2e4da; padding-top: 24px; font-size: 12px; }
+}
+@media (max-width: 360px) {
+  .frame :global(.header-inner), .frame :global(.footer-grid) { width: calc(100% - 40px); }
+}

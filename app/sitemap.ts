@@ -11,8 +11,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     path: string;
     changeFrequency: "weekly" | "monthly";
     priority: number;
+    lastModified?: Date;
   }> = [
     { path: "/", changeFrequency: "weekly", priority: 1 },
+    { path: "/download/", changeFrequency: "weekly", priority: 0.9, lastModified: new Date("2026-09-11T00:00:00+08:00") },
     { path: "/support", changeFrequency: "monthly", priority: 0.8 },
     { path: "/contact", changeFrequency: "monthly", priority: 0.7 },
     { path: "/privacy", changeFrequency: "monthly", priority: 0.8 },
@@ -22,9 +24,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/account-deletion", changeFrequency: "monthly", priority: 0.8 },
   ];
 
-  return routes.map(({ path, changeFrequency, priority }) => ({
+  return routes.map(({ path, changeFrequency, priority, lastModified: routeModified }) => ({
     url: new URL(path, "https://planchime.com").toString(),
-    lastModified,
+    lastModified: routeModified ?? lastModified,
     changeFrequency,
     priority,
   }));
