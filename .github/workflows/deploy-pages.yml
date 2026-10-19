@@ -3,6 +3,8 @@ name: 发布官网
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -31,7 +33,7 @@ jobs:
         run: npm ci
 
       - name: 检查官网
-        run: npm run lint
+        run: npm run lint && npm test
 
       - name: 生成静态官网
         env:
@@ -47,9 +49,11 @@ jobs:
         run: npm run build:static
 
       - name: 准备 GitHub Pages
+        if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v6
 
       - name: 上传官网产物
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v5
         with:
           path: ./out
@@ -57,6 +61,8 @@ jobs:
           include-hidden-files: true
 
   deploy:
+    # PR 仅验证，不触及公网；合并 main 后才进入既有 Pages 发布流程。
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

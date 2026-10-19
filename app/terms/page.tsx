@@ -5,7 +5,7 @@ import { publicSiteFacts } from "../publicSiteFacts";
 
 export const metadata: Metadata = {
   title: "用户协议",
-  description: "记上日成 Android 1.0 用户协议，说明免费离线服务、本地数据和提醒能力边界。",
+  description: "记上日成 1.1 用户协议，说明本地优先日程、可选登录与确认后同步的服务边界。",
 };
 
 export default function TermsPage() {
@@ -13,24 +13,25 @@ export default function TermsPage() {
     <LegalPage
       eyebrow="服务规则"
       title="记上日成用户协议"
-      summary="本协议适用于记上日成 Android 1.0。当前版本是无需登录的免费本地日程工具，提供今日、日历、完成、稍后、改期和本地提醒，不提供账号、云同步、AI、语音、天气、广告、支付或订阅。"
-      version="1.1"
+      summary="本协议适用于记上日成 iOS、Android 1.1 与微信小程序 1.1.0。无需登录即可使用本地日程；登录与跨端同步均为可选能力，登录本身不会上传日程。"
+      version="1.2"
       status="现行有效"
-      publishedAt="2026 年 8 月 18 日"
-      effectiveAt="2026 年 8 月 18 日"
+      publishedAt="2026 年 9 月 8 日"
+      effectiveAt="2026 年 9 月 8 日"
       history={[
-        { version: "1.1", publishedAt: "2026 年 8 月 18 日", note: "按 Android 1.0 离线首发范围更新服务、数据与提醒边界。" },
+        { version: "1.2", publishedAt: "2026 年 9 月 8 日", note: "按三端 1.1 发布范围更新可选登录、确认后同步与账号权利。" },
+        { version: "1.1", publishedAt: "2026 年 8 月 18 日", note: "按 Android 1.0 离线首发范围更新服务边界。" },
         { version: "1.0", publishedAt: "2026 年 8 月 10 日", note: "首次发布。" },
       ]}
     >
       <LegalSection title="1. 协议主体与适用范围">
-        <p>记上日成由米堆（南京）网络科技有限公司（以下简称“我们”）提供。本协议适用于包名为 <code>com.planchime.app</code> 的 Android 1.0。用户下载、安装或使用前，应同时阅读<Link className="inline-link" href="/privacy">隐私政策</Link>和<Link className="inline-link" href="/privacy/data-list">数据与 SDK 清单</Link>。</p>
-        <p>当前版本无需账号，不含付费商品或订阅。未来功能只有在实际版本明确提供并完成必要披露后才适用，不因路线图、协议历史或代码预留而成为已承诺服务。</p>
+        <p>记上日成由米堆（南京）网络科技有限公司（以下简称“我们”）提供。本协议适用于包名为 <code>com.planchime.app</code> 的 iOS、Android 1.1，以及微信小程序 1.1.0。使用前请同时阅读<Link className="inline-link" href="/privacy">隐私政策</Link>和<Link className="inline-link" href="/privacy/data-list">数据与 SDK 清单</Link>。</p>
+        <p>无需账号即可使用本地核心功能。当前版本不含付费商品、订阅、广告、AI、邮箱读取或天气能力；未来功能只有在实际开放并完成必要披露后才适用。</p>
       </LegalSection>
 
       <LegalSection title="2. 当前服务内容">
-        <p>Android 1.0 提供日程与待办的创建、编辑、今日与日历查看、完成、稍后、改期、本地提醒、JSON 导出和本机数据完整清理。基础功能可离线使用，正式安装包不申请互联网访问权限。</p>
-        <p>当前不提供账号、云同步、跨设备恢复、AI、语音、天气、广告、统计、远程推送、支付或订阅。不同 Android 版本、设备厂商和系统设置可能影响界面或提醒能力，App 会在相关页面说明必要条件和降级方式。</p>
+        <p>三端提供日程与待办的创建、编辑、今日与日历查看、完成、稍后和改期。iOS 与 Android 可在用户授权后登记设备本地提醒；微信小程序不提供系统闹钟，也不承诺退出后仍能后台准点提醒。</p>
+        <p>用户可以选择登录：iOS 支持手机号验证码、Apple 与微信，Android 支持手机号验证码与微信，小程序只支持微信。登录不会自动上传日程；只有用户再次选择“仅从现在同步”或确认合并预览后，所选日程才会同步到账号。</p>
       </LegalSection>
 
       <LegalSection title="3. 提醒能力边界">
@@ -39,14 +40,14 @@ export default function TermsPage() {
         <p>权限被拒绝或登记失败时，App 会尽量保留已输入日程、说明提醒尚未完成，并提供可执行的恢复入口。</p>
       </LegalSection>
 
-      <LegalSection title="4. 本地数据、导出与删除">
-        <p>日程、待办、完成状态、提醒设置和偏好保存在用户设备。当前版本没有云端备份或跨设备恢复；设备损坏、丢失、卸载 App 或系统清除存储可能造成仅存于本机且未导出的数据无法恢复。</p>
-        <p>用户可以在 App 的“数据与帮助”中通过 Android 系统文件创建器导出 JSON 副本。完整清理须经过两次确认，App 会先取消已登记的本地提醒，再清理用户数据。成功清理后，开发者无法远程恢复本机数据。</p>
+      <LegalSection title="4. 本地数据、同步、导出与删除">
+        <p>未登录或未开启同步的日程、待办、完成状态、提醒设置和偏好保存在用户设备。设备损坏、丢失、卸载或清除存储可能造成仅存于本机且未导出的数据无法恢复。</p>
+        <p>开启同步后，有效账号与已同步日程会为提供账号和同步功能持续保存。撤回同步同意只停止后续同步，不删除既有云端数据；用户可另行执行同步删除、导出或账号注销。注销申请有 7 天可取消宽限期，具体规则见<Link className="inline-link" href="/account-deletion">账号删除说明</Link>。</p>
       </LegalSection>
 
       <LegalSection title="5. 用户责任与内容">
         <p>用户应确保其输入、导出和使用的内容合法，并自行保护设备解锁方式与主动导出的文件。请避免在日程中记录不必要的身份证件、健康、财务、密码或验证码等敏感信息。</p>
-        <p>用户对其依法享有权利的日程、备注和其他输入内容保留相应权利。当前版本不把这些内容上传给我们，也不将其用于广告或模型训练。</p>
+        <p>用户对其依法享有权利的日程、备注和其他输入内容保留相应权利。未取得同步确认时不会上传日程；已确认同步的数据只用于提供账号与同步服务，不用于广告或模型训练。</p>
       </LegalSection>
 
       <LegalSection title="6. 软件许可与禁止行为">
@@ -60,7 +61,7 @@ export default function TermsPage() {
 
       <LegalSection title="7. 服务变更与终止">
         <p>我们会尽力保持软件稳定，并通过版本说明或官网告知重要变更。系统限制、设备故障、不可抗力或第三方平台变化可能影响部分能力。</p>
-        <p>如未来停止维护当前版本，我们会在可行范围内提前说明。由于 Android 1.0 的数据保存在用户设备，本地导出是迁移或留存数据的主要方式。</p>
+        <p>如未来停止维护相关版本或网络服务，我们会在可行范围内提前说明，并依法提供必要的导出或迁移安排。本地功能不会被设计为必须依赖云端持续在线。</p>
       </LegalSection>
 
       <LegalSection title="8. 责任边界与消费者权利">
@@ -69,7 +70,7 @@ export default function TermsPage() {
       </LegalSection>
 
       <LegalSection title="9. 未成年人、法律与联系">
-        <p>未满十八周岁的用户应在监护人指导下阅读和使用。当前版本不提供账号、社交、内容发布或付费功能。</p>
+        <p>未满十八周岁的用户应在监护人指导下阅读和使用。当前版本不提供公开社交、内容发布或付费功能。</p>
         <p>本协议适用中华人民共和国法律。争议可先通过客服协商；协商不成的，双方可依法向有管辖权的人民法院提起诉讼。本条不排除消费者依法选择其他投诉、调解或争议解决渠道。</p>
         <p>运营主体：米堆（南京）网络科技有限公司。客服邮箱：<a className="inline-link" href="mailto:zhangxiao@planchime.com">zhangxiao@planchime.com</a>。</p>
       </LegalSection>

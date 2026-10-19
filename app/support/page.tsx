@@ -4,7 +4,7 @@ import { SiteFrame } from "../components/SiteFrame";
 
 export const metadata: Metadata = {
   title: "帮助与支持",
-  description: "记上日成 Android 1.0 的通知、精确闹钟、数据导出、完整清理与联系说明。",
+  description: "记上日成 1.1 的提醒、登录、同步、数据导出、账号注销与联系说明。",
   alternates: { canonical: "/support" },
 };
 
@@ -31,21 +31,21 @@ export default function SupportPage() {
             <span>02</span>
             <h2>本地数据</h2>
             <p>
-              Android 1.0 无需账号。你可以在 App 的“数据与帮助”中导出 JSON 副本，或经过两次确认后完整清理本机数据。
+              无需登录即可使用本地日程。登录后仍需再次确认同步方式；也可以导出、撤回同步或申请注销账号。
             </p>
           </article>
           <article className="support-card">
             <span>03</span>
             <h2>当前版本</h2>
             <p>
-              当前版本提供离线日程、今日、日历、完成、稍后、改期和本地提醒；不包含账号、AI、语音、天气、广告、支付或订阅。
+              1.1 提供本地日程、今日、日历、完成、稍后、改期、移动端本地提醒，以及可选登录和确认后的跨端同步。
             </p>
           </article>
           <article className="support-card">
             <span>04</span>
             <h2>隐私与联系</h2>
             <p>
-              查看<Link className="card-text-link" href="/privacy">隐私政策</Link>与<Link className="card-text-link" href="/privacy/data-list">数据与 SDK 清单</Link>，了解当前版本的本地处理与系统权限。
+              查看<Link className="card-text-link" href="/privacy">隐私政策</Link>、<Link className="card-text-link" href="/privacy/data-list">数据与 SDK 清单</Link>和<Link className="card-text-link" href="/account-deletion">账号删除说明</Link>。
             </p>
           </article>
         </div>
@@ -57,7 +57,7 @@ export default function SupportPage() {
           <div className="faq-list">
             <details>
               <summary>通知没有出现怎么办？</summary>
-              <p>请在 Android“设置 → 应用 → 记上日成 → 通知”中检查通知权限，并确认当前通知类别没有被关闭。部分设备还会受到静音、省电或后台限制影响。即使通知不可用，日程仍会保存在本机。</p>
+              <p>iPhone 请在“设置 → 通知 → 记上日成”检查权限；Android 请在“设置 → 应用 → 记上日成 → 通知”检查权限。静音、专注模式、省电和厂商后台策略也可能影响展示。即使通知不可用，日程仍会保存在本机。</p>
             </details>
             <details>
               <summary>为什么需要精确闹钟特殊访问？</summary>
@@ -65,19 +65,19 @@ export default function SupportPage() {
             </details>
             <details>
               <summary>数据会上传吗？</summary>
-              <p>不会。Android 1.0 不申请互联网访问权限，日程和设置保存在设备本地，不上传给开发者。</p>
+              <p>登录不会自动上传日程。只有你另行选择“仅从现在同步”或确认合并预览后，所选日程才会同步到账号。</p>
             </details>
             <details>
               <summary>如何导出数据？</summary>
-              <p>在 App 的“数据与帮助”中选择导出，Android 系统会让你选择 JSON 文件的保存位置。App 不需要读取整个存储空间。</p>
+              <p>在 App 的账号与数据页面选择导出。登录用户可以请求账号数据导出；设备本地数据仍按系统文件能力保存，不需要读取整个存储空间。</p>
             </details>
             <details>
               <summary>如何删除本地数据？</summary>
               <p>在“数据与帮助”中选择完整清理，阅读范围说明并进行第二次确认。App 会先取消本地提醒，再清理用户数据。也可以使用 Android 系统的“清除存储”或卸载 App。</p>
             </details>
             <details>
-              <summary>当前有账号、AI、语音、天气或订阅吗？</summary>
-              <p>没有。Android 1.0 不提供这些能力，也不需要审核账号或购买商品。</p>
+              <summary>当前有哪些登录方式？</summary>
+              <p>iOS 支持手机号验证码、Apple 和微信；Android 支持手机号验证码和微信；微信小程序使用微信登录。1.1 不提供 AI、邮箱读取、天气、支付、订阅或广告。</p>
             </details>
           </div>
         </div>
