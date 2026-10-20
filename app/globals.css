@@ -945,6 +945,12 @@ summary {
   color: rgba(255, 255, 255, 0.86);
 }
 
+/* 深色客服卡片需继承浅色正文，避免普通链接绿色覆盖后使邮箱难以辨认。 */
+.support-card.featured .card-text-link {
+  color: inherit;
+  text-decoration-color: currentColor;
+}
+
 .support-card .support-meta {
   margin-top: 22px;
   padding-top: 18px;

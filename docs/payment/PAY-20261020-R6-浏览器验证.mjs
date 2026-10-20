@@ -15,7 +15,7 @@ const port = 4193;
 const origin = `http://127.0.0.1:${port}`;
 const pages = ["/", "/services/", "/support/", "/contact/", "/subscription/", "/download/", "/privacy/", "/privacy/data-list/", "/terms/", "/account-deletion/", "/wechat/"];
 const excluded = ["/services/sign-in/", "/services/orders/", "/services/checkout/", "/services/payment-return/", "/services/purchase-info/"];
-const report = { generatedAt: new Date().toISOString(), node: process.version, root, origin, browser: "", routes: [], excludedRoutes: [], links: [], externalLinks: [], views: [], interactions: [], pageErrors: [], consoleErrors: [], failedResponses: [], externalRequests: [], outputFiles: [] };
+const report = { generatedAt: new Date().toISOString(), node: process.version, root, origin, browser: "", routes: [], excludedRoutes: [], links: [], externalLinks: [], views: [], interactions: [], featuredLinkContrast: [], pageErrors: [], consoleErrors: [], failedResponses: [], externalRequests: [], outputFiles: [] };
 const contentTypes = { ".html": "text/html; charset=utf-8", ".txt": "text/plain; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".xml": "application/xml", ".png": "image/png", ".webp": "image/webp", ".ico": "image/x-icon", ".svg": "image/svg+xml", ".woff2": "font/woff2" };
 
 async function fileFor(pathname) {
@@ -80,6 +80,27 @@ try {
     assert.doesNotMatch(data.text, /(?:立即购买|立即支付|开通会员)/, pathname);
     report.routes.push({ pathname, status: response.status(), h1: data.h1[0], canonical: data.canonical });
     domSnapshots.set(pathname, data);
+    if (pathname === "/contact/" || pathname === "/support/") {
+      const colors = await page.locator(".support-card.featured .card-text-link").evaluate((link) => {
+        const textStyle = getComputedStyle(link);
+        const cardStyle = getComputedStyle(link.closest(".support-card.featured"));
+        return { foreground: textStyle.color, background: cardStyle.backgroundColor, underline: textStyle.textDecorationColor, fontSize: textStyle.fontSize };
+      });
+      const rgb = (color) => color.match(/[\d.]+/g).map(Number);
+      const foreground = rgb(colors.foreground);
+      const background = rgb(colors.background);
+      const alpha = foreground[3] ?? 1;
+      // computedStyle 仍可能返回带透明度的白色；先与实际卡片底色合成，再按 sRGB 亮度计算对比度。
+      assert.equal(background[3] ?? 1, 1, `${pathname}: 卡片底色应不透明`);
+      const blended = foreground.slice(0, 3).map((value, index) => value * alpha + background[index] * (1 - alpha));
+      const luminance = (color) => color.slice(0, 3).map((value) => value / 255).map((value) => value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4).reduce((sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index], 0);
+      const light = luminance(blended);
+      const dark = luminance(background);
+      const ratio = (Math.max(light, dark) + 0.05) / (Math.min(light, dark) + 0.05);
+      report.featuredLinkContrast.push({ pathname, ...colors, blendedForeground: blended, ratio });
+      assert.ok(ratio >= 4.5, `${pathname}: 邮箱对比度 ${ratio}`);
+      assert.equal(colors.underline, colors.foreground, `${pathname}: 下划线应与可读文字同色`);
+    }
     for (const href of data.links) {
       const url = new URL(href, origin + pathname);
       if (url.origin === origin) uniqueLinks.set(url.pathname + url.hash, url);
@@ -199,6 +220,6 @@ try {
   }
   await hashFiles(root);
   await writeFile(resolve(evidence, "report.json"), JSON.stringify(report, null, 2) + "\n");
-  console.log(JSON.stringify({ success: !failure, browser: report.browser, routes: report.routes.length, links: report.links.length, excludedRoutes: report.excludedRoutes, screenshots: report.views.length, interactions: report.interactions, errors: { page: report.pageErrors, console: report.consoleErrors, responses: report.failedResponses, external: report.externalRequests }, report: resolve(evidence, "report.json"), failure: report.failure }, null, 2));
+  console.log(JSON.stringify({ success: !failure, browser: report.browser, routes: report.routes.length, links: report.links.length, excludedRoutes: report.excludedRoutes, screenshots: report.views.length, interactions: report.interactions, featuredLinkContrast: report.featuredLinkContrast, errors: { page: report.pageErrors, console: report.consoleErrors, responses: report.failedResponses, external: report.externalRequests }, report: resolve(evidence, "report.json"), failure: report.failure }, null, 2));
 }
 if (failure) process.exitCode = 1;

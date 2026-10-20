@@ -174,6 +174,15 @@ test("联系页免登录公开主体、邮箱与安全提示", async () => {
   assert.doesNotMatch(html, /客服电话|办公地址|ICP备案/);
 });
 
+test("深色客服卡片的邮箱继承浅色正文与下划线，避免普通链接绿色覆盖", async () => {
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(css, /\.support-card\.featured \.card-text-link\s*\{\s*color:\s*inherit;\s*text-decoration-color:\s*currentColor;\s*\}/);
+  for (const path of ["/contact", "/support"]) {
+    const html = await (await render(path)).text();
+    assert.match(html, /class="support-card featured"[\s\S]*?class="card-text-link" href="mailto:zhangxiao@planchime\.com"/, path);
+  }
+});
+
 test("经营资料说明真实免费服务，会员与主题不能被误读为已可付款", async () => {
   const response = await render("/services/");
   assert.equal(response.status, 200);
