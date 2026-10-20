@@ -116,7 +116,7 @@ export default function Home() {
         </section>
 
         <section className={styles.container + " " + styles.faqSection} id="faq" aria-labelledby="faq-title">
-          <div><p className={styles.eyebrow}>你可能想知道</p><h2 id="faq-title">把疑问，<br />也说清楚。</h2><Link className={styles.textLink} href="/support">更多帮助 <span aria-hidden="true">↗</span></Link></div>
+          <div><p className={styles.eyebrow}>你可能想知道</p><h2 id="faq-title">把疑问，<br />也说清楚。</h2><Link className={styles.textLink} href="/support">更多帮助 <span aria-hidden="true">↗</span></Link><p><Link className={styles.textLink} href="/services/">产品与服务状态 <span aria-hidden="true">↗</span></Link></p></div>
           <div className={styles.faqList}>{faq.map(([question, answer]) => <details key={question}><summary>{question}<span aria-hidden="true">＋</span></summary><p>{answer}</p></details>)}</div>
         </section>
 

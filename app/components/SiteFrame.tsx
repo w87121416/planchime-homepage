@@ -14,10 +14,12 @@ const footerNavigation = [
   { href: "/", label: "首页" },
   { href: "/#platforms", label: "下载与使用" },
   { href: "/download/", label: "Android 下载" },
+  { href: "/services/", label: "产品与服务" },
   { href: "/privacy", label: "隐私政策" },
   { href: "/privacy/data-list", label: "数据与 SDK 清单" },
   { href: "/terms", label: "用户协议" },
   { href: "/support", label: "帮助与支持" },
+  { href: "/contact", label: "联系我们" },
 ];
 
 export function Brand() {
@@ -67,7 +69,7 @@ export function SiteFooter() {
           <p className="footer-note">无需登录即可使用；同步始终由你确认。</p>
         </div>
         <div className="footer-links" aria-label="页脚导航">
-          {/* 页脚只呈现 1.1 已冻结能力，避免把 AI、付费等未来能力误写成已上线。 */}
+          {/* 服务说明明确当前免费范围与未开放商品；入口可见不代表付费能力已上线。 */}
           {footerNavigation.map((item) => (
             item.href.includes("#") ? (
               <a href={item.href} key={item.href}>{item.label}</a>
