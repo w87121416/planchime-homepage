@@ -17,6 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/download/", changeFrequency: "weekly", priority: 0.9, lastModified: new Date("2026-09-11T00:00:00+08:00") },
     { path: "/support", changeFrequency: "monthly", priority: 0.8 },
     { path: "/contact", changeFrequency: "monthly", priority: 0.7 },
+    { path: "/services/", changeFrequency: "monthly", priority: 0.8, lastModified: new Date("2026-10-20T00:00:00+08:00") },
     { path: "/privacy", changeFrequency: "monthly", priority: 0.8 },
     { path: "/privacy/data-list", changeFrequency: "monthly", priority: 0.6 },
     { path: "/terms", changeFrequency: "monthly", priority: 0.7 },

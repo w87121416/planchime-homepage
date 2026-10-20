@@ -30,6 +30,7 @@ export default function SubscriptionPage() {
       ]}
     >
       <LegalSection title="1. 当前状态">
+        <p>当前 1.1 的免费能力、会员与主题开放状态，以及运营主体和客服入口，见<Link className="inline-link" href="/services/">产品与服务</Link>。下述未来续费规则不代表已开放购买。</p>
         {hasStorePrices ? (
           <>
             <ul>

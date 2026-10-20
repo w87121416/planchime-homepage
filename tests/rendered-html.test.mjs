@@ -174,10 +174,51 @@ test("联系页免登录公开主体、邮箱与安全提示", async () => {
   assert.doesNotMatch(html, /客服电话|办公地址|ICP备案/);
 });
 
+test("经营资料说明真实免费服务，会员与主题不能被误读为已可付款", async () => {
+  const response = await render("/services/");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /<h1>产品与服务<\/h1>/);
+  assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
+  assert.match(html, /rel="canonical" href="https:\/\/planchime\.com\/services\/"/);
+  assert.match(html, /当前可使用的免费服务/);
+  assert.match(html, /版本 1\.1，免费下载/);
+  assert.match(html, /href="https:\/\/apps\.apple\.com\/cn\/app\/id6803545111"/);
+  assert.match(html, /界面示意/);
+  assert.match(html, /会员与主题：尚未开放购买/);
+  assert.match(html, /本网站目前不提供下单、支付、预付款/);
+  assert.match(html, /米堆（南京）网络科技有限公司/);
+  assert.match(html, /苏ICP备2026061783号-2/);
+  assert.match(html, /href="mailto:zhangxiao@planchime\.com"/);
+  // 经营资料不能带出历史计划价格、他项目应用或能收款的入口。
+  assert.doesNotMatch(html, /<form\b|<iframe\b|立即购买|立即支付|开通会员|免费试用[0-9三]|[¥￥]\s*\d/);
+  assert.doesNotMatch(html, /wxsyai\.com|2021006168650481|alipays?:\/\//i);
+});
+
+test("用户可以从现有首页、支持和订阅说明找到当前服务状态", async () => {
+  for (const path of ["/", "/support", "/contact", "/subscription"]) {
+    const html = await (await render(path)).text();
+    assert.match(html, /href="\/services\/"/, path);
+  }
+  const subscriptionHtml = await (await render("/subscription")).text();
+  assert.match(subscriptionHtml, /未来续费规则不代表已开放购买/);
+  assert.match(subscriptionHtml, /当前没有已确认并可公开展示的商品价格/);
+});
+
+test("内容候选不包含购买组件、订单、登录或支付返回路由", async () => {
+  const source = await readFile(new URL("../app/services/page.tsx", import.meta.url), "utf8");
+  assert.doesNotMatch(source, /PurchasePortal|lib\/purchase|use client|\bfetch\s*\(/);
+  // 路由缺失必须返回 404，不能用隐藏按钮代替不发布未获准模块。
+  for (const path of ["/services/sign-in/", "/services/orders/", "/services/checkout/", "/services/payment-return/", "/services/purchase-info/"]) {
+    assert.equal((await render(path)).status, 404, path);
+  }
+});
+
 test("商店审核所需公共页面可访问、可索引且不是草案", async () => {
   const reviewPaths = [
     "/support",
     "/contact",
+    "/services/",
     "/privacy",
     "/privacy/data-list",
     "/terms",
@@ -207,6 +248,7 @@ test("站点地图收录全部正式官网与审核入口", async () => {
     "https://planchime.com/download/",
     "https://planchime.com/support",
     "https://planchime.com/contact",
+    "https://planchime.com/services/",
     "https://planchime.com/privacy",
     "https://planchime.com/privacy/data-list",
     "https://planchime.com/terms",

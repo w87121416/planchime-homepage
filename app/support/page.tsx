@@ -79,12 +79,18 @@ export default function SupportPage() {
               <summary>当前有哪些登录方式？</summary>
               <p>iOS 支持手机号验证码、Apple 和微信；Android 支持手机号验证码和微信；微信小程序使用微信登录。1.1 不提供 AI、邮箱读取、天气、支付、订阅或广告。</p>
             </details>
+            <details>
+              <summary>会员和主题可以购买了吗？</summary>
+              <p>尚未开放购买。当前使用免费基础服务，官网没有下单、支付或自动扣费入口。会员和主题的开放状态、运营主体及使用入口见<Link className="inline-link" href="/services/">产品与服务</Link>。</p>
+            </details>
           </div>
         </div>
       </section>
 
       <section className="support-links">
         <div className="shell support-link-row">
+          <Link href="/services/">产品与服务 <span aria-hidden="true">→</span></Link>
+          <Link href="/contact">联系我们 <span aria-hidden="true">→</span></Link>
           <Link href="/privacy">隐私政策 <span aria-hidden="true">→</span></Link>
           <Link href="/privacy/data-list">数据与 SDK 清单 <span aria-hidden="true">→</span></Link>
           <Link href="/terms">用户协议 <span aria-hidden="true">→</span></Link>
