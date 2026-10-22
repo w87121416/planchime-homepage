@@ -324,14 +324,17 @@ test("水墨城市素材、示意标注与手机适配保持完整", async () =>
   assert.match(page, /<SchedulePreview/);
 });
 
-test("首页主导航指向现有产品体验区块", async () => {
-  const [page, frame] = await Promise.all([
+test("桌面与手机主导航均指向现有产品体验区块", async () => {
+  const [page, frame, mobileMenu] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/components/SiteFrame.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/MobileMenu.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(page, /id="experience"/);
   assert.match(frame, /href: "\/#experience"/);
   assert.doesNotMatch(frame, /href: "\/#features"/);
+  assert.match(mobileMenu, /href="\/#experience"/);
+  assert.doesNotMatch(mobileMenu, /href="\/#features"/);
 });
 
 test("页内定位使用原生锚点，避免客户端路由重复拼接 hash", async () => {
