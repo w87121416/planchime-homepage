@@ -16,7 +16,37 @@ export const metadata: Metadata = {
 const benefits = [
   ["01", "随手记下", "新建、编辑，思路不中断"],
   ["02", "一眼看清", "今天与日历，各有条理"],
-  ["03", "从容处理", "完成、稍后、改期，由你决定"],
+  ["03", "从容处理", "完成、稍后或改期，由你决定"],
+];
+
+const journeys = [
+  {
+    number: "01",
+    kicker: "记下来",
+    title: "想到的事，先有一个清楚的位置。",
+    description: "创建事项，设好日期与时间。没有网络也可以保存，不必为了记一件小事，先完成一串设置。",
+    image: "/images/ink-reminder-desk.jpg",
+    imageAlt: "暖光书桌与城市窗景的水彩插画",
+    note: "本地保存 · 随时可改",
+  },
+  {
+    number: "02",
+    kicker: "看清楚",
+    title: "眼前这一件，与之后的安排，各有条理。",
+    description: "今日视图聚焦眼前，日历视图看清之后。工作与生活不必挤在一起，也不会被系统悄悄挪动。",
+    image: "/images/ink-home-district.jpg",
+    imageAlt: "雨后城市街区与朱砂路径的水彩插画",
+    note: "今日 · 日历 · 待办",
+  },
+  {
+    number: "03",
+    kicker: "从容调整",
+    title: "计划会变，下一步仍然由你决定。",
+    description: "完成、稍后或改期，都从当前安排继续。提醒按需设置；平台或权限受限时，日程仍然保留。",
+    image: "/images/ink-achievement-evening.jpg",
+    imageAlt: "傍晚城市灯光与朱砂路径的水彩插画",
+    note: "完成 · 稍后 · 改期",
+  },
 ];
 
 const faq = [
@@ -33,23 +63,35 @@ export default function Home() {
     <SiteFrame>
       <div className={styles.home}>
         <section className={styles.hero} aria-labelledby="home-title">
+          <img className={styles.heroBackdrop} src="/images/og-ink-city-v1-1200x630.png" alt="" width="1200" height="630" fetchPriority="high" />
+          <div className={styles.heroVeil} />
           <div className={styles.container + " " + styles.heroGrid}>
             <div className={styles.heroCopy}>
-              <p className={styles.eyebrow}>日程有序，生活从容。</p>
-              <h1 id="home-title">把事情记下，<br />把时间留给生活。</h1>
-              <p className={styles.lead}>用清楚的日程和恰到好处的提醒，<br className={styles.desktopBreak} />安顿工作，也留住自己的节奏。</p>
+              <p className={styles.eyebrow}>记上日成 · PlanChime</p>
+              <h1 id="home-title">把事情记下。<br /><span>把时间留给<br className={styles.mobileBreak} />生活。</span></h1>
+              <p className={styles.lead}>清楚安排日程、待办与提醒。<br className={styles.desktopBreak} />不催促，不替你决定，只把下一步准备好。</p>
               <div className={styles.actions}>
                 <a className={styles.button} href={appStoreUrl ?? "#platforms"}>
                   {appStoreUrl ? "免费下载 iPhone 版" : "查看使用方式"}
                 </a>
-                <a className={styles.textLink} href="#platforms">其他使用方式 <span aria-hidden="true">↗</span></a>
+                <a className={styles.textLink} href="#experience">看看怎么用 <span aria-hidden="true">↓</span></a>
               </div>
-              <p className={styles.heroMeta}>无需账号即可开始 · 本地优先 · iOS 17+</p>
+              <div className={styles.heroFacts} aria-label="产品特点">
+                <span>无需账号即可开始</span>
+                <span>本地优先</span>
+                <span>iOS 17+</span>
+              </div>
             </div>
             <figure className={styles.heroFigure}>
-              <div className={styles.artStage}>
-                <img src="/images/window-light.webp" alt="" width="1300" height="867" fetchPriority="high" className={styles.windowArt} />
+              <div className={styles.productStage}>
+                <div className={styles.orbitLabel + " " + styles.orbitLabelTop}>
+                  <span>今天</span><strong>3 件安排</strong>
+                </div>
                 <div className={styles.phonePosition}><SchedulePreview /></div>
+                <div className={styles.orbitLabel + " " + styles.orbitLabelBottom}>
+                  <i aria-hidden="true" />
+                  <div><strong>本地已保存</strong><span>同步由你再次确认</span></div>
+                </div>
               </div>
               <figcaption>界面示意 · 以实际版本为准</figcaption>
             </figure>
@@ -62,39 +104,48 @@ export default function Home() {
           ))}
         </section>
 
-        <section className={styles.featureSection} id="features" aria-labelledby="feature-title">
-          <div className={styles.container + " " + styles.featureGrid}>
-            <div className={styles.featureIntro}>
-              <p className={styles.eyebrow}>简单一点，安排好每一天</p>
-              <h2 id="feature-title">装下大小事，<br />不把日子排得太满。</h2>
-              <p>重要的事记得住，临时的变化接得住。<br />一份清楚的安排，让你更专注于眼前。</p>
-              <div className={styles.dayNote} aria-label="产品原则">
-                <span className={styles.noteMark} aria-hidden="true">“</span>
-                <p>计划可以改变。<br />下一步，始终由你决定。</p>
-                <span>记上日成 · 每天从容一点</span>
-              </div>
+        <section className={styles.experienceSection} id="experience" aria-labelledby="feature-title">
+          <div className={styles.container}>
+            <div className={styles.experienceHeading}>
+              <div><p className={styles.eyebrow}>一天的节奏，不必交给复杂设置</p><h2 id="feature-title">从记下，到收好。<br />每一步都很轻。</h2></div>
+              <p>重要的事记得住，临时的变化接得住。忙的时候只看下一件；想回顾时，再展开完整安排。</p>
             </div>
-            <div className={styles.featureList}>
-              <article><span>01 / 记录</span><h3>想到，就先记下来。</h3><p>创建事项，设好日期与时间。没有网络也可以保存，不必为了记一件小事，先完成一串设置。</p></article>
-              <article><span>02 / 查看</span><h3>今天做什么，之后怎么安排。</h3><p>今日视图聚焦眼前，日历视图看清之后。工作与生活，都有一个清楚的位置。</p></article>
-              <article><span>03 / 调整</span><h3>完成、稍后或改期，都顺手。</h3><p>提醒按需设置，已有日程不会被静默移动。计划有变化时，轻松调整，再往前走一步。</p></article>
+            <div className={styles.journeyList}>
+              {journeys.map((journey, index) => (
+                <article className={styles.journey} key={journey.number}>
+                  <figure className={styles.journeyArt}>
+                    <img src={journey.image} alt={journey.imageAlt} width="1200" height="900" loading="lazy" />
+                    <figcaption>{journey.note}</figcaption>
+                  </figure>
+                  <div className={styles.journeyCopy}>
+                    <span className={styles.journeyNumber}>{journey.number}</span>
+                    <p>{journey.kicker}</p>
+                    <h3>{journey.title}</h3>
+                    <p>{journey.description}</p>
+                    {index === 1 ? <div className={styles.timelineSample} aria-label="一天安排示意"><span>09:30</span><i /><strong>确认产品方案</strong><span>14:00</span><i /><strong>项目沟通</strong><span>18:30</span><i /><strong>晚间散步</strong></div> : null}
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
         </section>
 
-        <section className={styles.container + " " + styles.privacySection} aria-labelledby="privacy-title">
-          <div><p className={styles.eyebrow}>属于你的安排，也由你掌握</p><h2 id="privacy-title">本地优先，<br />同步不替你做决定。</h2></div>
-          <div className={styles.privacyCopy}>
-            <p className={styles.largeCopy}>无需账号，先把日程用起来。<br />需要跨端时，再选择登录与同步。</p>
-            <p>登录不自动上传。你可以选择仅从现在同步，或先看合并预览，再确认要同步的内容。</p>
-            <p>也可以导出数据、清理本机、撤回后续同步，或申请注销账号。每一步，都会先说明影响范围。</p>
-            <div className={styles.inlineLinks}><Link href="/privacy">了解隐私保护 <span aria-hidden="true">↗</span></Link><Link href="/privacy/data-list">数据与 SDK 清单 <span aria-hidden="true">↗</span></Link></div>
+        <section className={styles.privacySection} aria-labelledby="privacy-title">
+          <div className={styles.privacyArt} aria-hidden="true"><img src="/images/ink-reminder-desk.jpg" alt="" width="1200" height="900" loading="lazy" /></div>
+          <div className={styles.container + " " + styles.privacyGrid}>
+            <div><p className={styles.eyebrow}>属于你的安排，也由你掌握</p><h2 id="privacy-title">先在本地安心使用。<br />需要时，再连接更多设备。</h2></div>
+            <div className={styles.privacyCopy}>
+              <p className={styles.largeCopy}>无需账号，先把日程用起来。<br />登录，也不会自动上传。</p>
+              <p>你可以选择仅从现在同步，或先看合并预览，再确认要同步的内容。已有事项不会被系统静默移动。</p>
+              <p>导出数据、清理本机、撤回后续同步或申请注销前，都会先说明影响范围。</p>
+              <div className={styles.inlineLinks}><Link href="/privacy">了解隐私保护 <span aria-hidden="true">↗</span></Link><Link href="/privacy/data-list">数据与 SDK 清单 <span aria-hidden="true">↗</span></Link></div>
+            </div>
           </div>
         </section>
 
         <section className={styles.downloadSection} id="platforms" aria-labelledby="platform-title">
           <div className={styles.container}>
-            <div className={styles.sectionHeading}><p className={styles.eyebrow}>下载与使用</p><h2 id="platform-title">从你顺手的地方开始。</h2><p>在手机上安排一天，也能在微信里随手记录。</p></div>
+            <div className={styles.sectionHeading}><p className={styles.eyebrow}>下载与使用</p><h2 id="platform-title">从你顺手的地方开始。</h2><p>在手机上安排一天，也能在微信里随手记录。不同平台的提醒能力会如实说明。</p></div>
             <div className={styles.platforms}>
               <article className={styles.applePanel}>
                 <img src="/images/app-icon.png" alt="" width="72" height="72" loading="lazy" />
@@ -121,7 +172,8 @@ export default function Home() {
         </section>
 
         <section className={styles.finalSection} aria-label="开始使用记上日成">
-          <div className={styles.container}><p className={styles.eyebrow}>记上日成 · PlanChime</p><h2>留一点时间，<br className={styles.mobileBreak} />给生活本来的样子。</h2><a className={styles.button} href="#platforms">开始你的第一份安排 <span aria-hidden="true">↗</span></a><p className={styles.finalNote}>无需账号，即可开始。</p></div>
+          <img src="/images/og-ink-city-v1-1200x630.png" alt="" width="1200" height="630" loading="lazy" />
+          <div className={styles.container}><p className={styles.eyebrow}>记上日成 · PlanChime</p><h2>把事情收好，<br className={styles.mobileBreak} />然后好好生活。</h2><a className={styles.button} href="#platforms">开始你的第一份安排 <span aria-hidden="true">↗</span></a><p className={styles.finalNote}>无需账号，即可开始。</p></div>
         </section>
       </div>
     </SiteFrame>

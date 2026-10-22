@@ -305,7 +305,7 @@ test("首页与页脚保留 Android 入口，主导航改为三端选择", async
   assert.match(html, /href="\/#platforms"[^>]*>下载与使用/);
 });
 
-test("暖白窗光素材、示意标注与手机适配保持完整", async () => {
+test("水墨城市素材、示意标注与手机适配保持完整", async () => {
   const [css, page] = await Promise.all([
     readFile(new URL("../app/home.module.css", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
@@ -316,9 +316,22 @@ test("暖白窗光素材、示意标注与手机适配保持完整", async () =>
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(css, /@media \(max-width: 760px\)/);
   assert.match(css, /@media \(max-width: 360px\)/);
-  assert.match(page, /window-light\.webp/);
+  assert.match(page, /og-ink-city-v1-1200x630\.png/);
+  assert.match(page, /ink-reminder-desk\.jpg/);
+  assert.match(page, /ink-home-district\.jpg/);
+  assert.match(page, /ink-achievement-evening\.jpg/);
   assert.match(page, /界面示意 · 以实际版本为准/);
   assert.match(page, /<SchedulePreview/);
+});
+
+test("首页主导航指向现有产品体验区块", async () => {
+  const [page, frame] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/SiteFrame.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(page, /id="experience"/);
+  assert.match(frame, /href: "\/#experience"/);
+  assert.doesNotMatch(frame, /href: "\/#features"/);
 });
 
 test("页内定位使用原生锚点，避免客户端路由重复拼接 hash", async () => {

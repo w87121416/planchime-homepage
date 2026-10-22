@@ -5,7 +5,7 @@ import { MobileMenu } from "./MobileMenu";
 import styles from "./siteFrame.module.css";
 
 const navigation = [
-  { href: "/#features", label: "产品体验" },
+  { href: "/#experience", label: "产品体验" },
   { href: "/#platforms", label: "下载与使用" },
   { href: "/support", label: "帮助" },
 ];
