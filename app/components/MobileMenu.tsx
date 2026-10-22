@@ -13,7 +13,7 @@ export function MobileMenu() {
       </button>
       {/* 选择锚点后收起菜单，避免手机端导航遮住目标内容；Escape 也可直接退出。 */}
       <nav id="mobile-navigation" aria-label="手机导航" hidden={!open} onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }}>
-        <a href="/#features" onClick={() => setOpen(false)}>产品体验</a>
+        <a href="/#experience" onClick={() => setOpen(false)}>产品体验</a>
         <a href="/#platforms" onClick={() => setOpen(false)}>下载与使用</a>
         <a href="/support/" onClick={() => setOpen(false)}>帮助与支持</a>
         <a href="/privacy/" onClick={() => setOpen(false)}>隐私政策</a>
