@@ -4,7 +4,7 @@ import { LegalPage, LegalSection } from "../components/LegalPage";
 
 export const metadata: Metadata = {
   title: "隐私政策",
-  description: "记上日成 1.1 隐私政策，说明本地日程、可选登录、跨端同步、导出与账号注销。",
+  description: "记上日成 1.1 隐私政策，说明本地日程、可选登录、跨端同步、购买、导出与账号注销。",
 };
 
 export default function PrivacyPage() {
@@ -13,11 +13,12 @@ export default function PrivacyPage() {
       eyebrow="隐私与数据"
       title="记上日成隐私政策"
       summary="无需登录即可使用本地日程。只有你主动登录并再次选择同步方式后，所选日程才会传输到账号；登录本身不会自动上传日程。"
-      version="1.2"
+      version="1.3"
       status="现行有效"
-      publishedAt="2026 年 9 月 8 日"
-      effectiveAt="2026 年 9 月 8 日"
+      publishedAt="2026 年 10 月 26 日"
+      effectiveAt="2026 年 10 月 26 日"
       history={[
+        { version: "1.3", publishedAt: "2026 年 10 月 26 日", note: "补充购买渠道、订单与权益处理边界，并明确当前尚未开放销售。" },
         { version: "1.2", publishedAt: "2026 年 9 月 8 日", note: "按 1.1 三端发布范围更新可选登录、跨端同步、留存和账号注销说明。" },
         { version: "1.1", publishedAt: "2026 年 8 月 18 日", note: "更新 Android 1.0 本地处理与权限说明。" },
         { version: "1.0", publishedAt: "2026 年 8 月 10 日", note: "首次发布。" },
@@ -42,6 +43,7 @@ export default function PrivacyPage() {
               <tr><td>设备与会话</td><td>随机安装/设备标识、会话状态、同步游标和必要安全事件</td><td>登录后用于会话安全、增量同步、导出和注销；不用于广告或跨产品追踪。</td></tr>
               <tr><td>本地提醒</td><td>提醒时间、事项摘要、登记标识和必要状态</td><td>由 iOS/Android 在设备本地登记；系统通知记录和原始录音不进入账号同步载荷。</td></tr>
               <tr><td>应用偏好</td><td>用户选择的显示、提醒和使用偏好</td><td>保存在 App 沙盒内，用于保持用户明确选择的设置。</td></tr>
+              <tr><td>购买与权益</td><td>账号、商品、支付渠道、平台订单标识、交易状态、权益起止时间以及退款或撤销状态</td><td>仅在购买入口已经正式开放且用户主动发起购买时处理，用于把订单、查验结果和权益关联到当前账号。iOS 由 Apple StoreKit 完成交易；Android 直付只会在渠道审核与跨主体授权完成后启用。我们不接收完整银行卡号、支付密码或验证码。</td></tr>
               <tr><td>导出与删除</td><td>用户主动选择导出的数据、注销请求和最小审计状态</td><td>导出文件最多保留 7 天，下载令牌 10 分钟且一次性使用；注销按下文规则处理。</td></tr>
               <tr><td>客服邮件</td><td>来信邮箱、用户主动提供的问题描述与附件</td><td>仅在用户主动发信时，由客服和邮件服务提供方为回复、排查问题与安全响应而处理。请勿发送密码、验证码或无关敏感内容。</td></tr>
               <tr><td>官网访问</td><td>托管方可能记录的 IP 地址、访问时间、请求地址、浏览器和错误信息</td><td>用于网页交付、安全防护和故障排查；与 Android App 内的本地日程数据分开，官网不接入广告或行为分析脚本。</td></tr>
@@ -67,8 +69,14 @@ export default function PrivacyPage() {
           账号与同步服务部署在阿里云北京地域。手机号验证码由阿里云短信按用户请求发送；Apple 和微信仅在用户主动选择相应登录方式时处理一次性身份凭据。长期密钥只保存在服务端。
         </p>
         <p>
-          App 使用 React Native、Hermes、SQLite、AndroidX、WechatOpenSDK 等组件提供界面、本地存储和用户选择的微信登录。1.1 不接入广告、统计、支付、AI、天气或邮件 SDK，不出售数据，不建立广告画像。完整清单见<Link className="inline-link" href="/privacy/data-list">数据与 SDK 清单</Link>。
+          App 使用 React Native、Hermes、SQLite、AndroidX、WechatOpenSDK 等组件提供界面、本地存储和用户选择的微信登录。购买能力仍处于发布准备阶段：iOS 仅按 Apple StoreKit 规则处理，Android 的微信支付和支付宝接入只有在购买入口正式开放、用户主动操作且对应渠道审核通过后才会调用；当前官网不下单或收款。我们不接入广告或行为统计，不出售数据，不建立广告画像。完整清单见<Link className="inline-link" href="/privacy/data-list">数据与 SDK 清单</Link>。
         </p>
+        <ul>
+          <li><strong>微信支付：</strong>计划使用微信 OpenSDK 6.8.40。我们向 SDK 提供完成本次交易所需的 AppID、商户号、预支付标识、随机数、时间戳与签名；SDK 或支付服务可能按其规则处理必要的设备、网络、应用与支付安全信息。提供方包括深圳市腾讯计算机系统有限公司及财付通支付科技有限公司，详见<a className="inline-link" href="https://support.weixin.qq.com/cgi-bin/mmsupportacctnodeweb-bin/pages/RYiYJkLOrQwu0nb8">微信官方说明</a>。</li>
+          <li><strong>支付宝：</strong>计划使用支付宝客户端 SDK 15.8.42。我们向 SDK 提供服务端签名的订单字符串；SDK 可能按其官方规则处理必要的设备、网络、应用、交易与安全信息。具体个人信息处理者和范围以<a className="inline-link" href="https://opendocs.alipay.com/open/54/01g6qm">支付宝官方 SDK 规则</a>为准。</li>
+        </ul>
+        <p>Android 只会在用户进入购买流程、阅读独立提示并点击同意后，调用所选渠道的支付接口并初始化对应支付功能模块。微信登录与微信支付是不同用途；选择微信登录不等于同意调用微信支付。拒绝或撤回不会影响本地日程、提醒和免费主题；用户可在 App 的“Pro 与购买”页面撤回对应渠道同意。撤回只阻止以后调用该渠道的支付能力，不会删除已经形成的订单、权益、退款记录或依法需要保留的交易记录。</p>
+        <p>订单与权益记录会关联到完成购买的记上日成账号，用于查单、恢复权益、处理退款和防止重复发放。相关记录在提供服务、处理争议以及履行财务和法律义务所必需的期限内保存；账号删除后，依法仍需保留的交易记录会隔离保存，不再用于日常产品功能。</p>
       </LegalSection>
 
       <LegalSection title="5. 保存、导出与删除">
@@ -82,11 +90,11 @@ export default function PrivacyPage() {
       </LegalSection>
 
       <LegalSection title="7. 未成年人">
-        <p>本产品不专门面向未满十四周岁未成年人，也不提供社交、公开内容发布或付费能力。未成年人应在监护人指导下使用，并避免在日程正文中记录不必要的敏感信息。</p>
+        <p>本产品不专门面向未满十四周岁未成年人，也不提供社交或公开内容发布。当前购买能力尚未开放；未来开放后，未成年人应在监护人指导下操作。使用日程时请避免记录不必要的敏感信息。</p>
       </LegalSection>
 
       <LegalSection title="8. 政策更新与联系">
-        <p>如果以后增加 AI、语音、天气、支付、订阅或新的第三方 SDK，我们会在相关能力开始处理信息前更新政策与清单，并在需要时取得用户同意；不会仅因代码预留就把未来能力视为已经启用。</p>
+        <p>如果以后增加 AI、语音、天气、自动续费或新的第三方 SDK，或者正式启用新的支付渠道，我们会在相关能力开始处理信息前更新政策与清单，并在需要时取得用户同意；不会仅因代码预留就把未来能力视为已经启用。</p>
         <p>运营主体：米堆（南京）网络科技有限公司。联系邮箱：<a className="inline-link" href="mailto:zhangxiao@planchime.com">zhangxiao@planchime.com</a>。</p>
       </LegalSection>
     </LegalPage>
