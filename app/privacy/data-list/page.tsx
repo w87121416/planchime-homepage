@@ -4,7 +4,7 @@ import { LegalPage, LegalSection } from "../../components/LegalPage";
 
 export const metadata: Metadata = {
   title: "个人信息与第三方服务清单",
-  description: "记上日成 1.1 三端当前实际处理的数据、权限、系统能力和第三方服务清单。",
+  description: "记上日成 1.1 三端当前实际处理的数据、权限、购买渠道、系统能力和第三方服务清单。",
 };
 
 export default function DataListPage() {
@@ -12,15 +12,15 @@ export default function DataListPage() {
     <LegalPage
       eyebrow="公开透明清单"
       title="1.1 数据与第三方服务清单"
-      summary="本清单适用于 iOS、Android 1.1 与微信小程序 1.1.0，区分设备本地处理、用户主动登录和再次确认后才会发生的跨端同步。"
-      version="1.2"
+      summary="本清单适用于 iOS、Android 1.1 与微信小程序 1.1.0，区分设备本地处理、用户主动选择的联网能力，以及尚未正式开放的购买渠道。"
+      version="1.3"
       status="现行有效"
-      publishedAt="2026 年 9 月 8 日"
-      effectiveAt="2026 年 9 月 8 日"
+      publishedAt="2026 年 10 月 26 日"
+      effectiveAt="2026 年 10 月 26 日"
     >
       <LegalSection title="1. 当前结论">
         <p><strong>无需登录即可本地使用。</strong>移动端包名为 <code>com.planchime.app</code>。登录是可选能力，登录本身不会上传日程；只有再次选择“仅从现在同步”或确认合并预览后，所选日程才会传到账号服务。</p>
-        <p>1.1 不接入广告、统计、支付、AI、天气或邮件 SDK，不出售个人信息，也不基于日程正文建立广告画像。</p>
+        <p>1.1 不接入广告或行为统计 SDK，不出售个人信息，也不基于日程正文建立广告画像。购买能力尚未正式开放：iOS 预留 StoreKit 交易路径，Android 的微信支付与支付宝适配已完成本地接线，但只有平台审核、跨主体授权与服务端核验全部就绪后才会面向用户启用。</p>
       </LegalSection>
 
       <LegalSection title="2. App 内本地处理清单">
@@ -34,6 +34,7 @@ export default function DataListPage() {
               <tr><td>手机号与一次性验证码</td><td>仅在 iOS 或 Android 用户主动选择手机号登录时，通过账号服务和阿里云短信发送、校验</td><td><strong>是，仅用于登录与账号安全</strong></td></tr>
               <tr><td>Apple 或微信一次性身份凭据</td><td>仅在用户主动选择对应平台登录时换取稳定身份标识；长期密钥只保存在服务端</td><td><strong>是，仅用于登录与账号安全</strong></td></tr>
               <tr><td>随机安装/设备标识、会话与同步游标</td><td>登录后用于会话安全、增量同步和跨端一致性</td><td><strong>是</strong></td></tr>
+              <tr><td>账号、商品、订单与权益状态</td><td>购买入口正式开放后，用于把订单绑定到当前账号、核验平台交易、恢复权益以及处理退款或撤销</td><td>仅在用户主动购买时发送给实际支付渠道与记上日成权益服务；当前未开放购买，不会因浏览页面而产生订单</td></tr>
               <tr><td>导出与账号注销</td><td>用户主动发起；导出正文或文件最多保留 7 天，注销申请有 7 天可取消宽限期</td><td>按用户请求处理</td></tr>
             </tbody>
           </table>
@@ -68,18 +69,23 @@ export default function DataListPage() {
               <tr><td>短信</td><td>阿里云短信</td><td>仅在用户主动请求手机号验证码时发送登录验证码，不发送营销短信</td></tr>
               <tr><td>Apple 登录</td><td>Apple</td><td>仅 iOS 用户主动选择时处理 Apple 一次性身份凭据；不读取姓名或邮箱</td></tr>
               <tr><td>微信登录</td><td>微信开放平台 / 腾讯</td><td>用户主动选择时处理一次性 code；不请求昵称、头像或通讯录</td></tr>
+              <tr><td>iOS 购买</td><td>Apple StoreKit</td><td>仅在 iOS 购买入口正式开放且用户主动确认时处理平台订单标识、商品、交易与退款状态；Apple 负责收款，我们不接收完整银行卡信息</td></tr>
+              <tr><td>Android 微信支付</td><td>微信 OpenSDK 6.8.40；深圳市腾讯计算机系统有限公司 / 财付通支付科技有限公司；<a className="inline-link" href="https://support.weixin.qq.com/cgi-bin/mmsupportacctnodeweb-bin/pages/RYiYJkLOrQwu0nb8">官方说明</a></td><td>我们提供 AppID、商户号、预支付标识、随机数、时间戳和签名；SDK 或支付服务可能按官方规则处理必要的设备、网络、应用与支付安全信息。本地接入已准备、当前未开售；仅在独立提示同意并主动购买后调用</td></tr>
+              <tr><td>Android 支付宝</td><td>支付宝客户端 SDK 15.8.42；具体处理者见<a className="inline-link" href="https://opendocs.alipay.com/open/54/01g6qm">官方 SDK 规则</a></td><td>我们提供服务端签名的订单字符串；SDK 可能按官方规则处理必要的设备、网络、应用、交易与安全信息。本地接入已准备、当前未开售；仅在独立提示同意并主动购买后调用</td></tr>
               <tr><td>系统能力</td><td>Apple / Android 系统日历、通知与提醒服务</td><td>只在用户主动使用相应功能时调用；提醒仍由支持该能力的设备本地登记</td></tr>
               <tr><td>官网托管</td><td>当前 planchime.com 托管服务</td><td>可能处理 IP、请求时间、页面地址、浏览器和错误信息，用于页面交付与安全；与 App 本地数据分开</td></tr>
             </tbody>
           </table>
         </div>
-        <p>完整组件名称、版本与许可证以 App 内“数据与帮助”展示和当前正式安装包所附许可证为准。</p>
+        <p>Android 用户拒绝支付隐私提示，不影响本地日程、提醒和免费主题。用户可在 App 的“Pro 与购买”页面撤回微信支付或支付宝隐私同意；撤回只阻止未来调用对应 SDK，不删除旧订单、已发放权益、退款记录或依法需要保留的交易记录。</p>
+        <p>订单、平台交易标识、退款和权益状态会与购买账号关联，用于查单、恢复权益、防止重复发放和处理争议。相关记录按提供服务及履行财务、退款和法律义务所需期限保存；账号注销后，依法需保留的部分会隔离保存。完整组件名称、版本与许可证以 App 内“数据与帮助”和正式安装包为准。</p>
       </LegalSection>
 
       <LegalSection title="5. 留存、删除与明确不提供">
         <p>有效账号与已同步日程为提供功能持续保存；撤回同步同意只停止后续同步，不删除既有云端数据。完成或取消的注销请求及最小 HMAC 墓碑保留 30 天，安全审计与身份防重放事件保留 180 天，加密数据库备份保留 30 天。</p>
         <ul>
-          <li>不提供 AI、天气、邮箱读取、支付、订阅、广告或营销短信。</li>
+          <li>当前不开放购买，官网不下单或收款；Android 计划中的固定期会员不自动续费，支付适配代码不会被描述成已经开售。</li>
+          <li>不提供 AI、天气、邮箱读取、广告或营销短信。</li>
           <li>不读取通讯录、短信、通话记录、位置、相册或相机。</li>
           <li>不把令牌、验证码、微信 code 或日程正文写入应用日志。</li>
           <li>不出售个人信息，不基于日程正文建立广告画像。</li>
