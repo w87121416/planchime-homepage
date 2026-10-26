@@ -11,7 +11,7 @@ export default function SubscriptionPage() {
   return (
     <LegalPage
       eyebrow="购买与权益"
-      title="记上日成购买与权益说明"
+      title="购买与权益说明"
       summary="当前购买能力仍在准备与渠道审核中，官网不下单或收款。未来开放时会在付款前说明每项商品的期限、续费方式、实际收款方与退款规则。"
       version="1.1"
       status="现行有效 · 当前未开放购买"

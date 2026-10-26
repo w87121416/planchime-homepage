@@ -713,12 +713,6 @@ summary {
   margin: 24px 0 0;
 }
 
-/* 中文长标题在窄屏没有空格可断行，必须显式允许按字符换行，避免被页面横向裁切。 */
-.legal-hero h1 {
-  overflow-wrap: anywhere;
-  text-wrap: balance;
-}
-
 .document-meta {
   margin-top: 34px;
   display: grid;
@@ -791,12 +785,6 @@ summary {
 
 .legal-section p {
   margin: 0 0 14px;
-}
-
-/* 包名、域名等连续字符可能很长，移动端应在容器内安全断行。 */
-.legal-section code {
-  overflow-wrap: anywhere;
-  word-break: break-word;
 }
 
 .legal-section ul {
@@ -1204,12 +1192,6 @@ summary {
   .legal-hero,
   .support-hero {
     padding: 66px 0 52px;
-  }
-
-  .legal-hero h1 {
-    font-size: clamp(30px, 9vw, 38px);
-    line-height: 1.24;
-    letter-spacing: -0.035em;
   }
 
   .document-meta {
