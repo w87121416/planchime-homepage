@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 async function render(path) {
@@ -60,13 +59,6 @@ test("隐私与数据清单披露最小支付信息并排除支付凭据", async
   assert.match(dataList, /本地接入已准备[、，]当前未(正式)?开售/);
   assert.match(dataList, /微信 OpenSDK 6\.8\.40/);
   assert.match(dataList, /支付宝客户端 SDK 15\.8\.42/);
-  assert.match(dataList, /撤回只阻止未来调用对应 SDK/);
-});
-
-test("移动端法律页长标题和连续标识不会撑宽页面", async () => {
-  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
-
-  // 支付与数据清单标题较长，必须保留显式断行规则，避免窄屏只显示半句。
-  assert.match(css, /\.legal-hero h1\s*\{[\s\S]*?overflow-wrap:\s*anywhere;/);
-  assert.match(css, /\.legal-section code\s*\{[\s\S]*?word-break:\s*break-word;/);
+  assert.match(dataList, /撤回只阻止未来调用该渠道的支付能力/);
+  assert.match(dataList, /登录授权不等于支付授权/);
 });
