@@ -5,9 +5,12 @@ import { MobileMenu } from "./MobileMenu";
 import styles from "./siteFrame.module.css";
 
 const navigation = [
+  // 独立内容页置于主导航，手机和桌面都能直接了解服务与运营主体。
+  { href: "/services/", label: "产品与服务" },
   { href: "/#experience", label: "产品体验" },
-  { href: "/#platforms", label: "下载与使用" },
-  { href: "/support", label: "帮助" },
+  { href: "/about/", label: "关于我们" },
+  { href: "/contact/", label: "联系我们" },
+  { href: "/support/", label: "帮助" },
 ];
 
 const footerNavigation = [
@@ -15,6 +18,7 @@ const footerNavigation = [
   { href: "/#platforms", label: "下载与使用" },
   { href: "/download/", label: "Android 下载" },
   { href: "/services/", label: "产品与服务" },
+  { href: "/about/", label: "关于我们" },
   { href: "/privacy", label: "隐私政策" },
   { href: "/privacy/data-list", label: "数据与 SDK 清单" },
   { href: "/terms", label: "用户协议" },
