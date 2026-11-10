@@ -13,19 +13,20 @@ export default function SubscriptionPage() {
       eyebrow="购买与权益"
       title="购买与权益说明"
       summary="当前购买能力仍在准备与渠道审核中，官网不下单或收款。未来开放时会在付款前说明每项商品的期限、续费方式、实际收款方与退款规则。"
-      version="1.1"
+      version="1.2"
       status="现行有效 · 当前未开放购买"
-      publishedAt="2026 年 10 月 26 日"
-      effectiveAt="2026 年 10 月 26 日"
+      publishedAt="2026 年 11 月 10 日"
+      effectiveAt="2026 年 11 月 10 日"
       history={[
+        { version: "1.2", publishedAt: "2026 年 11 月 10 日", note: "按当前方案统一米堆收款主体，补充拟售商品说明入口，保留尚未开放购买的状态。" },
         { version: "1.1", publishedAt: "2026 年 10 月 26 日", note: "补充 Android 固定期会员，以及 iOS 与其他主题商品的边界说明。" },
         { version: "1.0", publishedAt: "2026 年 8 月 10 日", note: "首次正式发布，明确当前商品状态和未来自动续费规则。" },
       ]}
     >
       <LegalSection title="1. 当前状态">
-        <p>记上日成当前没有已确认并可公开展示的商品价格，也没有已经开放的官网、Android 或微信小程序收款入口。浏览本页、下载 App、登录账号或联系客服都不会产生费用。</p>
+        <p>记上日成尚未开放官网、Android 或微信小程序收款入口。已确定的拟售价格与权益见<Link className="inline-link" href="/services/#planned-services">会员与主题方案</Link>，方案展示不表示已经可购买或使用。浏览本页、下载 App、登录账号或联系客服都不会产生费用。</p>
         <p>本页提及的未来商品不代表已经开放销售，未来续费规则不代表已开放购买；只有购买入口正式出现、用户主动确认且支付平台展示完整订单信息时，才会产生交易。</p>
-        <p>iOS 购买将遵循 Apple StoreKit 规则；Android 的微信支付与支付宝接入已经完成本地技术准备，但跨主体授权、渠道审核和生产服务端核验尚未全部完成，因此不能视为已开售。当前 1.1 的免费服务状态见<Link className="inline-link" href="/services/">产品与服务</Link>。</p>
+        <p>iOS 购买将遵循 Apple StoreKit 规则；Android 的微信支付与支付宝接入已经完成本地技术准备，但渠道审核、商品交付和生产服务端核验尚未全部完成，因此不能视为已开售。当前 1.1 的免费服务状态见<Link className="inline-link" href="/services/">产品与服务</Link>。</p>
       </LegalSection>
 
       <LegalSection title="2. Android 固定期会员与免费能力">
@@ -39,10 +40,10 @@ export default function SubscriptionPage() {
         <p>记上日成的产品运营主体为<strong>米堆（南京）网络科技有限公司</strong>。</p>
         <ul>
           <li><strong>iOS：</strong>数字权益仅通过 Apple StoreKit 交易，最终收款页面、价格、币种和订单状态以 App Store 确认页面为准。</li>
-          <li><strong>Android：</strong>计划支持微信支付与支付宝。拟由<strong>浦口区新极光科技经营部</strong>作为相关直付渠道的收款商户；该主体与产品运营主体不同。</li>
+          <li><strong>Android：</strong>计划支持微信支付与支付宝，拟由<strong>米堆（南京）网络科技有限公司</strong>作为收款商户，与产品运营主体一致。</li>
           <li><strong>官网与微信小程序：</strong>当前不提供下单或收款，不展示付款二维码或转账账户。</li>
         </ul>
-        <p>Android 直付只有在对应平台完成跨主体授权与审核，并且购买确认页真实展示运营主体、实际收款方和渠道后才会启用。当前说明不表示微信支付或支付宝已经批准关联，也不表示浦口区新极光科技经营部已经能够为本产品收款。</p>
+        <p>官网、H5 与微信小程序的拟收款主体同为米堆（南京）网络科技有限公司。各入口只有在对应平台完成审核、商品可交付、服务端验证通过，并在购买确认页展示实际收款方和渠道后才会启用。当前说明不表示微信支付或支付宝已经批准关联，也不表示已能正常收款。</p>
       </LegalSection>
 
       <LegalSection title="4. 付款前确认与权益发放">
