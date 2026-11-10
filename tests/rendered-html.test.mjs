@@ -199,8 +199,13 @@ test("经营资料说明真实免费服务，会员与主题不能被误读为�
   assert.match(html, /米堆（南京）网络科技有限公司/);
   assert.match(html, /苏ICP备2026061783号-2/);
   assert.match(html, /href="mailto:zhangxiao@planchime\.com"/);
-  // 经营资料不能带出历史计划价格、他项目应用或能收款的入口。
-  assert.doesNotMatch(html, /<form\b|<iframe\b|立即购买|立即支付|开通会员|免费试用[0-9三]|[¥￥]\s*\d/);
+  // 用户确认的拟售方案可披露，但不能让方案说明变成正式交易入口。
+  assert.match(html, /已确定的拟售方案/);
+  assert.match(html, /当前版本尚不可购买或使用这些付费权益/);
+  assert.match(html, /¥12 \/ 30 天/);
+  assert.match(html, /苔光书庭主题/);
+  assert.match(html, /¥6/);
+  assert.doesNotMatch(html, /<form\b|<iframe\b|立即购买|立即支付|开通会员|免费试用[0-9三]/);
   assert.doesNotMatch(html, /wxsyai\.com|2021006168650481|alipays?:\/\//i);
 });
 
@@ -211,7 +216,7 @@ test("用户可以从现有首页、支持和订阅说明找到当前服务状�
   }
   const subscriptionHtml = await (await render("/subscription")).text();
   assert.match(subscriptionHtml, /未来续费规则不代表已开放购买/);
-  assert.match(subscriptionHtml, /当前没有已确认并可公开展示的商品价格/);
+  assert.match(subscriptionHtml, /方案展示不表示已经可购买或使用/);
 });
 
 test("内容候选不包含购买组件、订单、登录或支付返回路由", async () => {

@@ -28,6 +28,8 @@ test("四个支付相关公开页面使用一致且不过度承诺的事实", as
     assert.match(html, /当前.{0,20}(未开放|尚未正式开放|尚未开放|不能视为已开售)/, path);
     // “未获批”这类风险提示本身可以出现；这里仅禁止页面提供会误导用户立即交易的动作。
     assert.doesNotMatch(html, />\s*(立即购买|立即支付)\s*</, path);
+    // 本次已明确统一米堆主体，不允许旧个体户或跨主体方案重新出现在公开页面。
+    assert.doesNotMatch(html, /浦口区新极光科技经营部|跨主体授权/, path);
   }
 });
 
@@ -41,7 +43,7 @@ test("购买说明明确固定期限、免费主题、渠道和主体边界", as
   assert.match(html, /不是自动续费订阅/);
   assert.match(html, /原有 8 套主题继续免费/);
   assert.match(html, /米堆（南京）网络科技有限公司/);
-  assert.match(html, /浦口区新极光科技经营部/);
+  assert.match(html, /与产品运营主体一致/);
   assert.match(html, /Apple StoreKit/);
   assert.match(html, /微信支付与支付宝/);
   assert.match(html, /(当前说明)?不表示微信支付或支付宝已经批准关联/);
