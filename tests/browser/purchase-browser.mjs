@@ -270,7 +270,10 @@ try {
       state.orders = []; state.catalogProduct = disclosed;
       for (const view of ["catalog", "login", "orders", "confirm", "policy"]) {
         const page = await open(ctx, view, "prelaunch");
-        await page.getByText("商品目录已连接，尚未开放购买。", { exact: true }).first().waitFor();
+        await page.getByText("尚未开放购买。", { exact: true }).first().waitFor();
+        const availability = await page.locator('[aria-labelledby="purchase-availability-title"]').innerText();
+        assert.match(availability, /会员与主题尚未开放购买，免费日程与提醒可继续使用。/);
+        assert.doesNotMatch(availability, /商品目录|连接状态|本页只查看|权益交付|开通收款/);
         assert.equal(await page.locator("form,input").count(), 0);
         assert.equal(await page.getByRole("button", { name: /获取验证码|查看并购买|确认并前往|继续支付/ }).count(), 0);
         assert.equal(await page.getByRole("link", { name: "我的订单", exact: true }).count(), 0);
@@ -278,10 +281,10 @@ try {
         if (view === "catalog") {
           await screenshot(page, `prelaunch-${width}`);
           state.offline = true; await page.getByRole("button", { name: "重新查看开放状态" }).click();
-          await page.getByText("暂未取得商品目录状态，购买仍未开放。", { exact: true }).first().waitFor();
+          await page.getByText("暂时无法查看开放情况，请稍后再试。", { exact: true }).first().waitFor();
           state.offline = false;
           state.catalogEnabled = false; await page.getByRole("button", { name: "重新查看开放状态" }).click();
-          await page.getByText("商品目录已连接，尚未开放购买。", { exact: true }).first().waitFor();
+          await page.getByText("尚未开放购买。", { exact: true }).first().waitFor();
           state.catalogEnabled = true;
         }
         await page.close();

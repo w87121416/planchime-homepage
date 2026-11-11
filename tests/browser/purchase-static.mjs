@@ -55,9 +55,12 @@ async function isolatedContext(options = {}) {
   return { context, state, close: async () => { state.closing = true; await context.close(); } };
 }
 async function checkClosed(page, connected = true) {
-  const text = connected ? "商品目录已连接，尚未开放购买。" : "暂未取得商品目录状态，购买仍未开放。";
+  const text = connected ? "尚未开放购买。" : "暂时无法查看开放情况，请稍后再试。";
   await page.getByRole("status").getByText(text, { exact: true }).first().waitFor();
   assert.equal(await page.getByRole("status").getByText(text, { exact: true }).count(), 2);
+  const availability = await page.locator('[aria-labelledby="purchase-availability-title"]').innerText();
+  assert.match(availability, /会员与主题尚未开放购买，免费日程与提醒可继续使用。/);
+  assert.doesNotMatch(availability, /商品目录|连接状态|本页只查看|权益交付|开通收款/);
   assert.equal(await page.locator("form,input,iframe").count(), 0);
   assert.equal(await page.getByRole("button", { name: /获取验证码|查看并购买|确认并前往|继续支付|登录并/ }).count(), 0);
   assert.equal(await page.getByText("权益已加入这个账号", { exact: true }).count(), 0);

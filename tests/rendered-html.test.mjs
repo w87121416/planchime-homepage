@@ -230,8 +230,8 @@ test("售前路由只呈现开放状态，不挂载身份表单或交易动作",
     assert.equal(response.status, 200, path);
     const html = await response.text();
     assert.match(html, /尚未开放购买/, path);
-    assert.match(html, /本页只查看商品目录的连接状态/, path);
-    assert.match(html, /不提供短信验证码、下单或付款操作/, path);
+    assert.match(html, /会员与主题尚未开放购买，免费日程与提醒可继续使用。/, path);
+    assert.doesNotMatch(html, /商品目录|连接状态|本页只查看|权益交付仍在准备|开通收款/, path);
     assert.doesNotMatch(html, /<(?:form|input|iframe)\b|http-equiv=["']?refresh/iu, path);
     assert.doesNotMatch(html, /获取验证码|登录并查看订单|登录并核对购买|查看并购买|确认并前往|继续支付原订单/, path);
     assert.doesNotMatch(html, /(?:alipays?|weixin):\/\/|openapi\.alipay\.com|wx\.tenpay\.com/iu, path);
