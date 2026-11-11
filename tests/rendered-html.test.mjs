@@ -219,12 +219,22 @@ test("用户可以从现有首页、支持和订阅说明找到当前服务状�
   assert.match(subscriptionHtml, /方案展示不表示已经可购买或使用/);
 });
 
-test("内容候选不包含购买组件、订单、登录或支付返回路由", async () => {
+test("售前路由只呈现开放状态，不挂载身份表单或交易动作", async () => {
   const source = await readFile(new URL("../app/services/page.tsx", import.meta.url), "utf8");
   assert.doesNotMatch(source, /PurchasePortal|lib\/purchase|use client|\bfetch\s*\(/);
-  // 路由缺失必须返回 404，不能用隐藏按钮代替不发布未获准模块。
+  assert.match(source, /PurchasePrelaunchStatus/);
+  // 本阶段已批准发布只读路由；把旧404门禁替换为更明确的内容与无副作用门禁，而非隐藏交易按钮。
+  // 水合后的请求范围另由静态浏览器验证：只有PC/H5公开目录GET，没有身份、短信或交易外呼。
   for (const path of ["/services/sign-in/", "/services/orders/", "/services/checkout/", "/services/payment-return/", "/services/purchase-info/"]) {
-    assert.equal((await render(path)).status, 404, path);
+    const response = await render(path);
+    assert.equal(response.status, 200, path);
+    const html = await response.text();
+    assert.match(html, /尚未开放购买/, path);
+    assert.match(html, /本页只查看商品目录的连接状态/, path);
+    assert.match(html, /不提供短信验证码、下单或付款操作/, path);
+    assert.doesNotMatch(html, /<(?:form|input|iframe)\b|http-equiv=["']?refresh/iu, path);
+    assert.doesNotMatch(html, /获取验证码|登录并查看订单|登录并核对购买|查看并购买|确认并前往|继续支付原订单/, path);
+    assert.doesNotMatch(html, /(?:alipays?|weixin):\/\/|openapi\.alipay\.com|wx\.tenpay\.com/iu, path);
   }
 });
 

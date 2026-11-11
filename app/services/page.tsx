@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFrame } from "../components/SiteFrame";
 import { publicSiteFacts } from "../publicSiteFacts";
+import { PurchasePrelaunchStatus } from "../components/PurchasePrelaunchStatus";
 
 export const metadata: Metadata = {
   title: "产品与服务",
@@ -14,7 +15,7 @@ export default function ServicesPage() {
 
   return (
     <SiteFrame>
-      {/* 只复用已发布的公共文档外框，不挂载登录或购买模块；一级标题保持完整阅读层级。 */}
+      {/* 保留已发布说明，只附加无凭据目录状态；不挂载登录或交易界面。 */}
       <div className="legal-hero">
         <div className="shell legal-shell">
           <p className="eyebrow">当前版本 · 免费基础服务</p>
@@ -61,6 +62,8 @@ export default function ServicesPage() {
           <p>本网站目前不提供下单、支付、预付款、免费试用转扣费或自动续费。浏览本页、下载 App 或联系客服不会产生订阅。</p>
           <p>会员与主题将在实际功能、权益交付和支付验证完成后一起开放。届时会在购买页说明适用平台、版本、交付方式、退款路径与客服方式；当前免费基础服务可以继续使用。</p>
         </section>
+
+        <PurchasePrelaunchStatus embedded />
 
         <section className="legal-section" aria-labelledby="operator">
           <h2 id="operator">运营主体与备案</h2>

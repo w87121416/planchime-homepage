@@ -1,0 +1,6 @@
+qrcode-generator 2.0.4
+来源：https://github.com/kazuhikoarase/qrcode-generator/tree/js2.0.4
+许可证：MIT（见 LICENSE）
+原始运行代码保持不变，随网站本地打包，不把支付地址发送到第三方二维码服务。
+qrcode.mjs SHA256 ea91d7118a5395289170da848b7c6758b996163bfbccf312591ab65a4911b7c0
+LICENSE SHA256 3a850fa5f08101db6f40676c2786e10bd2cd5fff7b12ffdf1e0c434d4e49d90c
