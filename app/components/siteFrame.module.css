@@ -19,7 +19,11 @@
 .frame :global(.company-note) { color: #6a7464; font-size: 11px; line-height: 1.8; }
 .frame :global(.company-note p) { margin: 0 0 6px; }
 .frame :global(.company-note a) { overflow-wrap: anywhere; }
-.frame a:focus-visible, .frame button:focus-visible { outline: 3px solid #bd503c; outline-offset: 5px; }
+.frame a:focus-visible, .frame button:focus-visible, .frame summary:focus-visible { outline: 3px solid #bd503c; outline-offset: 5px; }
+.pageNavigation { display: flex; flex-wrap: wrap; gap: 4px 24px; padding-block: 16px; font-size: 14px; }
+.pageNavigation a, .pageNavigation span { display: inline-flex; align-items: center; min-height: 44px; }
+.pageNavigation a { color: #294c3b; text-decoration: underline; text-underline-offset: 4px; }
+.pageNavigation span { color: #657063; }
 .mobileMenu { display: none; }
 @media (max-width: 1100px) {
   .frame :global(.header-inner), .frame :global(.footer-grid) { width: calc(100% - 80px); gap: 24px; }
@@ -33,9 +37,12 @@
   .mobileMenu { display: block; }
   .menuButton { width: 44px; height: 44px; border: 1px solid #dce0d4; border-radius: 12px; background: transparent; color: #294c3b; display: grid; place-items: center; cursor: pointer; padding: 0; }
   .menuButton > span { font-size: 27px; line-height: 1; }
+  .menuButton { list-style: none; }
+  .menuButton::-webkit-details-marker { display: none; }
+  .menuButton .menuClose, .mobileMenu[open] .menuLines { display: none; }
+  .mobileMenu[open] .menuClose { display: block; }
   .menuButton i { display: block; width: 17px; height: 1px; background: currentColor; margin: 5px 0; }
   .mobileMenu nav { position: absolute; left: 24px; right: 24px; top: 68px; max-height: calc(100dvh - 96px); overflow-y: auto; padding: 14px; border: 1px solid #dce0d4; border-radius: 16px; background: #faf8f3; box-shadow: 0 12px 28px #293d2b12; z-index: 20; }
-  .mobileMenu nav[hidden] { display: none; }
   .mobileMenu nav a { display: flex; align-items: center; min-height: 48px; padding: 8px 14px; border-radius: 8px; color: #294c3b; text-decoration: none; font-size: 16px; }
   .mobileMenu nav a:hover { background: #edeee5; }
   .frame :global(.footer-grid) { width: calc(100% - 48px); grid-template-columns: 1fr; gap: 28px; }

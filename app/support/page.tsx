@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function SupportPage() {
   return (
-    <SiteFrame>
+    <SiteFrame currentPage="帮助">
       <section className="support-hero">
         <div className="shell support-shell">
           <p className="eyebrow">官方支持</p>

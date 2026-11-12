@@ -74,13 +74,19 @@ export default function Home() {
                 <a className={styles.button} href={appStoreUrl ?? "#platforms"}>
                   {appStoreUrl ? "免费下载 iPhone 版" : "查看使用方式"}
                 </a>
-                <a className={styles.textLink} href="#experience">看看怎么用 <span aria-hidden="true">↓</span></a>
+                <a className={styles.textLink} href="/services/">产品与服务 <span aria-hidden="true">↗</span></a>
               </div>
               <div className={styles.heroFacts} aria-label="产品特点">
                 <span>无需账号即可开始</span>
                 <span>本地优先</span>
                 <span>iOS 17+</span>
               </div>
+              {/* 经营信息使用独立页面直达入口，不要求打开手机菜单或运行脚本。 */}
+              <nav className={styles.serviceLinks} aria-label="了解记上日成">
+                <a href="/about/">关于米堆</a>
+                <a href="/contact/">联系我们</a>
+                <a href="/support/">使用帮助</a>
+              </nav>
             </div>
             <figure className={styles.heroFigure}>
               <div className={styles.productStage}>

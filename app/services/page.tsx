@@ -14,13 +14,14 @@ export default function ServicesPage() {
   const { appStoreUrl, filings } = publicSiteFacts;
 
   return (
-    <SiteFrame>
+    <SiteFrame currentPage="产品与服务">
       {/* 保留已发布说明，只附加无凭据目录状态；不挂载登录或交易界面。 */}
       <div className="legal-hero">
         <div className="shell legal-shell">
           <p className="eyebrow">当前版本 · 免费基础服务</p>
           <h1>产品与服务</h1>
           <p className="legal-summary">现在可以使用什么、从哪里开始，以及尚未开放的服务，都在这里说明。</p>
+          <p>服务提供方：米堆（南京）网络科技有限公司 · 更新于 2026 年 11 月 13 日</p>
         </div>
       </div>
 
@@ -30,6 +31,22 @@ export default function ServicesPage() {
           <p>无需登录即可创建和编辑本地日程，通过今日与日历查看安排，并使用完成、稍后和改期处理变化。</p>
           <p>iOS 可在授权后设置设备本地提醒。需要跨端时，可以选择登录，并再次确认同步方式；登录本身不会上传日程。提醒仍受设备权限和系统设置影响。</p>
           <p>当前 1.1 不提供支付、订阅或付费主题商品，也不包含 AI、语音录入、邮箱读取、天气或广告能力。</p>
+          <ul>
+            <li><strong>日程与待办记录（免费）：</strong>手动创建和编辑事项，保存日期与时间；适合记录工作安排、学习计划与生活待办。</li>
+            <li><strong>今日与日历（免费）：</strong>查看眼前和之后的安排，按实际情况完成、稍后或改期，已有事项不会被自动移动。</li>
+            <li><strong>设备本地提醒（免费）：</strong>在支持的平台上按需授权和设置。权限或系统受限时，已保存的日程仍可查看和编辑；微信小程序不提供系统闹钟。</li>
+          </ul>
+        </section>
+
+        <section className="legal-section" aria-labelledby="getting-started">
+          <h2 id="getting-started">从记录到完成：怎样使用</h2>
+          <ol>
+            <li>从下方官方入口下载 App。打开后可直接开始使用本地日程，无需先注册会员。</li>
+            <li>新建事项，填写内容和日期时间，确认后保存；需要提醒时再按提示授予通知权限。</li>
+            <li>在今日或日历中查看安排，根据实际情况选择完成、稍后或改期。</li>
+            <li>需要跨端时再选择登录，并确认同步方式。仅登录不会自动上传已有日程。</li>
+          </ol>
+          <p>通知、同步或数据使用遇到问题，请查看<Link className="inline-link" href="/support/">帮助与支持</Link>，也可以<Link className="inline-link" href="/contact/">联系米堆客服</Link>。</p>
         </section>
 
         <section className="legal-section" aria-labelledby="official-product">
