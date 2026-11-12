@@ -5,12 +5,12 @@ import { SiteFrame } from "../components/SiteFrame";
 export const metadata: Metadata = {
   title: "联系我们",
   description: "记上日成官方联系信息与个人信息权利请求入口。",
-  alternates: { canonical: "/contact" },
+  alternates: { canonical: "/contact/" },
 };
 
 export default function ContactPage() {
   return (
-    <SiteFrame>
+    <SiteFrame currentPage="联系我们">
       <section className="support-hero">
         <div className="shell support-shell">
           <p className="eyebrow">无需登录 · 联系我们</p>

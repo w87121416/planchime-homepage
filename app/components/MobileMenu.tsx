@@ -1,26 +1,34 @@
 "use client";
 /* eslint-disable @next/next/no-html-link-for-pages -- 目录静态站采用原生锚点，避免框架重复拼接 hash。 */
 
-import { useState } from "react";
 import styles from "./siteFrame.module.css";
 
 export function MobileMenu() {
-  const [open, setOpen] = useState(false);
   return (
-    <div className={styles.mobileMenu}>
-      <button className={styles.menuButton} type="button" aria-label={open ? "关闭导航菜单" : "打开导航菜单"} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen(!open)}>
-        <span aria-hidden="true">{open ? "×" : <><i /><i /></>}</span>
-      </button>
-      {/* 选择锚点后收起菜单，避免手机端导航遮住目标内容；Escape 也可直接退出。 */}
-      <nav id="mobile-navigation" aria-label="手机导航" hidden={!open} onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }}>
-        <a href="/services/" onClick={() => setOpen(false)}>产品与服务</a>
-        <a href="/#experience" onClick={() => setOpen(false)}>产品体验</a>
-        <a href="/#platforms" onClick={() => setOpen(false)}>下载与使用</a>
-        <a href="/about/" onClick={() => setOpen(false)}>关于我们</a>
-        <a href="/contact/" onClick={() => setOpen(false)}>联系我们</a>
-        <a href="/support/" onClick={() => setOpen(false)}>帮助与支持</a>
-        <a href="/privacy/" onClick={() => setOpen(false)}>隐私政策</a>
+    // 原生 details 在脚本未加载时仍可展开；增强事件只负责收起，不作为导航可用的前提。
+    <details className={styles.mobileMenu} onKeyDown={(event) => {
+      if (event.key === "Escape") {
+        event.currentTarget.open = false;
+        event.currentTarget.querySelector("summary")?.focus();
+      }
+    }}>
+      <summary className={styles.menuButton} aria-label="导航菜单" aria-controls="mobile-navigation">
+        <span className={styles.menuLines} aria-hidden="true"><i /><i /></span>
+        <span className={styles.menuClose} aria-hidden="true">×</span>
+      </summary>
+      <nav id="mobile-navigation" aria-label="手机导航" onClick={(event) => {
+        if (event.target instanceof Element && event.target.closest("a")) {
+          event.currentTarget.closest("details")?.removeAttribute("open");
+        }
+      }}>
+        <a href="/services/">产品与服务</a>
+        <a href="/#experience">产品体验</a>
+        <a href="/#platforms">下载与使用</a>
+        <a href="/about/">关于我们</a>
+        <a href="/contact/">联系我们</a>
+        <a href="/support/">帮助与支持</a>
+        <a href="/privacy/">隐私政策</a>
       </nav>
-    </div>
+    </details>
   );
 }

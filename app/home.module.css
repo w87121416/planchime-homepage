@@ -22,6 +22,8 @@
 .heroFacts { display: flex; flex-wrap: wrap; gap: 0; margin-top: 28px; color: #5e6c63; font-size: 12px; }
 .heroFacts span { display: inline-flex; align-items: center; min-height: 34px; }
 .heroFacts span + span::before { content: ""; width: 1px; height: 13px; margin-inline: 14px; background: #bbb9ad; }
+.serviceLinks { display: flex; flex-wrap: wrap; gap: 4px 24px; margin-top: 12px; }
+.serviceLinks a { display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; color: #244d3c; text-decoration: underline; text-underline-offset: 4px; }
 .heroFigure { min-width: 0; align-self: stretch; position: relative; }
 .productStage { height: 100%; min-height: 720px; position: relative; }
 .phonePosition { position: absolute; z-index: 2; top: 48px; right: 68px; }
@@ -165,6 +167,7 @@
   .actions { display: flex; flex-direction: column; gap: 12px; margin-top: 30px; }
   .actions .button { width: 100%; }
   .heroFacts { justify-content: center; font-size: 10px; margin-top: 22px; }
+  .serviceLinks { justify-content: center; }
   .heroFigure { height: 600px; }
   .productStage { min-height: 580px; }
   .phonePosition { top: 0; left: 50%; right: auto; transform: translateX(-50%); }

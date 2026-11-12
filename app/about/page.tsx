@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <SiteFrame>
+    <SiteFrame currentPage="关于我们">
       <section className="support-hero">
         <div className="shell support-shell">
           <p className="eyebrow">关于我们 · 记上日成</p>

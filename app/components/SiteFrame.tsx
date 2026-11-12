@@ -100,12 +100,24 @@ export function SiteFooter() {
   );
 }
 
-export function SiteFrame({ children }: { children: React.ReactNode }) {
+export function SiteFrame({ children, currentPage }: { children: React.ReactNode; currentPage?: string }) {
   return (
     <div className={`site-frame ${styles.frame}`}>
       <a className="skip-link" href="#main-content">跳到主要内容</a>
       <SiteHeader />
-      <main id="main-content">{children}</main>
+      <main id="main-content">
+        {currentPage ? (
+          // 独立页面保留可直接访问的标准链接，低网速或禁用脚本也能返回首页、继续浏览服务和主体信息。
+          <nav className={`shell ${styles.pageNavigation}`} aria-label="网站栏目">
+            <Link href="/">首页</Link>
+            {navigation.filter((item) => !item.href.includes("#")).map((item) => (
+              item.label === currentPage ? <span key={item.href} aria-current="page">{item.label}</span> :
+                <a key={item.href} href={item.href}>{item.label}</a>
+            ))}
+          </nav>
+        ) : null}
+        {children}
+      </main>
       <SiteFooter />
     </div>
   );

@@ -270,8 +270,9 @@ test("站点地图收录全部正式官网与审核入口", async () => {
   for (const url of [
     "https://planchime.com/",
     "https://planchime.com/download/",
-    "https://planchime.com/support",
-    "https://planchime.com/contact",
+    "https://planchime.com/support/",
+    "https://planchime.com/contact/",
+    "https://planchime.com/about/",
     "https://planchime.com/services/",
     "https://planchime.com/privacy",
     "https://planchime.com/privacy/data-list",
