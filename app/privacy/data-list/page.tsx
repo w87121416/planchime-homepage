@@ -13,11 +13,16 @@ export default function DataListPage() {
       eyebrow="公开透明清单"
       title="1.1 数据与第三方服务清单"
       summary="本清单适用于 iOS、Android 1.1 与微信小程序 1.1.0，区分设备本地处理、用户主动选择的联网能力，以及尚未正式开放的购买渠道。"
-      version="1.4"
+      version="1.5"
       status="现行有效"
-      publishedAt="2026 年 11 月 10 日"
-      effectiveAt="2026 年 11 月 10 日"
+      publishedAt="2026 年 11 月 19 日"
+      effectiveAt="2026 年 11 月 19 日"
     >
+      <LegalSection title="网页日程本：独立的浏览器本地处理">
+        <p><Link className="inline-link" href="/planner/">免费网页日程本</Link>使用浏览器原生 localStorage 保存标题、日期、时间、备注、完成状态、随机事项 ID、修订和创建/更新时间。React 仅用于界面，不接入日程分析、广告、AI、通知或支付 SDK；正文不进入网址、服务器请求和日志。</p>
+        <p>导出在本地生成 JSON 文件，恢复仅在本地解析，用户预览确认后添加缺失记录；不读取其他设备文件。日程与 App、小程序数据分开，不能自动同步。浏览器清除存储或无痕会话结束可能清除数据，导出文件由用户自行保管。</p>
+      </LegalSection>
+
       <LegalSection title="1. 当前结论">
         <p><strong>无需登录即可本地使用。</strong>移动端包名为 <code>com.planchime.app</code>。登录是可选能力，登录本身不会上传日程；只有再次选择“仅从现在同步”或确认合并预览后，所选日程才会传到账号服务。</p>
         <p>1.1 不接入广告或行为统计 SDK，不出售个人信息，也不基于日程正文建立广告画像。购买能力尚未正式开放：iOS 预留 StoreKit 交易路径，Android 的微信支付与支付宝适配已完成本地接线，拟由米堆（南京）网络科技有限公司收款；只有平台审核、商品交付与服务端核验全部就绪后才会面向用户启用。</p>

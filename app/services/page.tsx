@@ -21,13 +21,25 @@ export default function ServicesPage() {
           <p className="eyebrow">当前版本 · 免费基础服务</p>
           <h1>产品与服务</h1>
           <p className="legal-summary">现在可以使用什么、从哪里开始，以及尚未开放的服务，都在这里说明。</p>
-          <p>服务提供方：米堆（南京）网络科技有限公司 · 更新于 2026 年 11 月 13 日</p>
+          <p>服务提供方：米堆（南京）网络科技有限公司 · 更新于 2026 年 11 月 19 日</p>
         </div>
       </div>
 
       <article className="shell legal-shell legal-content">
+        <section className="legal-section" aria-labelledby="web-service">
+          <h2 id="web-service">免费网页日程本 · 现在直接使用</h2>
+          <p><strong>价格：¥0，免费，无需登录或下载。</strong>直接在本网站记录事项、选择日期与时间、填写备注，修改计划，完成或撤销完成，并按今天、待安排或指定日期查看。</p>
+          <p><Link className="inline-link" href="/planner/">打开网页日程本，记录第一件事 →</Link></p>
+          <ol>
+            <li>填写“事情”，日期、时间和备注选填，点击“保存日程”。时间未定可以先留空。</li>
+            <li>在右侧或下方列表查看事项，选择编辑、完成或撤销完成；刷新后，已保存事项仍在当前浏览器。</li>
+            <li>展开“备份与恢复”，导出全部日程；选择此前导出的文件，预览后确认恢复，不会覆盖现有记录。</li>
+          </ol>
+          <p>数据只保存在当前浏览器，最多 500 条；不上传日程、不提供账号同步、AI、语音或到点提醒。清理浏览器数据或结束无痕会话可能清除内容，请按需导出。恢复仅支持本网页的 JSON 备份。</p>
+          <p>使用支持、投诉及功能问题请发邮件至 <a className="inline-link" href="mailto:zhangxiao@planchime.com">zhangxiao@planchime.com</a>。这项服务免费，不涉及付款或退款；不会因为使用网页而开通订阅。<Link className="inline-link" href="/terms/">查看服务规则与争议处理</Link>。</p>
+        </section>
         <section className="legal-section" aria-labelledby="available-services">
-          <h2 id="available-services">当前可使用的免费服务</h2>
+          <h2 id="available-services">App 与小程序的免费基础服务</h2>
           <p>无需登录即可创建和编辑本地日程，通过今日与日历查看安排，并使用完成、稍后和改期处理变化。</p>
           <p>iOS 可在授权后设置设备本地提醒。需要跨端时，可以选择登录，并再次确认同步方式；登录本身不会上传日程。提醒仍受设备权限和系统设置影响。</p>
           <p>当前 1.1 不提供支付、订阅或付费主题商品，也不包含 AI、语音录入、邮箱读取、天气或广告能力。</p>
@@ -39,7 +51,7 @@ export default function ServicesPage() {
         </section>
 
         <section className="legal-section" aria-labelledby="getting-started">
-          <h2 id="getting-started">从记录到完成：怎样使用</h2>
+          <h2 id="getting-started">需要设备提醒时：怎样使用 App</h2>
           <ol>
             <li>从下方官方入口下载 App。打开后可直接开始使用本地日程，无需先注册会员。</li>
             <li>新建事项，填写内容和日期时间，确认后保存；需要提醒时再按提示授予通知权限。</li>
@@ -65,7 +77,7 @@ export default function ServicesPage() {
           <h2 id="product-images">查看产品界面</h2>
           <p>首页的手机画面已标注为界面示意。开发者提供的商店截图可以在 App Store 产品页查看；具体界面与功能以安装的版本为准。</p>
           {appStoreUrl ? <p><a className="inline-link" href={appStoreUrl}>查看官方商店截图</a></p> : null}
-          <p>体验基础流程无需账号：打开 App，新建一条日程，在今日和日历中查看，再按需要完成、稍后或改期。</p>
+          <p>无需安装也可以<Link className="inline-link" href="/planner/">直接使用网页日程本</Link>。App 界面和提醒能力与网页不同，以上商店截图不代表网页工作台。</p>
         </section>
 
         <section className="legal-section" aria-labelledby="planned-services">

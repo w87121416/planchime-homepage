@@ -7,7 +7,7 @@ import styles from "./siteFrame.module.css";
 const navigation = [
   // 独立内容页置于主导航，手机和桌面都能直接了解服务与运营主体。
   { href: "/services/", label: "产品与服务" },
-  { href: "/#experience", label: "产品体验" },
+  { href: "/planner/", label: "网页日程" },
   { href: "/about/", label: "关于我们" },
   { href: "/contact/", label: "联系我们" },
   { href: "/support/", label: "帮助" },
@@ -15,6 +15,7 @@ const navigation = [
 
 const footerNavigation = [
   { href: "/", label: "首页" },
+  { href: "/planner/", label: "免费网页日程" },
   { href: "/#platforms", label: "下载与使用" },
   { href: "/download/", label: "Android 下载" },
   { href: "/services/", label: "产品与服务" },
@@ -54,8 +55,7 @@ export function SiteHeader() {
             item.href.includes("#") ? <a href={item.href} key={item.href}>{item.label}</a> : <Link href={item.href} key={item.href}>{item.label}</Link>
           ))}
         </nav>
-        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- 静态站页内定位使用原生锚点，避免客户端路由重复拼接 hash。 */}
-        <a className="development-pill" href="/#platforms">立即下载</a>
+        <Link className="development-pill" href="/planner/">开始使用</Link>
         <MobileMenu />
       </div>
     </header>
@@ -70,7 +70,7 @@ export function SiteFooter() {
       <div className="shell footer-grid">
         <div>
           <Brand />
-          <p className="footer-note">无需登录即可使用；同步始终由你确认。</p>
+          <p className="footer-note">网页日程免费使用，保存在当前浏览器。App 能力请查看服务说明。</p>
         </div>
         <div className="footer-links" aria-label="页脚导航">
           {/* 服务说明明确当前免费范围与未开放商品；入口可见不代表付费能力已上线。 */}

@@ -14,11 +14,12 @@ export default function TermsPage() {
       eyebrow="服务规则"
       title="记上日成用户协议"
       summary="本协议适用于记上日成 iOS、Android 1.1 与微信小程序 1.1.0。无需登录即可使用本地日程；购买能力只有在对应渠道完成审核并于购买页明确展示后才会开放。"
-      version="1.4"
+      version="1.5"
       status="现行有效"
-      publishedAt="2026 年 11 月 10 日"
-      effectiveAt="2026 年 11 月 10 日"
+      publishedAt="2026 年 11 月 19 日"
+      effectiveAt="2026 年 11 月 19 日"
       history={[
+        { version: "1.5", publishedAt: "2026 年 11 月 19 日", note: "新增免费网页日程本的本地存储、备份恢复和服务边界。" },
         { version: "1.4", publishedAt: "2026 年 11 月 10 日", note: "统一米堆运营与拟收款主体，保留渠道审核和正式交付前不开放购买的边界。" },
         { version: "1.3", publishedAt: "2026 年 10 月 26 日", note: "补充固定期限购买、免费能力与不同支付渠道的服务边界。" },
         { version: "1.2", publishedAt: "2026 年 9 月 8 日", note: "按三端 1.1 发布范围更新可选登录、确认后同步与账号权利。" },
@@ -26,6 +27,13 @@ export default function TermsPage() {
         { version: "1.0", publishedAt: "2026 年 8 月 10 日", note: "首次发布。" },
       ]}
     >
+      <LegalSection title="免费网页日程本的服务范围">
+        <p>本协议也适用于 <Link className="inline-link" href="/planner/">planchime.com/planner/</Link>。免费网页服务提供手动创建、编辑、按日期筛选、完成、撤销完成、单条删除及 JSON 备份恢复，价格为 ¥0，无需注册或付款，不自动开通会员。</p>
+        <p>每个浏览器最多保存 500 条事项，恢复文件上限 2MB。日期、时间按你的输入保存，不提供到点通知、系统闹钟、AI、语音、云备份或跨端同步。日期时间需自行核对，网页不能作为医疗、航班等重要事项的唯一提醒工具。</p>
+        <p>日程只在当前浏览器保存。清理存储、设备故障、结束无痕窗口或卸载浏览器可能造成丢失，请自行导出备份。恢复经预览确认后添加缺失 ID，相同 ID 保留现有记录。已打开页面的本地操作可以离线使用，但不保证断网时能重新加载网站。</p>
+        <p>使用中遇到问题或投诉，可通过 <a className="inline-link" href="mailto:zhangxiao@planchime.com">zhangxiao@planchime.com</a> 联系米堆；其他消费者权利及争议处理规则见本协议第 9、10 节。免费服务不涉及付款或退款。</p>
+      </LegalSection>
+
       <LegalSection title="1. 协议主体与适用范围">
         <p>记上日成由米堆（南京）网络科技有限公司（以下简称“我们”）提供。本协议适用于包名为 <code>com.planchime.app</code> 的 iOS、Android 1.1，以及微信小程序 1.1.0。使用前请同时阅读<Link className="inline-link" href="/privacy">隐私政策</Link>和<Link className="inline-link" href="/privacy/data-list">数据与 SDK 清单</Link>。</p>
         <p>无需账号即可使用本地核心功能。当前购买能力仍在准备与渠道审核中，官网不提供下单或收款；任何付费商品只有在实际开放、完成必要披露并于购买页显示真实支付渠道后才适用。</p>
