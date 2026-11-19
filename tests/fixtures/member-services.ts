@@ -3,6 +3,7 @@ import { serviceConfiguration } from "../../app/lib/services/config.ts";
 import { PRO_POLICY, AI_PROVIDER } from "../../app/lib/services/protocol.ts";
 import { MOSSLIGHT_ENTITLEMENT, MOSSLIGHT_PRODUCT } from "../../app/lib/services/theme.ts";
 import type { PurchaseRuntime } from "../../app/lib/purchase/transport.ts";
+import { VOICE_POLICY, VOICE_PROVIDER } from "../../app/lib/services/voice-protocol.ts";
 
 // 仅供 node/隔离浏览器测试导入；正式 App Router 不导入此文件，所有请求在进程内合成。
 export function memberFixture(options: { anonymous?: boolean; closed?: boolean; storage?: PurchaseRuntime["storage"] } = {}) {
@@ -11,13 +12,15 @@ export function memberFixture(options: { anonymous?: boolean; closed?: boolean; 
     responseAccount: null as string | null, theme: true, refunded: false, revision: 1, unknownText: false, unknownBackup: false, unavailable: false,
     membership: "active" as "active" | "none" | "expired" | "refunded", backupUnavailable: false, entitlementGate: null as Promise<void> | null,
     balances: null as { validUntil: string; textRemaining: number; voiceSecondsRemaining: number }[] | null,
+    voiceConsent: null as Record<string, unknown> | null, voiceRemaining: 3600, unknownVoice: false, voiceRejected: false,
+    voiceOutcome: "ready" as "ready" | "failed" | "indeterminate", voiceDrafts: new Map<string, Record<string, unknown>>(),
     consent: null as Record<string, unknown> | null, remaining: 300, drafts: new Map<string, Record<string, unknown>>(), backups: new Map<string, Record<string, unknown>>() };
   const storage = new Map<string, string>(), calls: { path: string; method: string; body: Record<string, unknown> | null; headers: Record<string, string>; credentials: RequestCredentials | undefined }[] = [];
   let counter = 0;
   const response = (body: object, status = 200) => new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
   const envelope = (body: object) => ({ schemaVersion: 1, accountId: state.responseAccount ?? state.account, ...body });
   const ready = (requestId: string) => ({ schemaVersion: 1, requestId, state: "ready", usageState: "succeeded", expiresAt: new Date(Date.now() + 86400000).toISOString(), contentAvailable: true,
-    result: { selected: "ai-proposal", deterministicFallback: {}, audit: { schemaVersion: 1, outcome: "ai-proposal", reason: null, providerId: AI_PROVIDER, consentPolicyVersion: "ai-data-policy.v1" },
+    result: { selected: "ai-proposal", deterministicFallback: {}, audit: { schemaVersion: 1, outcome: "ai-proposal", reason: null, providerId: AI_PROVIDER, consentPolicyVersion: "ai-data-policy.v1", ruleVersion: "ai-schedule-draft-orchestration.v1", promptVersion: "schedule-draft.zh-cn.v1", dataScopes: ["typed-text"] },
       proposal: { schemaVersion: 1, promptVersion: "schedule-draft.zh-cn.v1", draftState: "unconfirmed", confirmationRequired: true,
         title: "合成测试：去图书馆", itemKind: "event", timeMeaning: "start", when: { kind: "local-date-time", localDate: "2026-11-25", localTime: "10:00" },
         timeZone: { timeZoneId: "Asia/Shanghai", source: "capture-context" }, repeat: { kind: "none" }, reminder: { kind: "none" }, ambiguities: [], confidence: { overall: .9, level: "high" } } } });
@@ -40,7 +43,24 @@ export function memberFixture(options: { anonymous?: boolean; closed?: boolean; 
         if (state.entitlementGate) await state.entitlementGate;
         return result;
       }
-      if (path === "/v1/web-pro/usage") return response(envelope({ policyVersion: PRO_POLICY, balances: state.balances ?? (state.membership === "active" ? [{ validUntil: until, textRemaining: state.remaining, voiceSecondsRemaining: 3600 }] : []) }));
+      if (path === "/v1/web-pro/usage") return response(envelope({ policyVersion: PRO_POLICY, balances: state.balances ?? (state.membership === "active" ? [{ validUntil: until, textRemaining: state.remaining, voiceSecondsRemaining: state.voiceRemaining }] : []) }));
+      if (path === "/v1/web-pro/voice-consent") {
+        if (method === "GET") return response(envelope({ consent: state.voiceConsent }));
+        state.voiceConsent = { schemaVersion: 1, recordId: body.recordId, capability: "remote-audio-transcription", providerId: VOICE_PROVIDER, policyVersion: VOICE_POLICY, dataScopes: ["raw-audio", "speech-transcript"], grantedAt: now, revokedAt: null, updatedAt: now, revision: 1 };
+        return response(envelope({ consent: state.voiceConsent }));
+      }
+      if (path === "/v1/web-pro/voice-consent/revoke") { state.voiceConsent = { ...state.voiceConsent, revokedAt: now, updatedAt: now, revision: 2 }; return response(envelope({ consent: state.voiceConsent })); }
+      if (path === "/v1/web-pro/voice-drafts") {
+        if (state.voiceRejected) return response({ schemaVersion: 1, status: "error", code: "PRO_VOICE_BUSY" }, 503);
+        const units = Math.ceil((atob(body.wavBase64).length - 44) / 32000), base = ready(body.requestId);
+        const draft = { ...base, stage: "parsing", units, sourceConsentPolicyVersion: VOICE_POLICY, sourceConsentRecordId: body.consentRecordId,
+          transcript: "合成录音转写：下周三上午十点去图书馆", state: state.voiceOutcome, usageState: state.voiceOutcome === "ready" ? "succeeded" : state.voiceOutcome === "failed" ? "released" : "running",
+          result: state.voiceOutcome === "ready" ? { ...base.result, audit: { ...base.result.audit, dataScopes: ["speech-transcript"] } } : null };
+        state.voiceDrafts.set(body.requestId, draft); if (state.voiceOutcome !== "failed") state.voiceRemaining -= units;
+        if (state.unknownVoice) throw new TypeError("synthetic voice response lost");
+        return response(envelope({ draft: { ...draft, state: "running", stage: "transcription", usageState: "running", transcript: null, result: null, contentAvailable: false } }), 202);
+      }
+      if (path.startsWith("/v1/web-pro/voice-drafts/")) { const draft = state.voiceDrafts.get(path.split("/")[4]); return draft ? response(envelope({ draft })) : response({ schemaVersion: 1, status: "error", code: "PRO_VOICE_NOT_FOUND" }, 404); }
       if (path === "/v1/web-pro/text-consent") {
         if (method === "GET") return response(envelope({ consent: state.consent }));
         state.consent = { schemaVersion: 1, recordId: body.recordId, capability: "remote-ai-schedule-draft", providerId: AI_PROVIDER, policyVersion: "ai-data-policy.v1", dataScopes: ["typed-text"], grantedAt: now, revokedAt: null, updatedAt: now, revision: 1 };
@@ -68,7 +88,7 @@ export function memberFixture(options: { anonymous?: boolean; closed?: boolean; 
       if (path.startsWith("/v1/web-pro/backups/")) { const backup = state.backups.get(path.split("/")[4]); return backup ? response(envelope({ backup })) : response({ schemaVersion: 1, status: "error", code: "PRO_BACKUP_NOT_FOUND" }, 404); }
       throw new Error("Unexpected synthetic route");
     }) as typeof fetch };
-  const configuration = options.closed ? serviceConfiguration : { ...serviceConfiguration, transport: { mode: "services" as const, apiOrigin: "https://api.planchime.com", servicesApproved: true }, textEnabled: true, themeEnabled: true, backupEnabled: true };
+  const configuration = options.closed ? serviceConfiguration : { ...serviceConfiguration, transport: { mode: "services" as const, apiOrigin: "https://api.planchime.com", servicesApproved: true }, textEnabled: true, themeEnabled: true, backupEnabled: true, voiceEnabled: true };
   const client = new WebMemberServiceClient(configuration, runtime);
   return { client, runtime, state, calls, storage, ready, configuration };
 }

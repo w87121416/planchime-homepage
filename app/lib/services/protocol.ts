@@ -34,12 +34,14 @@ export function parseUsage(value: unknown, accountId: string): ServiceUsage {
     return Object.freeze({ validUntil: utc(balance.validUntil), textRemaining, voiceSecondsRemaining });
   })) });
 }
-function proposal(value: unknown): NonNullable<TextDraft["proposal"]> {
+export function parseScheduleProposal(value: unknown, scope: "typed-text" | "speech-transcript"): NonNullable<TextDraft["proposal"]> {
   const result = object(value), p = versioned(result.proposal), audit = versioned(result.audit);
   if (result.selected !== "ai-proposal" || p.promptVersion !== "schedule-draft.zh-cn.v1" || p.draftState !== "unconfirmed" || p.confirmationRequired !== true ||
       (p.title !== null && (typeof p.title !== "string" || !p.title.trim() || p.title.length > 160)) ||
       !["task", "event"].includes(String(p.itemKind)) || !["start", "due"].includes(String(p.timeMeaning)) ||
-      audit.outcome !== "ai-proposal" || audit.reason !== null || audit.providerId !== AI_PROVIDER || audit.consentPolicyVersion !== AI_POLICY) invalid();
+      audit.outcome !== "ai-proposal" || audit.reason !== null || audit.providerId !== AI_PROVIDER || audit.consentPolicyVersion !== AI_POLICY ||
+      audit.ruleVersion !== "ai-schedule-draft-orchestration.v1" || audit.promptVersion !== "schedule-draft.zh-cn.v1" ||
+      !Array.isArray(audit.dataScopes) || audit.dataScopes.length !== 1 || audit.dataScopes[0] !== scope) invalid();
   const zone = object(p.timeZone), when = object(p.when), repeat = object(p.repeat), reminder = object(p.reminder);
   const timeZoneId = text(zone.timeZoneId, /^[A-Za-z0-9_+/-]{1,128}$/u);
   try { new Intl.DateTimeFormat("en", { timeZone: timeZoneId }).format(0); } catch { invalid(); }
@@ -70,5 +72,5 @@ export function parseTextDraft(value: unknown, accountId: string, requestId: str
       (row.result !== null && (row.state !== "ready" || row.contentAvailable !== true)) ||
       (row.state === "ready" && row.contentAvailable === true && row.result === null)) invalid();
   return Object.freeze({ requestId, state: row.state as TextDraft["state"], usageState: row.usageState as TextDraft["usageState"],
-    expiresAt: utc(row.expiresAt), contentAvailable: row.contentAvailable as boolean, proposal: row.result === null ? null : proposal(row.result) });
+    expiresAt: utc(row.expiresAt), contentAvailable: row.contentAvailable as boolean, proposal: row.result === null ? null : parseScheduleProposal(row.result, "typed-text") });
 }

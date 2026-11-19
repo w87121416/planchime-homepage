@@ -5,6 +5,8 @@ import { AI_POLICY, accountResponse, parseConsent, parseTextDraft, parseUsage, t
 import { serviceConfiguration, type ServiceConfiguration } from "./config.ts";
 import { backupVersion, parseBackupList, parseDownloadedBackup, type BackupList, type BackupVersion, type DownloadedBackup } from "./backup.ts";
 import { parseDocument, type PlannerDocument } from "../planner/model.ts";
+import { VOICE_POLICY, VOICE_PROVIDER, parseVoiceConsent, parseVoiceDraft, type VoiceConsent, type VoiceDraft } from "./voice-protocol.ts";
+import { voiceWavBase64 } from "./voice-audio.ts";
 
 export interface MemberServicePort {
   readonly configuration: ServiceConfiguration;
@@ -22,13 +24,19 @@ export interface MemberServicePort {
   logout(): Promise<void>;
   abort(): void;
   uuid(): string;
-  pending(accountId: string, kind?: "text" | "backup"): Promise<string | null>;
-  remember(accountId: string, requestId: string | null, kind?: "text" | "backup", expectedRequestId?: string): Promise<void>;
+  pending(accountId: string, kind?: "text" | "backup" | "voice"): Promise<string | null>;
+  remember(accountId: string, requestId: string | null, kind?: "text" | "backup" | "voice", expectedRequestId?: string): Promise<void>;
   backups(accountId: string, signal: AbortSignal, cursor?: string): Promise<BackupList>;
   uploadBackup(accountId: string, requestId: string, document: PlannerDocument, signal: AbortSignal): Promise<BackupVersion>;
   downloadBackup(accountId: string, requestId: string, signal: AbortSignal): Promise<DownloadedBackup>;
+  voiceConsent(accountId: string, signal: AbortSignal): Promise<VoiceConsent | null>;
+  voiceGrant(accountId: string, recordId: string, signal: AbortSignal): Promise<VoiceConsent>;
+  voiceRevoke(accountId: string, recordId: string, signal: AbortSignal): Promise<VoiceConsent>;
+  createVoice(accountId: string, input: VoiceRequest, signal: AbortSignal): Promise<VoiceDraft>;
+  readVoice(accountId: string, requestId: string, consentRecordId: string, signal: AbortSignal): Promise<VoiceDraft>;
 }
 export type TextRequest = Readonly<{ requestId: string; sourceText: string; referenceInstant: string; timeZoneId: string; consentRecordId: string }>;
+export type VoiceRequest = Readonly<{ requestId: string; wav: Uint8Array; referenceInstant: string; timeZoneId: string; consentRecordId: string }>;
 
 export class WebMemberServiceClient implements MemberServicePort {
   readonly configuration: ServiceConfiguration;
@@ -38,14 +46,14 @@ export class WebMemberServiceClient implements MemberServicePort {
     this.#commerce = new WebPurchaseClient(this.configuration.transport, runtime);
   }
   uuid() { return this.#commerce.identity.newMutation().clientMutationId; }
-  async #pendingKey(accountId: string, kind: "text" | "backup") { return `planchime:web-pro:${kind}:pending:v1:${await this.#commerce.identity.transport.runtime.digest(accountId)}`; }
-  async pending(accountId: string, kind: "text" | "backup" = "text") {
+  async #pendingKey(accountId: string, kind: "text" | "backup" | "voice") { return `planchime:web-pro:${kind}:pending:v1:${await this.#commerce.identity.transport.runtime.digest(accountId)}`; }
+  async pending(accountId: string, kind: "text" | "backup" | "voice" = "text") {
     try {
       const stored = this.#commerce.identity.transport.runtime.storage?.getItem(await this.#pendingKey(accountId, kind));
       return stored ? text(stored) : null;
     } catch { throw new PurchaseClientError("SERVICE_RECOVERY_UNAVAILABLE"); }
   }
-  async remember(accountId: string, requestId: string | null, kind: "text" | "backup" = "text", expectedRequestId?: string) {
+  async remember(accountId: string, requestId: string | null, kind: "text" | "backup" | "voice" = "text", expectedRequestId?: string) {
     try {
       const { storage, locks } = this.#commerce.identity.transport.runtime;
       if (!storage || !locks) throw new Error();
@@ -123,5 +131,35 @@ export class WebMemberServiceClient implements MemberServicePort {
   downloadBackup(accountId: string, requestId: string, signal: AbortSignal) {
     this.#requireBackup();
     return this.#request(accountId, `/v1/web-pro/backups/${text(requestId)}`, signal).then(value => parseDownloadedBackup(value, accountId, requestId));
+  }
+  #requireVoice() { if (!this.configuration.voiceEnabled || !this.configuration.voiceRetentionDisclosure) throw new PurchaseClientError("PRO_VOICE_NOT_OPEN"); }
+  async voiceConsent(accountId: string, signal: AbortSignal) {
+    this.#requireVoice();
+    const row = accountResponse(await this.#request(accountId, "/v1/web-pro/voice-consent", signal), accountId);
+    return row.consent === null ? null : parseVoiceConsent(row.consent);
+  }
+  async voiceGrant(accountId: string, recordId: string, signal: AbortSignal) {
+    this.#requireVoice();
+    const row = accountResponse(await this.#request(accountId, "/v1/web-pro/voice-consent", signal, { schemaVersion: 1, recordId: text(recordId), policyVersion: VOICE_POLICY, providerId: VOICE_PROVIDER, confirmed: true }), accountId);
+    const consent = parseVoiceConsent(row.consent);
+    if (consent.recordId !== recordId || consent.revokedAt !== null) throw new PurchaseClientError("CONSENT_CONFLICT"); return consent;
+  }
+  async voiceRevoke(accountId: string, recordId: string, signal: AbortSignal) {
+    this.#requireVoice();
+    const row = accountResponse(await this.#request(accountId, "/v1/web-pro/voice-consent/revoke", signal, { schemaVersion: 1, recordId: text(recordId) }), accountId);
+    const consent = parseVoiceConsent(row.consent);
+    if (consent.recordId !== recordId || consent.revokedAt === null) throw new PurchaseClientError("INVALID_RESPONSE"); return consent;
+  }
+  createVoice(accountId: string, input: VoiceRequest, signal: AbortSignal) {
+    this.#requireVoice();
+    try { if (!input.timeZoneId || input.timeZoneId.length > 128) throw new Error(); new Intl.DateTimeFormat("en", { timeZone: input.timeZoneId }).format(0); }
+    catch { throw new PurchaseClientError("PRO_VOICE_INPUT_INVALID"); }
+    const body = { schemaVersion: 1, requestId: text(input.requestId), consentRecordId: text(input.consentRecordId), referenceInstant: utc(input.referenceInstant),
+      timeZoneId: input.timeZoneId, wavBase64: voiceWavBase64(input.wav), confirmedUpload: true };
+    return this.#request(accountId, "/v1/web-pro/voice-drafts", signal, body).then(value => parseVoiceDraft(value, accountId, input.requestId, input.consentRecordId));
+  }
+  readVoice(accountId: string, requestId: string, consentRecordId: string, signal: AbortSignal) {
+    this.#requireVoice();
+    return this.#request(accountId, `/v1/web-pro/voice-drafts/${text(requestId)}`, signal).then(value => parseVoiceDraft(value, accountId, requestId, consentRecordId));
   }
 }

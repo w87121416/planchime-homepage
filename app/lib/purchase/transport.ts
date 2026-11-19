@@ -66,8 +66,8 @@ export class PurchaseTransport {
     const serviceIdentity = family === "identity" && (method === "GET" ? path === "/v1/web-auth/session" :
       ["/v1/web-auth/refresh", "/v1/web-auth/logout", "/v1/web-auth/phone/challenges", "/v1/web-auth/phone/verify"].includes(path));
     const servicePath = family === "service" && (method === "GET" ?
-      ["/v1/web-pro/usage", "/v1/web-pro/text-consent"].includes(path) || /^\/v1\/web-pro\/(?:text-drafts|backups)\/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/u.test(path) || /^\/v1\/web-pro\/backups(?:\?cursor=[A-Za-z0-9][A-Za-z0-9._:-]{0,127})?$/u.test(path) :
-      ["/v1/web-pro/text-consent", "/v1/web-pro/text-consent/revoke", "/v1/web-pro/text-drafts", "/v1/web-pro/backups"].includes(path) || /^\/v1\/web-pro\/text-drafts\/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}\/cancel$/u.test(path));
+      ["/v1/web-pro/usage", "/v1/web-pro/text-consent", "/v1/web-pro/voice-consent"].includes(path) || /^\/v1\/web-pro\/(?:text-drafts|voice-drafts|backups)\/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/u.test(path) || /^\/v1\/web-pro\/backups(?:\?cursor=[A-Za-z0-9][A-Za-z0-9._:-]{0,127})?$/u.test(path) :
+      ["/v1/web-pro/text-consent", "/v1/web-pro/text-consent/revoke", "/v1/web-pro/text-drafts", "/v1/web-pro/backups", "/v1/web-pro/voice-consent", "/v1/web-pro/voice-consent/revoke", "/v1/web-pro/voice-drafts"].includes(path) || /^\/v1\/web-pro\/text-drafts\/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}\/cancel$/u.test(path));
     // 固定白名单保证服务已开放、商品可售等任何响应都不能扩大到交易端点。
     if (this.configuration.mode === "services" && !(serviceIdentity || servicePath ||
         (family === "commerce" && method === "GET" && path === "/v1/commerce/entitlements"))) throw new PurchaseClientError("SERVICE_SCOPE_REJECTED");

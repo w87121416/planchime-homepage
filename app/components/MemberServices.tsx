@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore, type CSSProperties, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type FormEvent } from "react";
 import { WebMemberServiceClient } from "../lib/services/client";
 import { MemberServicesController, type MemberServicesState } from "../lib/services/controller";
 import { servicePlannerRepository } from "../lib/services/planner";
 import { mosslightWebManifest, ownsMosslight, themeVariables } from "../lib/services/theme";
-import type { PlannerDraft } from "../lib/planner/model";
 import styles from "./memberServices.module.css";
 import { MemberBackup } from "./MemberBackup";
+import { MemberVoice } from "./MemberVoice";
+import { MemberDraftForm } from "./MemberDraftForm";
 import { broadcastServiceInvalidation as broadcast, subscribeServiceInvalidation } from "../lib/services/session-events";
 
 const sections = [["text", "文字整理"], ["voice", "语音整理"], ["backup", "云备份"], ["theme", "主题"]] as const;
@@ -21,9 +22,12 @@ export function MemberServices({ controller: supplied }: { controller?: MemberSe
   const state = useSyncExternalStore(controller.subscribe, controller.getSnapshot, controller.getSnapshot);
   const now = useSyncExternalStore(subscribeClock, clockSnapshot, serverClock);
   const [section, setSection] = useState<(typeof sections)[number][0]>("text");
+  const capturing = useRef(false);
+  const onCaptureChange = useCallback((active: boolean) => { capturing.current = active; }, []);
   useEffect(() => {
     void controller.refresh();
-    const focus = () => { void controller.refresh(); };
+    // 麦克风许可弹窗返回焦点时保留本机录音；上传仍经服务端会话重验，退出广播/离线照常失效。
+    const focus = () => { if (!capturing.current) void controller.refresh(); };
     const offline = () => controller.invalidate();
     const unsubscribe = subscribeServiceInvalidation(controller.invalidate);
     window.addEventListener("focus", focus); window.addEventListener("offline", offline);
@@ -44,7 +48,9 @@ export function MemberServices({ controller: supplied }: { controller?: MemberSe
     <div className={styles.tabs} aria-label="服务类别">{sections.map(([key, name]) => <button key={key} type="button" aria-pressed={section === key} aria-controls="member-service-panel" onClick={() => setSection(key)}>{name}</button>)}</div>
     <section id="member-service-panel" className={styles.panel} aria-label={sections.find(([key]) => key === section)?.[1]}>
       {section === "text" ? state.phase === "ready" ? <TextService key={state.session!.accountId} controller={controller} state={state} now={now} /> : <Unavailable title="文字整理" description={state.phase === "closed" ? "文字整理尚未开放。你可以先在免费网页日程中记录安排。" : "核验本人账号后，可查看文字整理的开放情况和剩余额度。"} /> : null}
-      {section === "voice" ? <Unavailable title="语音整理" description="语音整理尚未开放。你可以切换到文字整理，或直接手动记录日程。" /> : null}
+      {section === "voice" ? state.phase === "ready" && controller.client.configuration.voiceEnabled && controller.client.configuration.voiceRetentionDisclosure ?
+        <MemberVoice key={state.session!.accountId} parent={controller} accountId={state.session!.accountId!} now={now} onCaptureChange={onCaptureChange} /> :
+        <Unavailable title="语音整理" description="语音整理尚未开放。你可以切换到文字整理，或直接手动记录日程。" /> : null}
       {section === "backup" ? state.phase === "ready" && controller.client.configuration.backupEnabled ? <MemberBackup key={state.session!.accountId} controller={controller} accountId={state.session!.accountId!} /> : <Unavailable title="云备份" description="云备份尚未开放。你仍可在免费网页日程中导出、恢复本地备份文件。" /> : null}
       {section === "theme" ? <div><h2>苔光书庭</h2><p className={styles.hint}>安静的绿色与暖白纸面。这里展示真实主题原图。</p>
         {/* 原图仅为预览；授权和资源都核验后，按钮才允许应用实际外观。 */}
@@ -103,20 +109,7 @@ function TextResult({ controller, state }: { controller: MemberServicesControlle
   const editable = draft?.state === "ready" && draft.contentAvailable && draft.proposal;
   const status = !draft || ["queued", "running", "indeterminate"].includes(draft.state) ? "这次处理结果还在核对，请先查询本次结果。" : draft.state === "ready" ? editable ? "已整理成草稿。确认日期和时间后，再保存到浏览器。" : "这份结果已经无法查看，当前浏览器中已保存的日程不受影响。" : draft.state === "cancelled" ? "本次尚未开始的整理已取消。" : "本次没有生成可用草稿，已有日程没有改变。";
   return <div><p role="status">{status}</p><div className={styles.actions}><button type="button" disabled={state.busy} onClick={() => void controller.query()}>查询本次结果</button>{draft?.state === "queued" ? <button type="button" disabled={state.busy} onClick={() => void controller.cancel()}>取消尚未开始的整理</button> : null}</div>
-    {editable ? <EditableDraft key={draft.requestId} controller={controller} state={state} initial={editable.draft} zone={editable.timeZoneId} notes={editable.reviewNotes} /> : null}
+    {editable ? <MemberDraftForm key={draft.requestId} busy={state.busy} onSave={(value, confirmed) => controller.saveDraft(servicePlannerRepository, value, confirmed)} initial={editable.draft} zone={editable.timeZoneId} notes={editable.reviewNotes} /> : null}
     {draft && ["ready", "failed", "cancelled"].includes(draft.state) ? <button className={styles.secondary} type="button" disabled={state.busy} onClick={() => void controller.finishRequest()}>结束查看本次结果</button> : null}
   </div>;
-}
-function EditableDraft({ controller, state, initial, zone, notes }: { controller: MemberServicesController; state: MemberServicesState; initial: PlannerDraft; zone: string; notes: readonly string[] }) {
-  const [draft, setDraft] = useState(initial), [confirmed, setConfirmed] = useState(false);
-  const update = (key: keyof PlannerDraft, value: string) => { setDraft(old => ({ ...old, [key]: value })); setConfirmed(false); };
-  return <form className={styles.form} onSubmit={e => { e.preventDefault(); void controller.saveDraft(servicePlannerRepository, draft, confirmed); }}>
-    <p className={styles.hint}>草稿按 {zone} 解释。保存前请核对；网页不转换为其他时区，也不发送到点提醒。</p>
-    {notes.length ? <ul>{notes.map(note => <li key={note}>{note}</li>)}</ul> : null}
-    <label htmlFor="draft-title">事情</label><input id="draft-title" value={draft.title} maxLength={100} required onChange={e => update("title", e.target.value)} />
-    <div className={styles.dateFields}><div><label htmlFor="draft-date">日期</label><input id="draft-date" type="date" value={draft.date} onChange={e => update("date", e.target.value)} /></div><div><label htmlFor="draft-time">时间</label><input id="draft-time" type="time" value={draft.time} onChange={e => update("time", e.target.value)} /></div></div>
-    <label htmlFor="draft-notes">备注</label><textarea id="draft-notes" rows={4} value={draft.notes} maxLength={2000} onChange={e => update("notes", e.target.value)} />
-    <label className={styles.checkbox}><input type="checkbox" checked={confirmed} onChange={e => setConfirmed(e.target.checked)} />我已核对，保存到当前浏览器；退出账号后仍保留。</label>
-    <button className={styles.primary} disabled={state.busy || !confirmed}>确认保存到浏览器</button>
-  </form>;
 }
