@@ -12,15 +12,26 @@ export default function DataListPage() {
     <LegalPage
       eyebrow="公开透明清单"
       title="1.1 数据与第三方服务清单"
-      summary="本清单适用于 iOS、Android 1.1 与微信小程序 1.1.0，区分设备本地处理、用户主动选择的联网能力，以及尚未正式开放的购买渠道。"
-      version="1.5"
+      summary="本清单适用于 iOS、Android 1.1、微信小程序 1.1.0 与 planchime.com 网页服务，区分本地处理、用户主动选择的联网能力，以及尚未正式开放的购买渠道。"
+      version="1.6"
       status="现行有效"
-      publishedAt="2026 年 11 月 19 日"
-      effectiveAt="2026 年 11 月 19 日"
+      publishedAt="2026 年 11 月 20 日"
+      effectiveAt="2026 年 11 月 20 日"
     >
       <LegalSection title="网页日程本：独立的浏览器本地处理">
         <p><Link className="inline-link" href="/planner/">免费网页日程本</Link>使用浏览器原生 localStorage 保存标题、日期、时间、备注、完成状态、随机事项 ID、修订和创建/更新时间。React 仅用于界面，不接入日程分析、广告、AI、通知或支付 SDK；正文不进入网址、服务器请求和日志。</p>
         <p>导出在本地生成 JSON 文件，恢复仅在本地解析，用户预览确认后添加缺失记录；不读取其他设备文件。日程与 App、小程序数据分开，不能自动同步。浏览器清除存储或无痕会话结束可能清除数据，导出文件由用户自行保管。</p>
+      </LegalSection>
+
+      <LegalSection title="网页会员服务：尚未开放">
+        <p>文字、语音、云备份入口目前关闭，不因浏览页面而处理以下内容。启用后也必须具备对应权益并由你主动操作；具体同意与留存规则见<Link className="inline-link" href="/privacy/">隐私政策中的网页会员服务说明</Link>。</p>
+        <ul>
+          <li><strong>文字整理：</strong>仅将确认发送的文字、参考时间和时区交由米堆服务端及阿里云百炼北京地域生成可编辑草稿。</li>
+          <li><strong>语音整理：</strong>仅在点击后申请浏览器麦克风；本地试听不上传。独立同意并确认上传后，百炼北京地域处理音频转写和后续文字整理。单段最多 60 秒，不后台监听。</li>
+          <li><strong>临时内容：</strong>米堆不持久保存原始录音；文字、转写与草稿加密保存至请求创建后 24 小时，不进入长期灾备。百炼对调用数据的保存依其服务协议和法规要求处理。最小授权、请求状态与用量记录不含原文，用于安全、去重和额度核对。</li>
+          <li><strong>云备份：</strong>只有你预览、确认的网页日程才上传至米堆北京服务端并加密保存。云备份与 AI 临时草稿分开，不存录音；容量、版本与到期下载规则在操作前展示。</li>
+          <li><strong>主题：</strong>核对当前账号的主题权益，在当前浏览器保存选择；不上传日程正文，权益失效时返回免费外观。</li>
+        </ul>
       </LegalSection>
 
       <LegalSection title="1. 当前结论">
