@@ -190,7 +190,7 @@ export function PlannerWorkbench() {
     </div>
 
     <details className={styles.backup}>
-      <summary>备份与恢复 <span>把日程留一份在自己手里</span></summary>
+      <summary>本地文件备份与恢复 <span>把日程留一份在自己手里</span></summary>
       <p>导出包含全部已保存事项，不受筛选影响。恢复仅添加缺失事项，已有事项保留当前版本，不会被备份覆盖。文件仅在当前浏览器读取，不会上传。</p>
       <div className={styles.backupActions}><button type="button" onClick={exportSaved} disabled={locked}>导出全部日程</button><label className={styles.fileLabel}>选择备份文件<input type="file" accept=".json,application/json" disabled={locked} onChange={(e) => { void readBackup(e.target.files?.[0]); e.target.value = ""; }} /></label></div>
       {pendingImport ? <div className={styles.importPreview} role="region" aria-label="恢复预览"><h3>恢复前，先确认一下</h3><p>备份包含 {pendingImport.items.length} 条事项。将添加 {pendingImport.items.filter((item) => !document.items.some((current) => item.id === current.id)).length} 条。已存在的事项会跳过，即使内容有变化，也保留当前版本。</p><ul>{pendingImport.items.slice(0, 5).map((item) => <li key={item.id}>{item.title} · {item.date || "待安排"}</li>)}</ul>{pendingImport.items.length > 5 ? <p>以及其余 {pendingImport.items.length - 5} 条事项。</p> : null}<button type="button" disabled={locked} className={styles.primary} onClick={() => void act(async () => {
