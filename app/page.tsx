@@ -50,6 +50,7 @@ const journeys = [
 ];
 
 const faq = [
+  ["可以直接在网站使用吗？", "可以。点击“免费开始网页使用”，无需登录即可录入、修改、完成日程和导出备份。网页数据仅保存在当前浏览器，不提供到点提醒，也不会同步到 App 或小程序。"],
   ["需要登录才能使用吗？", "不需要。本地日程无需登录；需要跨端使用时，可再选择手机号、Apple 或微信登录。"],
   ["登录后，数据会自动上传吗？", "不会。登录不自动上传日程。只有你另行选择“仅从现在同步”或确认合并预览后，所选日程才会同步。"],
   ["提醒一定会响吗？", "提醒受通知权限、精确闹钟特殊访问、静音和设备省电策略影响，不承诺穿透静音或任何环境下必响。权限不足时，已保存的日程仍可查看和编辑。"],
@@ -71,15 +72,15 @@ export default function Home() {
               <h1 id="home-title">把事情记下。<br /><span>把时间留给<br className={styles.mobileBreak} />生活。</span></h1>
               <p className={styles.lead}>清楚安排日程、待办与提醒。<br className={styles.desktopBreak} />不催促，不替你决定，只把下一步准备好。</p>
               <div className={styles.actions}>
-                <a className={styles.button} href={appStoreUrl ?? "#platforms"}>
-                  {appStoreUrl ? "免费下载 iPhone 版" : "查看使用方式"}
+                <a className={styles.button} href="/planner/">
+                  免费开始网页使用
                 </a>
                 <a className={styles.textLink} href="/services/">产品与服务 <span aria-hidden="true">↗</span></a>
               </div>
               <div className={styles.heroFacts} aria-label="产品特点">
                 <span>无需账号即可开始</span>
                 <span>本地优先</span>
-                <span>iOS 17+</span>
+                <span>网页 / App / 小程序</span>
               </div>
               {/* 经营信息使用独立页面直达入口，不要求打开手机菜单或运行脚本。 */}
               <nav className={styles.serviceLinks} aria-label="了解记上日成">
@@ -113,7 +114,7 @@ export default function Home() {
         <section className={styles.experienceSection} id="experience" aria-labelledby="feature-title">
           <div className={styles.container}>
             <div className={styles.experienceHeading}>
-              <div><p className={styles.eyebrow}>一天的节奏，不必交给复杂设置</p><h2 id="feature-title">从记下，到收好。<br />每一步都很轻。</h2></div>
+              <div><p className={styles.eyebrow}>App 里的日程与提醒体验</p><h2 id="feature-title">从记下，到收好。<br />每一步都很轻。</h2></div>
               <p>重要的事记得住，临时的变化接得住。忙的时候只看下一件；想回顾时，再展开完整安排。</p>
             </div>
             <div className={styles.journeyList}>
@@ -142,7 +143,7 @@ export default function Home() {
             <div><p className={styles.eyebrow}>属于你的安排，也由你掌握</p><h2 id="privacy-title">先在本地安心使用。<br />需要时，再连接更多设备。</h2></div>
             <div className={styles.privacyCopy}>
               <p className={styles.largeCopy}>无需账号，先把日程用起来。<br />登录，也不会自动上传。</p>
-              <p>你可以选择仅从现在同步，或先看合并预览，再确认要同步的内容。已有事项不会被系统静默移动。</p>
+              <p>网页日程仅在当前浏览器保存，可以自行导出备份，不与其他设备同步。App 中的同步是独立能力：你可以选择仅从现在同步，或先看合并预览，再确认内容。已有事项不会被系统静默移动。</p>
               <p>导出数据、清理本机、撤回后续同步或申请注销前，都会先说明影响范围。</p>
               <div className={styles.inlineLinks}><Link href="/privacy">了解隐私保护 <span aria-hidden="true">↗</span></Link><Link href="/privacy/data-list">数据与 SDK 清单 <span aria-hidden="true">↗</span></Link></div>
             </div>
@@ -179,7 +180,7 @@ export default function Home() {
 
         <section className={styles.finalSection} aria-label="开始使用记上日成">
           <img src="/images/og-ink-city-v1-1200x630.png" alt="" width="1200" height="630" loading="lazy" />
-          <div className={styles.container}><p className={styles.eyebrow}>记上日成 · PlanChime</p><h2>把事情收好，<br className={styles.mobileBreak} />然后好好生活。</h2><a className={styles.button} href="#platforms">开始你的第一份安排 <span aria-hidden="true">↗</span></a><p className={styles.finalNote}>无需账号，即可开始。</p></div>
+          <div className={styles.container}><p className={styles.eyebrow}>记上日成 · PlanChime</p><h2>把事情收好，<br className={styles.mobileBreak} />然后好好生活。</h2><a className={styles.button} href="/planner/">开始你的第一份安排 <span aria-hidden="true">↗</span></a><p className={styles.finalNote}>网页日程免费，无需账号。</p></div>
         </section>
       </div>
     </SiteFrame>

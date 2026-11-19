@@ -13,7 +13,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: number;
     lastModified?: Date;
   }> = [
-    { path: "/", changeFrequency: "weekly", priority: 1, lastModified: new Date("2026-11-13T00:00:00+08:00") },
+    { path: "/", changeFrequency: "weekly", priority: 1, lastModified: new Date("2026-11-19T00:00:00+08:00") },
+    { path: "/planner/", changeFrequency: "monthly", priority: 0.9, lastModified: new Date("2026-11-19T00:00:00+08:00") },
     { path: "/download/", changeFrequency: "weekly", priority: 0.9, lastModified: new Date("2026-09-11T00:00:00+08:00") },
     { path: "/support/", changeFrequency: "monthly", priority: 0.8, lastModified: new Date("2026-11-13T00:00:00+08:00") },
     { path: "/contact/", changeFrequency: "monthly", priority: 0.7, lastModified: new Date("2026-11-13T00:00:00+08:00") },

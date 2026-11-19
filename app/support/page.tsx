@@ -56,6 +56,11 @@ export default function SupportPage() {
           <div><p className="eyebrow">常见问题</p><h2>直接解决问题</h2></div>
           <div className="faq-list">
             <details>
+              <summary>网页日程怎么使用和备份？</summary>
+              <p>打开<Link className="inline-link" href="/planner/">免费网页日程本</Link>，填写事情并保存。日期时间选填，保存后可编辑、完成或删除单条事项。数据只在当前浏览器，不同步到 App，不发送提醒。展开“备份与恢复”可导出全部日程或预览恢复文件；相同 ID 保留现有记录。</p>
+              <p>若提示无法保存，输入仍会保留，请允许本站存储后重试或下载未保存输入。若读取异常，不要清除浏览器数据，先下载原始数据再联系支持。清理存储、结束无痕窗口可能清除日程，请定期自行备份。</p>
+            </details>
+            <details>
               <summary>通知没有出现怎么办？</summary>
               <p>iPhone 请在“设置 → 通知 → 记上日成”检查权限；Android 请在“设置 → 应用 → 记上日成 → 通知”检查权限。静音、专注模式、省电和厂商后台策略也可能影响展示。即使通知不可用，日程仍会保存在本机。</p>
             </details>

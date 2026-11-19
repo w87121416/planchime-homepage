@@ -22,7 +22,7 @@ export function MobileMenu() {
         }
       }}>
         <a href="/services/">产品与服务</a>
-        <a href="/#experience">产品体验</a>
+        <a href="/planner/">网页日程</a>
         <a href="/#platforms">下载与使用</a>
         <a href="/about/">关于我们</a>
         <a href="/contact/">联系我们</a>
