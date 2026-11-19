@@ -13,11 +13,12 @@ export default function PrivacyPage() {
       eyebrow="隐私与数据"
       title="记上日成隐私政策"
       summary="无需登录即可使用本地日程。只有你主动登录并再次选择同步方式后，所选日程才会传输到账号；登录本身不会自动上传日程。"
-      version="1.4"
+      version="1.5"
       status="现行有效"
-      publishedAt="2026 年 11 月 10 日"
-      effectiveAt="2026 年 11 月 10 日"
+      publishedAt="2026 年 11 月 19 日"
+      effectiveAt="2026 年 11 月 19 日"
       history={[
+        { version: "1.5", publishedAt: "2026 年 11 月 19 日", note: "新增免费网页日程本的本地存储、备份恢复和服务边界。" },
         { version: "1.4", publishedAt: "2026 年 11 月 10 日", note: "按米堆统一收款方案更新支付启用条件，不新增当前信息处理范围。" },
         { version: "1.3", publishedAt: "2026 年 10 月 26 日", note: "补充购买渠道、订单与权益处理边界，并明确当前尚未开放销售。" },
         { version: "1.2", publishedAt: "2026 年 9 月 8 日", note: "按 1.1 三端发布范围更新可选登录、跨端同步、留存和账号注销说明。" },
@@ -25,6 +26,12 @@ export default function PrivacyPage() {
         { version: "1.0", publishedAt: "2026 年 8 月 10 日", note: "首次发布。" },
       ]}
     >
+      <LegalSection title="免费网页日程本的数据处理">
+        <p>本政策也适用于 <Link className="inline-link" href="/planner/">planchime.com/planner/</Link>。网页日程无需登录；标题、备注、日期、时间、完成状态、随机事项 ID、修订和创建/更新时间仅存于当前浏览器的 localStorage。我们不将日程正文发送到服务器、日志或分析平台，也不与 App、小程序或其他浏览器自动同步。</p>
+        <p>导出文件在浏览器本地生成，由你自行保存；恢复文件只在本地读取、校验并经你确认后合并，已有 ID 不覆盖。单条删除从当前浏览器移除事项。网页不申请通知、麦克风或位置权限，不调用 AI 或支付。</p>
+        <p>数据保留至你主动删除或浏览器清除；无痕会话结束、卸载或清理存储可能造成丢失，请自行导出备份。下载到设备的文件不受账号导出“7 天”规则管理，需由你自行保管和删除。网页日程没有云备份或账号注销流程，当前免费服务不形成订单。</p>
+      </LegalSection>
+
       <LegalSection title="1. 适用范围与处理者">
         <p>
           本政策适用于包名为 <code>com.planchime.app</code> 的记上日成 iOS、Android 1.1，记上日成微信小程序 1.1.0，以及 planchime.com 公开页面。个人信息处理者为米堆（南京）网络科技有限公司，联系邮箱为 <a className="inline-link" href="mailto:zhangxiao@planchime.com">zhangxiao@planchime.com</a>。

@@ -190,7 +190,9 @@ test("经营资料说明真实免费服务，会员与主题不能被误读为�
   assert.match(html, /<h1>产品与服务<\/h1>/);
   assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
   assert.match(html, /rel="canonical" href="https:\/\/planchime\.com\/services\/"/);
-  assert.match(html, /当前可使用的免费服务/);
+  assert.match(html, /免费网页日程本 · 现在直接使用/);
+  assert.match(html, /href="\/planner\/"/);
+  assert.match(html, /价格：¥0，免费，无需登录或下载/);
   assert.match(html, /版本 1\.1，免费下载/);
   assert.match(html, /href="https:\/\/apps\.apple\.com\/cn\/app\/id6803545111"/);
   assert.match(html, /界面示意/);
@@ -340,16 +342,16 @@ test("水墨城市素材、示意标注与手机适配保持完整", async () =>
   assert.match(page, /<SchedulePreview/);
 });
 
-test("桌面与手机主导航均指向现有产品体验区块", async () => {
+test("桌面与手机主导航均直达实际网页日程，App介绍保留独立区块", async () => {
   const [page, frame, mobileMenu] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/components/SiteFrame.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/components/MobileMenu.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(page, /id="experience"/);
-  assert.match(frame, /href: "\/#experience"/);
+  assert.match(frame, /href: "\/planner\/"/);
   assert.doesNotMatch(frame, /href: "\/#features"/);
-  assert.match(mobileMenu, /href="\/#experience"/);
+  assert.match(mobileMenu, /href="\/planner\/"/);
   assert.doesNotMatch(mobileMenu, /href="\/#features"/);
 });
 
@@ -359,5 +361,16 @@ test("页内定位使用原生锚点，避免客户端路由重复拼接 hash", 
     readFile(new URL("../app/components/SiteFrame.tsx", import.meta.url), "utf8"),
   ]);
   assert.doesNotMatch(page, /<Link[^>]*href="[^\"]*#platforms"/);
-  assert.match(frame, /<a[^>]*href="\/#platforms"/);
+  assert.match(frame, /href: "\/#platforms", label: "下载与使用"/);
+});
+
+test("网页工作台公开真实边界，禁用脚本说明可见，免登录使用入口可发现", async () => {
+  const response = await render('/planner/'); assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /免费使用，无需登录/); assert.match(html, /不会同步到 App 或其他设备/);
+  assert.match(html, /网页不发送到点提醒/); assert.match(html, /<noscript>/);
+  assert.match(html, /苏ICP备2026061783号-2/);
+  for (const path of ['/', '/services/', '/support/']) {
+    const page = await (await render(path)).text(); assert.match(page, /href="\/planner\/"/);
+  }
 });
