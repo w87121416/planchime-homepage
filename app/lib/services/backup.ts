@@ -5,6 +5,13 @@ import { accountResponse } from "./protocol.ts";
 export type BackupVersion = Readonly<{ requestId: string; createdAt: string; byteLength: number; itemCount: number; downloadUntil: string; available: boolean }>;
 export type BackupList = Readonly<{ capacityBytes: 100000000; usedBytes: number; canUpload: boolean; membershipValidUntil: string | null; versions: readonly BackupVersion[]; nextCursor: string | null }>;
 export type DownloadedBackup = Readonly<{ metadata: BackupVersion; document: PlannerDocument }>;
+export type BackupRestorePreview = Readonly<{ added: number; preserved: number; localRevision: string }>;
+export function previewBackupRestore(local: PlannerDocument, incoming: PlannerDocument): BackupRestorePreview {
+  const ids = new Set(local.items.map(item => item.id));
+  // 保留数量包含本机全部事项；修订指纹只留在内存，用于确认前检测其他标签页的修改。
+  return { added: incoming.items.filter(item => !ids.has(item.id)).length, preserved: local.items.length,
+    localRevision: JSON.stringify(local.items.map(item => [item.id, item.revision]).sort(([a], [b]) => a.localeCompare(b))) };
+}
 export function backupVersion(value: unknown): BackupVersion {
   const row = versioned(value), byteLength = integer(row.byteLength), itemCount = integer(row.itemCount);
   if (byteLength > 2_000_000 || itemCount > 500 || typeof row.available !== "boolean") throw new PurchaseClientError("INVALID_RESPONSE");

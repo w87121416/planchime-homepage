@@ -9,6 +9,8 @@ export function memberFixture(options: { anonymous?: boolean; closed?: boolean; 
   const now = new Date().toISOString(), until = new Date(Date.now() + 30 * 86400000).toISOString();
   const state = { account: options.anonymous ? null as string | null : "synthetic-account-a", entitlementAccount: null as string | null,
     responseAccount: null as string | null, theme: true, refunded: false, revision: 1, unknownText: false, unknownBackup: false, unavailable: false,
+    membership: "active" as "active" | "none" | "expired" | "refunded", backupUnavailable: false, entitlementGate: null as Promise<void> | null,
+    balances: null as { validUntil: string; textRemaining: number; voiceSecondsRemaining: number }[] | null,
     consent: null as Record<string, unknown> | null, remaining: 300, drafts: new Map<string, Record<string, unknown>>(), backups: new Map<string, Record<string, unknown>>() };
   const storage = new Map<string, string>(), calls: { path: string; method: string; body: Record<string, unknown> | null; headers: Record<string, string>; credentials: RequestCredentials | undefined }[] = [];
   let counter = 0;
@@ -32,9 +34,13 @@ export function memberFixture(options: { anonymous?: boolean; closed?: boolean; 
       if (path === "/v1/web-auth/phone/verify") { state.account = "synthetic-account-a"; return response({ schemaVersion: 1, status: "authenticated", accountId: state.account, csrfToken: "a".repeat(64) }); }
       if (!state.account) return response({ schemaVersion: 1, status: "error", code: "AUTHENTICATION_REQUIRED" }, 401);
       if (state.unavailable) throw new TypeError("synthetic offline");
-      if (path === "/v1/commerce/entitlements") return response({ schemaVersion: 1, snapshot: { schemaVersion: 1, accountId: state.entitlementAccount ?? state.account, authority: "commerce-service-verified", evaluatedAt: now, entitlementRevision: state.revision,
-        entitlements: state.theme ? [{ schemaVersion: 1, authority: "commerce-service-verified", productId: MOSSLIGHT_PRODUCT, entitlementKey: MOSSLIGHT_ENTITLEMENT, lifecycleState: state.refunded ? "refunded" : "active-non-renewing", accessGranted: !state.refunded, validUntil: null }] : [] } });
-      if (path === "/v1/web-pro/usage") return response(envelope({ policyVersion: PRO_POLICY, balances: [{ validUntil: until, textRemaining: state.remaining, voiceSecondsRemaining: 3600 }] }));
+      if (path === "/v1/commerce/entitlements") {
+        const result = response({ schemaVersion: 1, snapshot: { schemaVersion: 1, accountId: state.entitlementAccount ?? state.account, authority: "commerce-service-verified", evaluatedAt: now, entitlementRevision: state.revision,
+          entitlements: state.theme ? [{ schemaVersion: 1, authority: "commerce-service-verified", productId: MOSSLIGHT_PRODUCT, entitlementKey: MOSSLIGHT_ENTITLEMENT, lifecycleState: state.refunded ? "refunded" : "active-non-renewing", accessGranted: !state.refunded, validUntil: null }] : [] } });
+        if (state.entitlementGate) await state.entitlementGate;
+        return result;
+      }
+      if (path === "/v1/web-pro/usage") return response(envelope({ policyVersion: PRO_POLICY, balances: state.balances ?? (state.membership === "active" ? [{ validUntil: until, textRemaining: state.remaining, voiceSecondsRemaining: 3600 }] : []) }));
       if (path === "/v1/web-pro/text-consent") {
         if (method === "GET") return response(envelope({ consent: state.consent }));
         state.consent = { schemaVersion: 1, recordId: body.recordId, capability: "remote-ai-schedule-draft", providerId: AI_PROVIDER, policyVersion: "ai-data-policy.v1", dataScopes: ["typed-text"], grantedAt: now, revokedAt: null, updatedAt: now, revision: 1 };
@@ -52,7 +58,8 @@ export function memberFixture(options: { anonymous?: boolean; closed?: boolean; 
         return response(envelope({ draft: path.endsWith("/cancel") ? { ...draft, state: "cancelled", usageState: "released", result: null } : draft }));
       }
       if (path === "/v1/web-pro/backups") {
-        if (method === "GET") return response(envelope({ backup: { capacityBytes: 100000000, usedBytes: [...state.backups.values()].reduce((n, b) => n + (b.metadata as {byteLength: number}).byteLength, 0), canUpload: true, membershipValidUntil: until, versions: [...state.backups.values()].map(b => b.metadata), nextCursor: null } }));
+        if (state.backupUnavailable) throw new TypeError("synthetic backup unavailable");
+        if (method === "GET") return response(envelope({ backup: { capacityBytes: 100000000, usedBytes: [...state.backups.values()].reduce((n, b) => n + (b.metadata as {byteLength: number}).byteLength, 0), canUpload: state.membership === "active", membershipValidUntil: state.membership === "active" ? until : state.membership === "expired" ? new Date(Date.now() - 86400000).toISOString() : null, versions: [...state.backups.values()].map(b => b.metadata), nextCursor: null } }));
         const metadata = { schemaVersion: 1, requestId: body.requestId, createdAt: now, downloadUntil: until, byteLength: new TextEncoder().encode(JSON.stringify(body.document)).byteLength, itemCount: body.document.items.length, available: true };
         state.backups.set(body.requestId, { metadata, document: body.document });
         if (state.unknownBackup) throw new TypeError("synthetic response lost");

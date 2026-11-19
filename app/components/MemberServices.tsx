@@ -83,13 +83,15 @@ function TextService({ controller, state, now }: { controller: MemberServicesCon
   const [timeZone, setTimeZone] = useState(() => Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Shanghai");
   const config = controller.client.configuration;
   if (!config.textEnabled || !config.textRetentionDisclosure || state.textUnavailable) return <Unavailable title="文字整理" description="文字整理尚未开放。你可以先在免费网页日程中记录安排。" />;
-  const balances = state.usage?.balances.filter(row => Date.parse(row.validUntil) > now);
+  const balances = state.usage?.balances.filter(row => Date.parse(row.validUntil) > now).sort((a, b) => Date.parse(a.validUntil) - Date.parse(b.validUntil));
   const remaining = balances?.reduce((sum, row) => sum + row.textRemaining, 0);
   return <div><h2>文字整理</h2><p>{remaining === undefined ? "暂时无法查看剩余额度，请重新核验。" : remaining === 0 ? "当前没有可用的文字整理额度，手动记录日程不消耗额度。" : `当前账号剩余文字整理 ${remaining} 次。`}</p>
+    {/* 每批额度单独列出期限，不能用最晚到期时间掩盖即将失效的额度。 */}
+    {balances?.length ? <ul aria-label="文字额度与到期时间">{balances.map((row, index) => <li key={`${row.validUntil}-${index}`}>剩余 {row.textRemaining} 次 · 有效至 {date(row.validUntil)}</li>)}</ul> : null}
     {!state.requestId ? <form className={styles.form} onSubmit={e => { e.preventDefault(); void controller.sendText(source, timeZone, confirmed); setConfirmed(false); }}>
       <label htmlFor="service-source">想安排的事情</label><textarea id="service-source" value={source} maxLength={8000} rows={5} onChange={e => { setSource(e.target.value); setConfirmed(false); }} disabled={state.busy} placeholder="先写下安排，整理后还会请你确认。" />
       <label htmlFor="service-timezone">解析时区</label><input id="service-timezone" value={timeZone} onChange={e => { setTimeZone(e.target.value); setConfirmed(false); }} disabled={state.busy} />
-      <div className={styles.disclosure}><p>确认后，将这次输入的文字发送给阿里云百炼／通义千问，用于整理日程草稿。不会发送本地日程本。</p><p>{config.textRetentionDisclosure}</p><p>本次文字整理按服务端规则计入文字额度；结果需要你核对，不会自动保存或安排提醒。</p></div>
+      <div className={styles.disclosure}><p>确认后，将这次输入的文字发送给阿里云百炼／通义千问，用于整理日程草稿。不会发送本地日程本。</p><p>{config.textRetentionDisclosure}</p><p>本次使用 1 次文字额度。尚未发送不消耗额度；服务端明确拒绝时释放本次预占额度。结果未知时保留本次额度并核对原请求，取消等待不代表额度已返还。</p><p>结果需要你核对，不会自动保存或安排提醒。</p></div>
       <label className={styles.checkbox}><input type="checkbox" checked={confirmed} onChange={e => setConfirmed(e.target.checked)} disabled={state.busy} />我已了解上述说明，同意发送这次文字。</label>
       <button className={styles.primary} disabled={state.busy || !confirmed || !source.trim() || !remaining}>确认发送并整理</button>
     </form> : <TextResult controller={controller} state={state} />}

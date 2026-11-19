@@ -9,6 +9,7 @@ import { parseTextDraft } from '../app/lib/services/protocol.ts';
 import { confirmedDraftDocument } from '../app/lib/services/planner.ts';
 import { PlannerRepository } from '../app/lib/planner/model.ts';
 import { memberFixture } from './fixtures/member-services.ts';
+import { previewBackupRestore } from '../app/lib/services/backup.ts';
 
 test('正式默认关闭服务：不读身份/权益/余额/备份，不调用短信或AI', async () => {
   const f = memberFixture({closed:true}), controller = new MemberServicesController(f.client);
@@ -100,4 +101,22 @@ test('等待本地写锁时退出，迟到保存不能写入新账号页面', as
   const saving=c.saveDraft(canSave=>new PlannerRepository({storage:{getItem:()=>raw,setItem:(_,value)=>{if(!canSave())throw new Error('stale');raw=value;}},
     exclusive:async action=>{entered();await waiting;return action();},uuid:()=> 'local-revision',now:()=>new Date().toISOString()}),{title:'合成安排',date:'',time:'',notes:''},true);
   await started;c.invalidate();release();await saving;assert.equal(raw,null);
+});
+test('恢复预览统计新条数与全部保留条数，修订变化必须重新确认', async () => {
+  const first=await confirmedDraftDocument({title:'本机合成事项',date:'',time:'',notes:''},'a','first');
+  const second=await confirmedDraftDocument({title:'备份合成事项',date:'',time:'',notes:''},'a','second');
+  const incoming={...first,items:[...first.items,...second.items]}, preview=previewBackupRestore(first,incoming);
+  assert.equal(preview.added,1);assert.equal(preview.preserved,1);
+  const changed={...first,items:first.items.map(row=>({...row,revision:'changed'}))};
+  assert.notEqual(previewBackupRestore(changed,incoming).localRevision,preview.localRevision);
+  assert.equal(previewBackupRestore({...incoming,items:[...incoming.items].reverse()},first).localRevision,previewBackupRestore(incoming,first).localRevision);
+});
+test('无会员、到期和退款备份由服务端分别控制上传与版本下载', async () => {
+  const f=memberFixture(),signal=new AbortController().signal,document={format:'planchime-web-planner',version:1,items:[]};
+  await f.client.uploadBackup('synthetic-account-a','retained-backup',document,signal);
+  for(const membership of ['none','expired','refunded']) {
+    f.state.membership=membership;const list=await f.client.backups('synthetic-account-a',signal);
+    assert.equal(list.canUpload,false);assert.equal(list.versions[0].available,true);
+    assert.deepEqual((await f.client.downloadBackup('synthetic-account-a','retained-backup',signal)).document,document);
+  }
 });

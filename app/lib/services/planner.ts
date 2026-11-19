@@ -7,14 +7,14 @@ export async function confirmedDraftDocument(draft: PlannerDraft, accountId: str
   return { format: "planchime-web-planner", version: 1, items: [{ ...clean, id, revision: crypto.randomUUID(), completed: false, createdAt: now, updatedAt: now }] };
 }
 /** 用户确认保存后若等待本地锁期间退出/切号，拒绝旧草稿写入；已完成的本地保存不撤回。 */
-export function servicePlannerRepository(canSave: () => boolean): PlannerRepository {
+export function servicePlannerRepository(canSave: () => boolean, validateLocked?: () => void): PlannerRepository {
   return new PlannerRepository({
     storage: { getItem: key => localStorage.getItem(key), setItem: (key, value) => {
       if (!canSave()) throw new PlannerError("conflict", "账号状态已变化，这份草稿尚未保存。"); localStorage.setItem(key, value);
     } },
     exclusive: action => {
       if (!navigator.locks) throw new PlannerError("unsupported", "当前浏览器暂不支持安全保存，草稿仍保留着。");
-      return navigator.locks.request(PLANNER_KEY, () => { if (!canSave()) throw new PlannerError("conflict", "账号状态已变化，这份草稿尚未保存。"); return action(); });
+      return navigator.locks.request(PLANNER_KEY, () => { if (!canSave()) throw new PlannerError("conflict", "账号状态已变化，这份草稿尚未保存。"); validateLocked?.(); return action(); });
     }, uuid: () => crypto.randomUUID(), now: () => new Date().toISOString(),
   });
 }
