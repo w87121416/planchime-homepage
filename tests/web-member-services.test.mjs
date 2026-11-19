@@ -120,3 +120,21 @@ test('无会员、到期和退款备份由服务端分别控制上传与版本�
     assert.deepEqual((await f.client.downloadBackup('synthetic-account-a','retained-backup',signal)).document,document);
   }
 });
+test('F3.1 同账号延迟后台核验不切 checking，切号与核验失败仍失效', async () => {
+  const f=memberFixture(),c=new MemberServicesController(f.client);await c.refresh();
+  let release;f.state.entitlementGate=new Promise(r=>{release=r;});const waiting=c.recheck();await new Promise(r=>setImmediate(r));
+  assert.equal(c.getSnapshot().phase,'ready');assert.equal(c.getSnapshot().rechecking,true);assert.equal(c.getSnapshot().session.accountId,'synthetic-account-a');
+  f.state.entitlementGate=null;release();await waiting;assert.equal(c.getSnapshot().phase,'ready');assert.equal(c.getSnapshot().rechecking,false);
+  f.state.account='synthetic-account-b';await c.recheck();assert.equal(c.getSnapshot().session.accountId,'synthetic-account-b');
+  f.state.unavailable=true;await c.recheck();assert.equal(c.getSnapshot().phase,'unavailable');assert.equal(c.getSnapshot().session,null);
+});
+test('F3.1 文字保存后恢复槽清理失败也终止编辑，不把二次merge跳过误报成功', async () => {
+  const f=memberFixture(),c=new MemberServicesController(f.client);await c.refresh();await c.sendText('合成输入','Asia/Shanghai',true);await c.query();
+  let raw=null;const repo=new PlannerRepository({storage:{getItem:()=>raw,setItem:(_,value)=>{raw=value;}},exclusive:async fn=>fn(),uuid:()=> 'revision',now:()=>new Date().toISOString()});
+  const remember=f.client.remember.bind(f.client);f.client.remember=async(account,id,...args)=>{if(id===null)throw new Error('synthetic cleanup rejected');return remember(account,id,...args);};
+  await c.saveDraft(()=>repo,{title:'真实保存A',date:'',time:'',notes:''},true);assert.equal(c.getSnapshot().textSaved,'saved');assert.ok(c.getSnapshot().requestId);assert.match(c.getSnapshot().error,/查询凭据还未清除/);
+  await c.saveDraft(()=>repo,{title:'不能假保存B',date:'',time:'',notes:''},true);assert.equal(repo.read().items.length,1);assert.equal(repo.read().items[0].title,'真实保存A');
+  const again=new MemberServicesController(f.client);await again.refresh();await again.query();await again.saveDraft(()=>repo,{title:'重开后也不能覆盖B',date:'',time:'',notes:''},true);
+  assert.equal(again.getSnapshot().textSaved,'existing');assert.equal(again.getSnapshot().notice,'本次日程已在当前浏览器中，已保留本机版本，没有覆盖修改。');assert.equal(repo.read().items[0].title,'真实保存A');
+  f.client.remember=remember;await c.finishRequest();assert.equal(c.getSnapshot().requestId,null);assert.equal(c.getSnapshot().textSaved,null);
+});

@@ -27,7 +27,7 @@ export function MemberServices({ controller: supplied }: { controller?: MemberSe
   useEffect(() => {
     void controller.refresh();
     // 麦克风许可弹窗返回焦点时保留本机录音；上传仍经服务端会话重验，退出广播/离线照常失效。
-    const focus = () => { if (!capturing.current) void controller.refresh(); };
+    const focus = () => { if (!capturing.current) void controller.recheck(); };
     const offline = () => controller.invalidate();
     const unsubscribe = subscribeServiceInvalidation(controller.invalidate);
     window.addEventListener("focus", focus); window.addEventListener("offline", offline);
@@ -39,8 +39,8 @@ export function MemberServices({ controller: supplied }: { controller?: MemberSe
     <header className={styles.intro}><p className={styles.eyebrow}>记上日成 · 网页服务</p><h1>我的服务</h1><p>登录用于查看本人权益和使用会员服务。当前浏览器中的日程不会自动上传。</p><a href="/planner/">继续使用免费网页日程 →</a></header>
     <section aria-label="当前账号" className={styles.account}>
       <div><strong>{state.phase === "closed" ? "会员服务尚未开放" : state.phase === "checking" ? "正在核验账号与权益…" : state.session?.status === "authenticated" ? `当前账号 · ${state.session.accountId}` : "尚未登录"}</strong>
-        <p>{state.checkedAt ? `权益核验时间：${date(state.checkedAt)}` : "免费日程和本地文件备份可以继续使用。"}</p></div>
-      {state.phase !== "closed" ? <div className={styles.actions}><button type="button" disabled={state.busy || state.phase === "checking"} onClick={() => void controller.refresh()}>重新核验</button>
+        <p>{state.rechecking ? "正在重新核验当前账号，已输入内容暂时保留。" : state.checkedAt ? `权益核验时间：${date(state.checkedAt)}` : "免费日程和本地文件备份可以继续使用。"}</p></div>
+      {state.phase !== "closed" ? <div className={styles.actions}><button type="button" disabled={state.busy || state.rechecking || state.phase === "checking"} onClick={() => void controller.recheck()}>重新核验</button>
         {state.session?.status === "authenticated" ? <button type="button" onClick={() => { broadcast(); void controller.logout(); }}>退出账号</button> : null}</div> : null}
     </section>
     {state.phase === "anonymous" ? <ServiceSignIn key="anonymous" controller={controller} state={state} /> : null}
@@ -49,7 +49,7 @@ export function MemberServices({ controller: supplied }: { controller?: MemberSe
     <section id="member-service-panel" className={styles.panel} aria-label={sections.find(([key]) => key === section)?.[1]}>
       {section === "text" ? state.phase === "ready" ? <TextService key={state.session!.accountId} controller={controller} state={state} now={now} /> : <Unavailable title="文字整理" description={state.phase === "closed" ? "文字整理尚未开放。你可以先在免费网页日程中记录安排。" : "核验本人账号后，可查看文字整理的开放情况和剩余额度。"} /> : null}
       {section === "voice" ? state.phase === "ready" && controller.client.configuration.voiceEnabled && controller.client.configuration.voiceRetentionDisclosure ?
-        <MemberVoice key={state.session!.accountId} parent={controller} accountId={state.session!.accountId!} now={now} onCaptureChange={onCaptureChange} /> :
+        <MemberVoice key={state.session!.accountId} parent={controller} accountId={state.session!.accountId!} now={now} rechecking={state.rechecking} onCaptureChange={onCaptureChange} /> :
         <Unavailable title="语音整理" description="语音整理尚未开放。你可以切换到文字整理，或直接手动记录日程。" /> : null}
       {section === "backup" ? state.phase === "ready" && controller.client.configuration.backupEnabled ? <MemberBackup key={state.session!.accountId} controller={controller} accountId={state.session!.accountId!} /> : <Unavailable title="云备份" description="云备份尚未开放。你仍可在免费网页日程中导出、恢复本地备份文件。" /> : null}
       {section === "theme" ? <div><h2>苔光书庭</h2><p className={styles.hint}>安静的绿色与暖白纸面。这里展示真实主题原图。</p>
@@ -107,9 +107,9 @@ function TextService({ controller, state, now }: { controller: MemberServicesCon
 function TextResult({ controller, state }: { controller: MemberServicesController; state: MemberServicesState }) {
   const draft = state.draft;
   const editable = draft?.state === "ready" && draft.contentAvailable && draft.proposal;
-  const status = !draft || ["queued", "running", "indeterminate"].includes(draft.state) ? "这次处理结果还在核对，请先查询本次结果。" : draft.state === "ready" ? editable ? "已整理成草稿。确认日期和时间后，再保存到浏览器。" : "这份结果已经无法查看，当前浏览器中已保存的日程不受影响。" : draft.state === "cancelled" ? "本次尚未开始的整理已取消。" : "本次没有生成可用草稿，已有日程没有改变。";
+  const status = state.textSaved ? "本次日程已保存在当前浏览器。后续修改请前往网页日程。" : !draft || ["queued", "running", "indeterminate"].includes(draft.state) ? "这次处理结果还在核对，请先查询本次结果。" : draft.state === "ready" ? editable ? "已整理成草稿。确认日期和时间后，再保存到浏览器。" : "这份结果已经无法查看，当前浏览器中已保存的日程不受影响。" : draft.state === "cancelled" ? "本次尚未开始的整理已取消。" : "本次没有生成可用草稿，已有日程没有改变。";
   return <div><p role="status">{status}</p><div className={styles.actions}><button type="button" disabled={state.busy} onClick={() => void controller.query()}>查询本次结果</button>{draft?.state === "queued" ? <button type="button" disabled={state.busy} onClick={() => void controller.cancel()}>取消尚未开始的整理</button> : null}</div>
-    {editable ? <MemberDraftForm key={draft.requestId} busy={state.busy} onSave={(value, confirmed) => controller.saveDraft(servicePlannerRepository, value, confirmed)} initial={editable.draft} zone={editable.timeZoneId} notes={editable.reviewNotes} /> : null}
+    {state.textSaved ? <section className={styles.disclosure} aria-label="本次日程已保存"><h3>已保存</h3>{state.textSaved === "existing" ? <p>已保留当前浏览器中的版本，没有覆盖已有修改。</p> : null}<a href="/planner/">前往网页日程修改 →</a></section> : editable ? <MemberDraftForm key={draft.requestId} busy={state.busy || state.rechecking} onSave={(value, confirmed) => controller.saveDraft(servicePlannerRepository, value, confirmed)} initial={editable.draft} zone={editable.timeZoneId} notes={editable.reviewNotes} /> : null}
     {draft && ["ready", "failed", "cancelled"].includes(draft.state) ? <button className={styles.secondary} type="button" disabled={state.busy} onClick={() => void controller.finishRequest()}>结束查看本次结果</button> : null}
   </div>;
 }

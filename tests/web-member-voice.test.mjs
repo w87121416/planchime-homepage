@@ -8,6 +8,7 @@ import { MemberVoiceController } from '../app/lib/services/voice-controller.ts';
 import { parseVoiceDraft } from '../app/lib/services/voice-protocol.ts';
 import { parseTextDraft } from '../app/lib/services/protocol.ts';
 import { PlannerRepository } from '../app/lib/planner/model.ts';
+import { confirmedDraftDocument } from '../app/lib/services/planner.ts';
 import { PurchaseTransport } from '../app/lib/purchase/transport.ts';
 import { memberFixture } from './fixtures/member-services.ts';
 
@@ -104,4 +105,21 @@ test('真实 worklet 源码硬限制 60 秒并下混单声道，不靠主线程�
  const p=new Processor(),left=new Float32Array(128).fill(1),right=new Float32Array(128).fill(-1);
  for(let i=0;i<7600;i++)if(!p.process([[left,right]]))break;
  const samples=messages.filter(m=>m.type==='samples').flatMap(m=>[...m.data]);assert.equal(samples.length,960000);assert.ok(samples.every(v=>v===0));assert.equal(messages.filter(m=>m.type==='done').length,1);assert.equal(p.process([[left,right]]),false);
+});
+test('F3.1 保存成功终结编辑；重查/重开识别本机版本，未知查询保持',async()=>{
+ const s=setup();s.f.state.voiceOutcome='indeterminate';await s.c.load();await s.c.record('Asia/Shanghai');await s.c.send(true);await s.c.query();const local=repository(),a={title:'已保存A',date:'',time:'',notes:''};
+ await s.c.save(()=>local.repo,a,true);assert.equal(s.c.getSnapshot().saved,'saved');const id=s.c.getSnapshot().requestId;
+ await s.c.save(()=>local.repo,{...a,title:'不应假保存B'},true);assert.equal(local.repo.read().items[0].title,'已保存A');assert.equal(local.repo.read().items.length,1);assert.equal(await s.f.client.pending('synthetic-account-a','voice'),id);
+ const existing=local.repo.read().items[0];await local.repo.save({...existing,title:'用户在日程页改成C'},existing);
+ const again=new MemberVoiceController(s.f.client,'synthetic-account-a',()=>true,()=>{},s.recorder,()=>local.repo.read());await again.load();await again.query();assert.equal(again.getSnapshot().saved,'existing');
+ await again.save(()=>local.repo,{...a,title:'不能覆盖C'},true);assert.equal(local.repo.read().items[0].title,'用户在日程页改成C');s.c.dispose();again.dispose();
+});
+test('F3.1 另页先保存导致merge跳过时明确已有版本，不谎称新输入写入',async()=>{
+ const s=setup();await s.c.load();await s.c.record('Asia/Shanghai');await s.c.send(true);await s.c.query();const local=repository(),id=s.c.getSnapshot().requestId;
+ await local.repo.merge(await confirmedDraftDocument({title:'另一页保存A',date:'',time:'',notes:''},'synthetic-account-a',`voice:${id}`));
+ await s.c.save(()=>local.repo,{title:'本页编辑B',date:'',time:'',notes:''},true);assert.equal(s.c.getSnapshot().saved,'existing');assert.equal(s.c.getSnapshot().notice,'本次日程已在当前浏览器中，已保留本机版本，没有覆盖修改。');assert.equal(local.repo.read().items[0].title,'另一页保存A');s.c.dispose();
+});
+test('F3.1 同账号额度复核保留clip，独立授权已撤回则清理clip和草稿',async()=>{
+ const s=setup();await s.c.load();await s.c.record('Asia/Shanghai');const before=s.c.getSnapshot().clip;await s.c.load();assert.equal(s.c.getSnapshot().clip,before);
+ await s.c.send(true);await s.c.query();s.f.state.voiceConsent.revokedAt=new Date().toISOString();await s.c.load();assert.equal(s.c.getSnapshot().clip,null);assert.equal(s.c.getSnapshot().draft,null);s.c.dispose();
 });

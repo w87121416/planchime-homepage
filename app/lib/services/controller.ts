@@ -10,10 +10,11 @@ export type MemberServicesState = Readonly<{
   phase: "closed" | "checking" | "anonymous" | "ready" | "unavailable";
   session: WebSession | null; entitlements: EntitlementSnapshot | null; checkedAt: string | null;
   usage: ServiceUsage | null; consent: TextConsent | null; requestId: string | null; draft: TextDraft | null;
-  busy: boolean; error: string; notice: string; textUnavailable: boolean; themeApplied: boolean;
+  busy: boolean; rechecking: boolean; error: string; notice: string; textUnavailable: boolean; themeApplied: boolean;
+  textSaved: "saved" | "existing" | null;
 }>;
 const fresh = (phase: MemberServicesState["phase"]): MemberServicesState => Object.freeze({ phase, session: null, entitlements: null,
-  checkedAt: null, usage: null, consent: null, requestId: null, draft: null, busy: false, error: "", notice: "", textUnavailable: false, themeApplied: false });
+  checkedAt: null, usage: null, consent: null, requestId: null, draft: null, busy: false, rechecking: false, textSaved: null, error: "", notice: "", textUnavailable: false, themeApplied: false });
 export function serviceFailure(error: unknown): string {
   const code = error instanceof PurchaseClientError ? error.code : "UNKNOWN";
   if (["PRO_DELIVERY_NOT_OPEN", "PURCHASE_DISABLED"].includes(code)) return "这项服务尚未开放，免费网页日程可以继续使用。";
@@ -46,6 +47,22 @@ export class MemberServicesController {
   }
   invalidate = () => { this.#reset(this.#state.phase === "closed" ? "closed" : "unavailable"); };
   #current(epoch: number, accountId?: string) { return epoch === this.#epoch && (accountId === undefined || this.#state.session?.accountId === accountId); }
+  async recheck(): Promise<void> {
+    if (this.#state.phase !== "ready") return this.refresh();
+    if (this.#state.rechecking) return;
+    const epoch = this.#epoch, accountId = this.#state.session!.accountId!;
+    // 阅读披露后返回只核验原账号，不先卸载其未保存输入；失败/切号仍立即失效。
+    this.#set({ rechecking: true });
+    try {
+      const session = await this.client.getSession(); if (!this.#current(epoch, accountId)) return;
+      if (session.status !== "authenticated" || session.accountId !== accountId) { await this.refresh(); return; }
+      const entitlements = await this.client.getEntitlements(); if (!this.#current(epoch, accountId)) return;
+      if (entitlements.accountId !== accountId) throw new PurchaseClientError("ACCOUNT_CHANGED");
+      this.#set({ session, entitlements, checkedAt: entitlements.evaluatedAt });
+    } catch (error) {
+      if (this.#current(epoch, accountId)) { this.#reset("unavailable"); this.#set({ error: serviceFailure(error) }); }
+    } finally { if (this.#current(epoch, accountId)) this.#set({ rechecking: false }); }
+  }
   async refresh(): Promise<void> {
     if (this.#state.phase === "closed") return;
     const epoch = this.#reset("checking");
@@ -71,7 +88,7 @@ export class MemberServicesController {
   }
   async #action(work: (accountId: string, signal: AbortSignal, epoch: number) => Promise<void>) {
     const accountId = this.#state.session?.accountId;
-    if (this.#state.busy || this.#state.phase !== "ready" || !accountId) return;
+    if (this.#state.busy || this.#state.rechecking || this.#state.phase !== "ready" || !accountId) return;
     const epoch = this.#epoch; this.#set({ busy: true, error: "", notice: "" });
     try { await work(accountId, this.#signal.signal, epoch); }
     catch (error) {
@@ -112,7 +129,7 @@ export class MemberServicesController {
       const requestId = this.client.uuid();
       await this.client.remember(accountId, requestId); if (!this.#current(epoch, accountId)) return;
       // 发起前保留原 ID；网络不明、刷新或退出后回到同账号，只能查询原任务。
-      this.#set({ requestId, usage: null });
+      this.#set({ requestId, usage: null, textSaved: null });
       const result = await this.client.create(accountId, { requestId, sourceText, timeZoneId, referenceInstant: new Date().toISOString(), consentRecordId: consent.recordId }, signal);
       if (!this.#current(epoch, accountId)) return;
       this.#set({ draft: result });
@@ -145,25 +162,27 @@ export class MemberServicesController {
     return this.#action(async (accountId, _signal, epoch) => {
       if (!this.#state.draft || !["ready", "failed", "cancelled"].includes(this.#state.draft.state)) return;
       await this.client.remember(accountId, null, "text", this.#state.requestId!);
-      if (this.#current(epoch, accountId)) this.#set({ requestId: null, draft: null });
+      if (this.#current(epoch, accountId)) this.#set({ requestId: null, draft: null, textSaved: null });
     });
   }
   saveDraft(repository: (canSave: () => boolean) => PlannerRepository, draft: PlannerDraft, confirmed: boolean) {
-    if (!confirmed) return Promise.resolve();
+    if (!confirmed || this.#state.textSaved) return Promise.resolve();
     return this.#action(async (accountId, _signal, epoch) => {
       if (this.#state.draft?.state !== "ready" || !this.#state.draft.contentAvailable || !this.#state.draft.proposal) return;
       try {
         const document = await confirmedDraftDocument(draft, accountId, this.#state.requestId!);
         if (!this.#current(epoch, accountId)) return;
-        await repository(() => this.#current(epoch, accountId)).merge(document);
+        const merged = await repository(() => this.#current(epoch, accountId)).merge(document);
+        if (!this.#current(epoch, accountId)) return;
+        // 保存事实先落入展示状态；清查询凭据失败不能让用户再次编辑后得到虚假成功。
+        this.#set({ textSaved: merged.result.added ? "saved" : "existing", notice: merged.result.added ? "已保存在当前浏览器。退出账号不会移除这条日程；网页不发送到点提醒。" : "本次日程已在当前浏览器中，已保留本机版本，没有覆盖修改。" });
       }
       catch { if (this.#current(epoch, accountId)) this.#set({ error: "草稿已生成，但还没有保存到浏览器。内容仍保留着。" }); return; }
       // 本地保存由用户独立确认，保存后的事项不属于会员账号；退出不撤回已保存内容。
       if (!this.#current(epoch, accountId)) return;
-      this.#set({ notice: "已保存在当前浏览器。退出账号不会移除这条日程；网页不发送到点提醒。" });
       try { await this.client.remember(accountId, null, "text", this.#state.requestId!); }
-      catch { if (this.#current(epoch, accountId)) this.#set({ error: "日程已保存，但本次查询凭据未能清除。重复确认不会添加同一事项。" }); return; }
-      if (this.#current(epoch, accountId)) this.#set({ requestId: null, draft: null, notice: "已保存在当前浏览器。退出账号不会移除这条日程；网页不发送到点提醒。" });
+      catch { if (this.#current(epoch, accountId)) this.#set({ error: "本次查询凭据还未清除。请查询或结束本次结果；后续修改请前往网页日程。" }); return; }
+      if (this.#current(epoch, accountId)) this.#set({ requestId: null, draft: null, textSaved: null });
     });
   }
   async applyTheme(manifest: WebThemeManifest | null) {

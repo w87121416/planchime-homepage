@@ -1,16 +1,17 @@
 import { PurchaseClientError } from "../purchase/protocol.ts";
-import type { PlannerDraft, PlannerRepository } from "../planner/model.ts";
+import type { PlannerDraft, PlannerRepository, PlannerDocument } from "../planner/model.ts";
 import type { MemberServicePort } from "./client.ts";
 import type { ServiceUsage } from "./protocol.ts";
 import type { VoiceClip } from "./voice-audio.ts";
 import { BrowserVoiceRecorder, VoiceRecordingError, type VoiceCapturePort } from "./voice-recorder.ts";
 import type { VoiceConsent, VoiceDraft } from "./voice-protocol.ts";
-import { confirmedDraftDocument } from "./planner.ts";
+import { confirmedDraftDocument, confirmedDraftId, servicePlannerRepository } from "./planner.ts";
 
 export type VoiceState = Readonly<{
   phase: "closed" | "loading" | "ready" | "unavailable"; recording: "idle" | "permission" | "recording";
   seconds: number; clip: VoiceClip | null; timeZoneId: string; consent: VoiceConsent | null; usage: ServiceUsage | null;
   requestId: string | null; draft: VoiceDraft | null; rejectedBeforeTask: boolean; busy: boolean; error: string; notice: string;
+  saved: "saved" | "existing" | null;
 }>;
 export function voiceFailure(error: unknown): string {
   if (error instanceof VoiceRecordingError) {
@@ -34,11 +35,13 @@ export class MemberVoiceController {
   #state: VoiceState; #listeners = new Set<() => void>(); #epoch = 0; #captureEpoch = 0; #signal = new AbortController(); #expiry: ReturnType<typeof setTimeout> | undefined;
   readonly client: MemberServicePort; readonly accountId: string;
   private readonly accountCurrent: () => boolean; private readonly invalidateAccount: () => void; private readonly recorder: VoiceCapturePort;
+  private readonly readLocal: () => PlannerDocument;
   constructor(client: MemberServicePort, accountId: string, accountCurrent: () => boolean,
-    invalidateAccount: () => void, recorder: VoiceCapturePort = new BrowserVoiceRecorder()) {
+    invalidateAccount: () => void, recorder: VoiceCapturePort = new BrowserVoiceRecorder(), readLocal: () => PlannerDocument = () => servicePlannerRepository(() => true).read()) {
     this.client = client; this.accountId = accountId; this.accountCurrent = accountCurrent; this.invalidateAccount = invalidateAccount; this.recorder = recorder;
+    this.readLocal = readLocal;
     this.#state = Object.freeze({ phase: open(client) ? "loading" : "closed", recording: "idle", seconds: 0, clip: null, timeZoneId: "Asia/Shanghai",
-      consent: null, usage: null, requestId: null, draft: null, rejectedBeforeTask: false, busy: false, error: "", notice: "" });
+      consent: null, usage: null, requestId: null, draft: null, rejectedBeforeTask: false, saved: null, busy: false, error: "", notice: "" });
   }
   getSnapshot = () => this.#state;
   subscribe = (listener: () => void) => { this.#listeners.add(listener); return () => { this.#listeners.delete(listener); }; };
@@ -46,7 +49,7 @@ export class MemberVoiceController {
   #current(epoch: number) { return epoch === this.#epoch && !this.#signal.signal.aborted && this.accountCurrent(); }
   dispose() {
     this.#epoch++; this.#captureEpoch++; this.#signal.abort(); this.recorder.cancel(); clearTimeout(this.#expiry);
-    this.#set({ phase: "unavailable", recording: "idle", clip: null, seconds: 0, consent: null, usage: null, draft: null, requestId: null, rejectedBeforeTask: false, busy: false, error: "", notice: "" });
+    this.#set({ phase: "unavailable", recording: "idle", clip: null, seconds: 0, consent: null, usage: null, draft: null, requestId: null, rejectedBeforeTask: false, saved: null, busy: false, error: "", notice: "" });
   }
   #error(error: unknown) {
     if (error instanceof PurchaseClientError && ["ACCOUNT_CHANGED", "AUTHENTICATION_REQUIRED", "PRO_DRAFT_IDENTITY_UNAVAILABLE"].includes(error.code)) {
@@ -60,7 +63,12 @@ export class MemberVoiceController {
     const epoch = this.#epoch; this.#set({ busy: true, error: "" });
     try {
       const [usage, consent, requestId] = await Promise.all([this.client.usage(this.accountId, this.#signal.signal), this.client.voiceConsent(this.accountId, this.#signal.signal), this.client.pending(this.accountId, "voice")]);
-      if (this.#current(epoch)) this.#set({ phase: "ready", usage, consent, requestId });
+      if (this.#current(epoch)) {
+        if (this.#state.consent && !this.#state.consent.revokedAt && (!consent || consent.revokedAt || consent.recordId !== this.#state.consent.recordId)) {
+          this.discard(); clearTimeout(this.#expiry); this.#set({ draft: null, saved: null });
+        }
+        this.#set({ phase: "ready", usage, consent, requestId, ...(requestId !== this.#state.requestId ? { draft: null, saved: null } : {}) });
+      }
     } catch (error) { if (this.#current(epoch)) { this.#set({ phase: "unavailable" }); this.#error(error); } }
     finally { if (this.#current(epoch)) this.#set({ busy: false }); }
   }
@@ -100,7 +108,7 @@ export class MemberVoiceController {
       if (!this.#current(epoch)) return; this.#set({ consent });
       const requestId = this.client.uuid(); await this.client.remember(this.accountId, requestId, "voice"); if (!this.#current(epoch)) return;
       // 音频与时间上下文仅发送一次；先持久保存原请求号，任何未知结果都只能读取原 ID。
-      this.#set({ requestId, usage: null, rejectedBeforeTask: false });
+      this.#set({ requestId, usage: null, rejectedBeforeTask: false, saved: null });
       let draft: VoiceDraft;
       try { draft = await this.client.createVoice(this.accountId, { requestId, consentRecordId: consent.recordId, wav: clip.wav, referenceInstant: clip.referenceInstant, timeZoneId: this.#state.timeZoneId }, this.#signal.signal); }
       catch (error) {
@@ -120,6 +128,13 @@ export class MemberVoiceController {
       if (!this.#current(epoch)) return;
       if (!consent) throw new PurchaseClientError("PRO_VOICE_CONSENT_REQUIRED");
       const draft = await this.client.readVoice(this.accountId, requestId, consent.recordId, this.#signal.signal);
+      if (!this.#current(epoch)) return;
+      // 重开面板或重查原请求也核对稳定本地 ID；已有版本不再伪装成可再次保存的新草稿。
+      try {
+        const localId = await confirmedDraftId(this.accountId, `voice:${requestId}`);
+        if (!this.#current(epoch)) return;
+        if (this.readLocal().items.some(item => item.id === localId)) this.#set({ saved: this.#state.saved ?? "existing" });
+      } catch { /* 本地暂不可读时不声称已保存，实际保存仍由仓库校验并保留失败输入。 */ }
       if (!this.#current(epoch)) return; this.#set({ consent }); this.#accept(draft);
       const usage = await this.client.usage(this.accountId, this.#signal.signal); if (this.#current(epoch)) this.#set({ usage });
     });
@@ -139,20 +154,22 @@ export class MemberVoiceController {
       if (!this.#state.rejectedBeforeTask && (!this.#state.draft || !["ready", "failed"].includes(this.#state.draft.state))) return;
       await this.client.remember(this.accountId, null, "voice", this.#state.requestId!);
       if (!this.#current(epoch)) return;
-      clearTimeout(this.#expiry); this.#set({ requestId: null, draft: null, rejectedBeforeTask: false });
+      clearTimeout(this.#expiry); this.#set({ requestId: null, draft: null, rejectedBeforeTask: false, saved: null });
       const usage = await this.client.usage(this.accountId, this.#signal.signal); if (this.#current(epoch)) this.#set({ usage });
     });
   }
   save(repository: (canSave: () => boolean) => PlannerRepository, draft: PlannerDraft, confirmed: boolean) {
-    if (!confirmed) return Promise.resolve();
+    if (!confirmed || this.#state.saved) return Promise.resolve();
     return this.#action(async epoch => {
       const result = this.#state.draft;
       if (!result?.contentAvailable || Date.parse(result.expiresAt) <= Date.now() || (!result.proposal && !result.transcript)) return;
       try {
         const document = await confirmedDraftDocument(draft, this.accountId, `voice:${result.requestId}`);
-        if (!this.#current(epoch)) return; await repository(() => this.#current(epoch)).merge(document);
+        if (!this.#current(epoch)) return;
+        const merged = await repository(() => this.#current(epoch)).merge(document); if (!this.#current(epoch)) return;
+        // merge 跳过意味着本机已有版本，不能把用户后来编辑的字段谎报为已写入。
+        this.#set({ saved: merged.result.added ? "saved" : "existing", notice: merged.result.added ? "已保存在当前浏览器。退出账号不会移除这条日程；网页不发送到点提醒。" : "本次日程已在当前浏览器中，已保留本机版本，没有覆盖修改。" });
       } catch { if (this.#current(epoch)) this.#set({ error: "草稿已生成，但还没有保存到浏览器。内容仍保留着。" }); return; }
-      if (this.#current(epoch)) this.#set({ notice: "已保存在当前浏览器。退出账号不会移除这条日程；网页不发送到点提醒。" });
       // 手工保存可信转写不等于未知收费结果已终结，原查询凭据必须继续保留。
     });
   }
